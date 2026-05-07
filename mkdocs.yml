@@ -83,6 +83,8 @@ nav:
     - ADRs:
       - infraestrutura/adr/index.md
       - "ADR-0001 — DBT RPC → CLI": infraestrutura/adr/0001-migracao-dbt-rpc-para-cli.md
+      - "ADR-0002 — Pipeline integrada com dev": infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev.md
+      - "ADR-0003 — Manter staging no processo": infraestrutura/adr/0003-manter-staging-no-processo-de-dados.md
   - Pipelines:
     - pipelines/index.md
   - Observabilidade:
