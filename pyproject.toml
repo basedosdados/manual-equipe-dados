@@ -1,0 +1,13 @@
+[project]
+name = "manual-equipe-dados"
+version = "0.0.0"
+description = "Documentação como código da equipe dados da Base dos Dados"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mkdocs-material>=9.5",
+    "pymdown-extensions>=10.7",
+]
+
+[tool.uv]
+package = false

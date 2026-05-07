@@ -1,0 +1,108 @@
+site_name: Manual da Equipe Dados — Base dos Dados
+site_description: Documentação centralizada da equipe dados da Base dos Dados
+site_url: https://basedosdados.github.io/manual-equipe-dados/
+repo_url: https://github.com/basedosdados/manual-equipe-dados
+repo_name: basedosdados/manual-equipe-dados
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo escuro
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para modo claro
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search:
+      lang: pt
+
+exclude_docs: |
+  _templates/
+
+nav:
+  - Início: index.md
+  - Glossário: glossario.md
+  - Onboarding:
+    - onboarding/index.md
+  - Processos:
+    - processos/index.md
+    - Como fazer:
+      - Revisar um PR: processos/como-fazer/revisar-pr.md
+      - Planejar uma sprint: processos/como-fazer/planejar-sprint.md
+    - Referência:
+      - Escala de pontuação: processos/referencia/escala-de-pontuacao.md
+      - Respostas-padrão de suporte: processos/referencia/respostas-padrao-suporte.md
+  - Infraestrutura:
+    - infraestrutura/index.md
+    - BigQuery: infraestrutura/bigquery/index.md
+    - Prefect: infraestrutura/prefect/index.md
+    - ADRs:
+      - infraestrutura/adr/index.md
+      - "ADR-0001 — DBT RPC → CLI": infraestrutura/adr/0001-migracao-dbt-rpc-para-cli.md
+  - Pipelines:
+    - pipelines/index.md
+  - Observabilidade:
+    - observabilidade/index.md
+    - Explicação:
+      - Dashboard Central da Equipe Dados: observabilidade/explicacao/dashboard-central-equipe-dados.md
+      - Cálculo do status de atualização: observabilidade/explicacao/calculo-status-atualizacao.md
+    - Referência:
+      - Métricas:
+        - observabilidade/referencia/metricas/index.md
+        - Panorama de Dados: observabilidade/referencia/metricas/panorama-de-dados.md
+        - Atualização: observabilidade/referencia/metricas/atualizacao.md
+        - Prefect: observabilidade/referencia/metricas/prefect.md
+        - Custos: observabilidade/referencia/metricas/custos.md
+      - Auditoria de consultas no BigQuery: observabilidade/referencia/auditoria-consultas-bq.md
+  - Governança:
+    - governanca/index.md
+    - Metadados:
+      - governanca/metadados/index.md
+      - Subir metadados: governanca/metadados/como-fazer/subir-metadados.md
+    - Qualidade: governanca/qualidade/index.md
+    - Acessos GCP: governanca/acessos-gcp/index.md
+    - Custos: governanca/custos/index.md
