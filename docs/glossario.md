@@ -56,6 +56,8 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## T
 
+**Tabela de arquitetura** — planilha no Google Drive em que descrevemos a estrutura de uma tabela antes de subi-la para o BigQuery: nome e descrição das colunas, tipo no BigQuery, cobertura temporal, unidade de medida, presença em diretórios, marcação de dados sensíveis, partições. É o artefato revisado pela equipe antes do `table-approve`. Ver [ADR-0001 — Manter tabelas de arquitetura no Google Drive](governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md).
+
 ## U
 
 ## V
