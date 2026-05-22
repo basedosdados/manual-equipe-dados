@@ -18,6 +18,8 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## D
 
+**Datalake House** — arquitetura híbrida que combina um *data lake* (arquivos brutos/tratados em object storage) com um *data warehouse* (engine SQL com modelos materializados), unidos por tabelas externas. Na BD: os buckets GCS (`basedosdados-dev`, `basedosdados-staging`) são o lake; os projetos BigQuery (`basedosdados-dev`, `basedosdados-staging`, `basedosdados`) são o warehouse; tabelas `<dataset>_staging` são externas e leem direto do GCS, enquanto `<dataset>` são materializadas pelo dbt. Ver [Fluxo de dados e infraestrutura](onboarding/fluxo-de-dados-e-infraestrutura.md).
+
 ## E
 
 ## F
@@ -33,6 +35,8 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 ## L
 
 ## M
+
+**Manual de estilo** — conjunto de regras canônicas da BD para nomeação, tipagem, formato e padronização de datasets, tabelas, colunas e diretórios. Mantido publicamente em <https://basedosdados.org/docs/style_data> e aplicado tanto no preenchimento de metadados (backend GraphQL) quanto na estrutura dos modelos dbt. Ver [Manual de estilo — explicação](governanca/metadados/explicacao-manual-de-estilo.md).
 
 ## N
 
@@ -52,6 +56,25 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## T
 
+**Tabela de arquitetura** — planilha no Google Drive em que descrevemos a estrutura de uma tabela antes de subi-la para o BigQuery: nome e descrição das colunas, tipo no BigQuery, cobertura temporal, unidade de medida, presença em diretórios, marcação de dados sensíveis, partições. É o artefato revisado pela equipe antes do `table-approve`. Ver [ADR-0001 — Manter tabelas de arquitetura no Google Drive](governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md).
+
 ## U
 
 ## V
+
+## Z
+
+**Zona de dev** — ambiente de desenvolvimento e validação na GCP. Componentes:
+
+- **GCS** — bucket `basedosdados-dev`.
+- **BigQuery** — projeto `basedosdados-dev`, que contém **as duas camadas no mesmo projeto**: `<dataset>_staging` (tabelas externas sobre o bucket `basedosdados-dev`) e `<dataset>` (modelos materializados pelo dbt com `target=dev`).
+
+Usada pela equipe para validar dados e modelos antes da promoção para prod. Ver [Fluxo de dados e infraestrutura](onboarding/fluxo-de-dados-e-infraestrutura.md).
+
+**Zona de prod** — ambiente de produção na GCP, dividido em **dois projetos BigQuery distintos**:
+
+- **GCS** — bucket `basedosdados-staging` (espelho dos datasets com sufixo _staging `basedosdados-dev` após aprovação).
+- **BigQuery `basedosdados-staging`** — camada de tabelas externas (`<dataset>_staging`) sobre o bucket `basedosdados-staging`. **Não é exposto ao público.**
+- **BigQuery `basedosdados`** — modelos materializados pelo dbt (`target=prod`) a partir de `basedosdados-staging`. É o projeto consultado pelos usuários no site e no pacote Python.
+
+A separação `basedosdados-staging` ↔ `basedosdados` é o que diferencia prod de dev: em prod, externas e materializadas vivem em **projetos diferentes**; em dev, vivem no mesmo projeto.
