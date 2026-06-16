@@ -79,12 +79,26 @@ nav:
   - Infraestrutura:
     - infraestrutura/index.md
     - BigQuery: infraestrutura/bigquery/index.md
-    - Prefect: infraestrutura/prefect/index.md
+    - Prefect:
+      - infraestrutura/prefect/index.md
+      - Explicação:
+        - Arquitetura do Prefect 3: infraestrutura/prefect/explicacao/arquitetura-prefect-3.md
+        - Workers: infraestrutura/prefect/explicacao/workers.md
+      - Como fazer:
+        - Instalar o servidor Prefect 3: infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3.md
+        - Configurar os workers: infraestrutura/prefect/como-fazer/configurar-workers.md
+        - Fazer deploy de um flow: infraestrutura/prefect/como-fazer/fazer-deploy-de-flow.md
+        - Ajustar recursos de pod: infraestrutura/prefect/como-fazer/ajustar-recursos-de-pod.md
+        - Registrar metadados no backend: infraestrutura/prefect/como-fazer/registrar-metadata.md
+      - Referência:
+        - Recursos dos pods: infraestrutura/prefect/referencia/recursos-pods.md
+        - Service accounts: infraestrutura/prefect/referencia/service-accounts.md
     - ADRs:
       - infraestrutura/adr/index.md
       - "ADR-0001 — DBT RPC → CLI": infraestrutura/adr/0001-migracao-dbt-rpc-para-cli.md
       - "ADR-0002 — Pipeline integrada com dev": infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev.md
       - "ADR-0003 — Manter staging no processo": infraestrutura/adr/0003-manter-staging-no-processo-de-dados.md
+      - "ADR-0004 — Migração Prefect 0 → 3": infraestrutura/adr/0004-migracao-prefect-0-para-3.md
   - Pipelines:
     - pipelines/index.md
     - Como fazer:
