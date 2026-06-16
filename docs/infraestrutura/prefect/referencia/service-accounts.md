@@ -1,3 +1,7 @@
+---
+tipo: referencia
+titulo: Contas de Serviço GCP — Prefect (0 e 3)
+---
 # Contas de Serviço GCP — Prefect (0 e 3)
 
 Mapeamento completo das service accounts usadas nos workers/agents do Prefect, como chegam no pod e para que servem.

@@ -11,3 +11,4 @@ Cada ADR é numerado sequencialmente dentro deste domínio (`0001-titulo.md`, `0
 | [0001](0001-migracao-dbt-rpc-para-cli.md) | Migração da integração DBT de servidor RPC para CLI direta | aceito | 2025-03-18 |
 | [0002](0002-pipeline-integrada-com-ambiente-dev.md) | Integrar pipelines com o ambiente de dev antes de promover para produção | aceito | 2026-05-07 |
 | [0003](0003-manter-staging-no-processo-de-dados.md) | Manter buckets e projeto de staging no processo de dados | aceito | 2026-05-07 |
+| [0004](0004-migracao-prefect-0-para-3.md) | Migração do Prefect 0 para o Prefect 3 | aceito | 2026-06-10 |

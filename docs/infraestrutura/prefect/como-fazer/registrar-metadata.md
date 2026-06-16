@@ -1,3 +1,7 @@
+---
+tipo: como-fazer
+titulo: Como registrar metadados no backend
+---
 # Guia de Onboarding de Metadados no Backend Data Basis
 
 Este guia descreve, passo a passo, como popular o backend da Base dos Dados ao
