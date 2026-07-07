@@ -15,7 +15,7 @@ recursos dos pods e registro de metadata.
 - [Configurar os workers](como-fazer/configurar-workers.md) — RBAC, credenciais GCP e work pools via API
 - [Fazer deploy de um flow](como-fazer/fazer-deploy-de-flow.md) — autenticação, CI/CD e disparo de runs
 - [Ajustar recursos de pod e resolver OOM](como-fazer/ajustar-recursos-de-pod.md) — CPU/memória por pool e por flow
-- [Registrar metadados no backend](como-fazer/registrar-metadata.md) — popular `Dataset`, `Table`, `Coverage` etc.
+- [Registrar metadados no backend](como-fazer/registrar-metadados.md) — popular `Dataset`, `Table`, `Coverage` etc.
 
 ## Referência — consultar valores
 
