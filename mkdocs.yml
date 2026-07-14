@@ -89,7 +89,7 @@ nav:
         - Configurar os workers: infraestrutura/prefect/como-fazer/configurar-workers.md
         - Fazer deploy de um flow: infraestrutura/prefect/como-fazer/fazer-deploy-de-flow.md
         - Ajustar recursos de pod: infraestrutura/prefect/como-fazer/ajustar-recursos-de-pod.md
-        - Registrar metadados no backend: infraestrutura/prefect/como-fazer/registrar-metadata.md
+        - Registrar metadados no backend: infraestrutura/prefect/como-fazer/registrar-metadados.md
       - Referência:
         - Recursos dos pods: infraestrutura/prefect/referencia/recursos-pods.md
         - Service accounts: infraestrutura/prefect/referencia/service-accounts.md
@@ -127,6 +127,9 @@ nav:
       - ADRs:
         - governanca/metadados/adr/index.md
         - "ADR-0001 — Manter tabelas de arquitetura no Drive": governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md
-    - Qualidade: governanca/qualidade/index.md
+    - Qualidade:
+      - governanca/qualidade/index.md
+      - Referência:
+        - Regras de metadados: governanca/qualidade/referencia/regras-metadados.md
     - Acessos GCP: governanca/acessos-gcp/index.md
     - Custos: governanca/custos/index.md
