@@ -28,6 +28,31 @@ O banco de dados é sempre a fonte de verdade. O Prefect 3 é ajustado para refl
 
 ---
 
+## Lógica de desativação
+
+!!! warning "Condições OR — qualquer uma delas desativa o flow"
+    O backend avalia **duas condições independentes** ao receber uma notificação de falha.
+    Basta uma ser verdadeira para o flow ser pausado no Prefect 3.
+
+| Condição | Critério exato |
+|---|---|
+| **Falhas consecutivas** | Os 2 últimos runs terminais falharam **e** o mais recente ocorreu após `reactivated_at` |
+| **Falha no dbt** | A task `run_dbt` falhou com um erro não ignorável **e** o run ocorreu após `reactivated_at` |
+
+**O papel do `reactivated_at`**
+
+Toda vez que um admin reativa um flow, o campo `reactivated_at` é preenchido com a data/hora atual. O backend ignora qualquer falha anterior a esse timestamp — assim, um histórico de erros antes do fix não reativa a desativação imediatamente após a reativação manual.
+
+**O que conta como "falha consecutiva"**
+
+Dois runs terminais seguidos em estado `Failed` ou `Crashed`. Runs em `Cancelled` ou `Pending` não contam. A ordem é por horário de início — se o run mais recente for anterior ao `reactivated_at`, a condição é ignorada.
+
+**O que conta como "falha no dbt"**
+
+A task de nome `run_dbt` terminou com `Failed` e o erro não está na lista de erros ignoráveis do backend (ex: erros de ambiente ou timeout de infraestrutura que não indicam problema no próprio flow).
+
+---
+
 ## Fluxo de deploy
 
 Quando um PR é mergeado no repositório `pipelines` e o CD (`cd-prefect3.yaml`) roda:
