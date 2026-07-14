@@ -6,4 +6,5 @@ Componentes técnicos que sustentam a Base dos Dados: projetos do BigQuery, orqu
 
 - [BigQuery](bigquery/index.md) — projetos `basedosdados`, `basedosdados-dev`, `basedosdados-staging` e buckets associados
 - [Prefect](prefect/index.md) — orquestração de pipelines
+- [Kubernetes](kubernetes/index.md) — operação do cluster GKE: comandos kubectl, Helm
 - [ADRs](adr/index.md) — decisões arquiteturais que afetam a infraestrutura

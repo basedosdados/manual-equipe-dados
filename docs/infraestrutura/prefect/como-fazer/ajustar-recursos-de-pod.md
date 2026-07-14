@@ -32,73 +32,65 @@ dos caminhos abaixo.
 
 ## Override por flow (recomendado)
 
-Quando só um flow precisa de mais memória, use `job_variables` no `flows.py` — afeta
+Quando só um flow precisa de mais memória, declare `job_variables` no `flows.py` — afeta
 apenas aquele deployment:
 
 ```python
-br_anatel_telefonia_movel__microdados.job_variables = {
-    "resources": {
-        "requests": {"cpu": "1", "memory": "2Gi"},
-        "limits":   {"cpu": "4", "memory": "8Gi"},
-    }
-}
+br_anatel_telefonia_movel__microdados.deploy(
+    name="br_anatel_telefonia_movel__microdados",
+    work_pool_name="basedosdados",
+    job_variables={
+        "memory_limit":   "8Gi",
+        "memory_request": "2Gi",
+    },
+    ...
+)
 ```
 
 O `deploy_flows.py` aplica os `job_variables` no momento do deploy.
 
 ## Alterar o limite global do pool (job pods)
 
-Os limites dos pods que executam os flows ficam no `base_job_template` do work pool,
-via API. Ver os atuais:
+Ver os limites atuais:
 
 ```bash
 source .env
 curl -s "$PREFECT_API_URL/work_pools/basedosdados-dev" \
-  -H "Authorization: Bearer $PREFECT_API_KEY" \
-  | python3 -m json.tool | grep -A5 -i "memory\|cpu\|limit\|request"
+  -H "Authorization: Bearer $PREFECT_API_KEY" | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+props = d['base_job_template']['variables']['properties']
+for k in ['memory_limit', 'memory_request', 'cpu_limit', 'cpu_request']:
+    print(f'{k}: {props[k][\"default\"]}')
+"
 ```
 
-Alterar via PATCH:
-
-```bash
-source .env
-curl -s -X PATCH "$PREFECT_API_URL/work_pools/basedosdados-dev" \
-  -H "Authorization: Bearer $PREFECT_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "base_job_template": {
-      "variables": {
-        "properties": {
-          "finished_job_ttl": {"default": 60},
-          "resources": {
-            "default": {
-              "requests": {"cpu": "500m", "memory": "1Gi"},
-              "limits":   {"cpu": "2",    "memory": "4Gi"}
-            }
-          }
-        }
-      }
-    }
-  }'
-```
-
-Para alterar os dois pools de uma vez, em Python:
+Alterar os defaults via Python (ambos os pools de uma vez):
 
 ```python
 import json, urllib.request, os
+
 api = os.environ['PREFECT_API_URL']
 key = os.environ['PREFECT_API_KEY']
-resources = {"requests": {"cpu": "500m", "memory": "1Gi"},
-             "limits":   {"cpu": "2",    "memory": "4Gi"}}
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+
+new_defaults = {
+    "memory_limit":   "4Gi",
+    "memory_request": "1Gi",
+    "cpu_limit":      "2",
+    "cpu_request":    "500m",
+}
+
 for pool in ["basedosdados", "basedosdados-dev"]:
-    req = urllib.request.Request(f'{api}/work_pools/{pool}',
-        headers={'Authorization': f'Bearer {key}'})
+    req = urllib.request.Request(f'{api}/work_pools/{pool}', headers={"Authorization": f"Bearer {key}"})
     with urllib.request.urlopen(req) as r:
-        tmpl = json.load(r)['base_job_template']
-    tmpl['job_configuration']['job_manifest']['spec']['template']['spec']['containers'][0]['resources'] = resources
+        d = json.load(r)
+    props = d['base_job_template']['variables']['properties']
+    for k, v in new_defaults.items():
+        props[k]['default'] = v
     req = urllib.request.Request(f'{api}/work_pools/{pool}',
-        data=json.dumps({"base_job_template": tmpl}).encode(), method='PATCH',
-        headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'})
+        data=json.dumps({"base_job_template": d['base_job_template']}).encode(),
+        method='PATCH', headers=headers)
     with urllib.request.urlopen(req) as r:
         r.read()
     print(f'✅ {pool} atualizado')
@@ -119,7 +111,7 @@ helm upgrade prefect-worker-basedosdados-dev \
 
 ## Verificação
 
-Após o PATCH, confirme com o `curl` de leitura acima que `resources` reflete o novo
+Após o PATCH, confirme com o `curl` de leitura acima que os defaults refletem o novo
 valor. No próximo run do flow, `kubectl describe pod` não deve mais mostrar `OOMKilled`.
 
 ## Ver também
