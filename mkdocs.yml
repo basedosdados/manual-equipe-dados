@@ -93,7 +93,6 @@ nav:
         - Configurar automação Flow Failed Webhook: infraestrutura/prefect/como-fazer/flow-failed-webhook.md
       - Referência:
         - Recursos dos pods: infraestrutura/prefect/referencia/recursos-pods.md
-        - Override de recursos por flow: infraestrutura/prefect/referencia/override-recursos.md
         - Gestão de Schedules: infraestrutura/prefect/referencia/gestao-de-schedules.md
         - Service accounts: infraestrutura/prefect/referencia/service-accounts.md
       - Runbooks:

@@ -7,7 +7,6 @@ Documentação da orquestração de pipelines via Prefect 3, rodando em Kubernet
 - **[Explicação](explicacao/workers.md)** — como os workers Prefect 3 funcionam no GKE (work pools, job variables, recursos por pod)
 - **[Referência](referencia/comandos.md)** — comandos úteis para operar flows, workers e deployments
   - [Recursos dos pods](referencia/recursos-pods.md) — CPU/memória por tipo de flow
-  - [Override de recursos por flow](referencia/override-recursos.md) — como definir CPU/memória por deployment
   - [Gestão de Schedules](referencia/gestao-de-schedules.md) — sistema de desativação automática de flows com falhas
   - [Service accounts](referencia/service-accounts.md) — SAs do GCP usadas pelos workers
 - **[Como fazer](como-fazer/flow-failed-webhook.md)** — configurar a automação Flow Failed Webhook

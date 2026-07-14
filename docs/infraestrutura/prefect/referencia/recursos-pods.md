@@ -20,6 +20,8 @@ O que importa para OOM é sempre o **job pod**.
 | `basedosdados` (prod) | 500m CPU / 1Gi RAM | 2 CPU / 4Gi RAM |
 | `basedosdados-dev` (dev) | 500m CPU / 1Gi RAM | 2 CPU / 4Gi RAM |
 
+Os valores são defaults do schema do work pool — cada flow pode sobrescrever via `job_variables` sem afetar os demais.
+
 **Por que limitar é melhor que deixar sem limite:**
 - Sem limite, o kernel Linux mata processos de forma imprevisível quando o nó fica sob pressão de memória — qualquer pod pode ser vítima
 - Com limite, o Kubernetes mata **só o pod que excedeu**, com erro claro (`OOMKilled`, exit code 137), sem afetar outros flows no mesmo nó
@@ -36,8 +38,9 @@ curl -s "$PREFECT_API_URL/work_pools/basedosdados" \
   -H "Authorization: Bearer $PREFECT_API_KEY" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)
-containers = d['base_job_template']['job_configuration']['job_manifest']['spec']['template']['spec']['containers']
-print(json.dumps(containers[0].get('resources', 'não definido'), indent=2))
+props = d['base_job_template']['variables']['properties']
+for k in ['memory_limit', 'memory_request', 'cpu_limit', 'cpu_request']:
+    print(f'{k}: {props[k][\"default\"]}')
 "
 ```
 
@@ -45,31 +48,34 @@ print(json.dumps(containers[0].get('resources', 'não definido'), indent=2))
 
 ## 4. Alterar o limite global do pool
 
+O `base_job_template` usa variáveis Jinja com defaults no schema — alterar os defaults muda o baseline de todos os flows que não declaram `job_variables`:
+
 ```python
 import json, urllib.request, os
 
 api = os.environ['PREFECT_API_URL']
 key = os.environ['PREFECT_API_KEY']
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-resources = {
-    "requests": {"cpu": "500m", "memory": "1Gi"},
-    "limits":   {"cpu": "2",    "memory": "4Gi"}
+new_defaults = {
+    "memory_limit":   "4Gi",
+    "memory_request": "1Gi",
+    "cpu_limit":      "2",
+    "cpu_request":    "500m",
 }
 
 for pool in ["basedosdados", "basedosdados-dev"]:
-    req = urllib.request.Request(f'{api}/work_pools/{pool}',
-        headers={'Authorization': f'Bearer {key}'})
+    req = urllib.request.Request(f'{api}/work_pools/{pool}', headers={"Authorization": f"Bearer {key}"})
     with urllib.request.urlopen(req) as r:
         d = json.load(r)
 
-    tmpl = d['base_job_template']
-    containers = tmpl['job_configuration']['job_manifest']['spec']['template']['spec']['containers']
-    containers[0]['resources'] = resources
+    props = d['base_job_template']['variables']['properties']
+    for k, v in new_defaults.items():
+        props[k]['default'] = v
 
     req = urllib.request.Request(f'{api}/work_pools/{pool}',
-        data=json.dumps({"base_job_template": tmpl}).encode(),
-        method='PATCH',
-        headers={'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'})
+        data=json.dumps({"base_job_template": d['base_job_template']}).encode(),
+        method='PATCH', headers=headers)
     with urllib.request.urlopen(req) as r:
         r.read()
     print(f'✅ {pool} atualizado')
@@ -79,42 +85,36 @@ for pool in ["basedosdados", "basedosdados-dev"]:
 
 ## 5. Override de recursos por flow específico
 
-Quando um flow precisa de mais memória que o padrão do pool, usar `job_variables` no `flows.py` — sobrescreve só para aquele deployment, sem afetar os demais:
+Quando um flow precisa de mais memória que o padrão do pool, declare `job_variables` no `flows.py` — sobrescreve só para aquele deployment, sem afetar os demais:
 
 ```python
-@flow(name="br_anatel_telefonia_movel__microdados", log_prints=True)
-def br_anatel_telefonia_movel__microdados(...):
+br_anatel_telefonia_movel__microdados.deploy(
+    name="br_anatel_telefonia_movel__microdados",
+    work_pool_name="basedosdados",
+    job_variables={
+        "memory_limit":   "8Gi",
+        "memory_request": "2Gi",
+    },
     ...
-
-br_anatel_telefonia_movel__microdados.deploy_schedules = [
-    {"cron": "0 3 * * *", "timezone": "America/Sao_Paulo"}
-]
-
-# Sobrescreve recursos só para este flow
-br_anatel_telefonia_movel__microdados.job_variables = {
-    "resources": {
-        "requests": {"cpu": "1",    "memory": "2Gi"},
-        "limits":   {"cpu": "4",    "memory": "8Gi"}
-    }
-}
+)
 ```
 
-O `deploy_flows.py` aplica os `job_variables` no momento do deploy. Os outros flows continuam com o padrão do pool.
+Apenas os campos que diferem do default precisam ser declarados — `cpu_limit` e `cpu_request` ficam no default do pool.
 
 > **Regra:** manter o pool em 4Gi como baseline e usar `job_variables` nos flows que precisam de mais. Não inflar o baseline global para todos.
 
+### Flows com OOM identificados
+
+| Flow | `memory_limit` sugerido |
+|---|---|
+| `br_anatel_telefonia_movel__densidade_brasil` | `8Gi` |
+| `br_anatel_telefonia_movel__densidade_municipio` | `8Gi` |
+| `br_anatel_telefonia_movel__densidade_uf` | `8Gi` |
+| `br_anatel_telefonia_movel__microdados` | `8Gi` |
+| `br_me_rais__*` | a confirmar |
+
 ---
 
-## 6. Diagnosticar OOM
+## Ver também
 
-Quando um pod morre por OOM, verificar antes que seja deletado:
-
-```bash
-# Listar pods recentes no namespace
-kubectl get pods -n prefect-worker-basedosdados --sort-by='.metadata.creationTimestamp' | tail -10
-
-# Ver motivo da morte
-kubectl describe pod <pod-name> -n prefect-worker-basedosdados | grep -A5 "Last State\|OOMKilled\|Exit Code\|Reason"
-```
-
-Se aparecer `OOMKilled` e `Exit Code: 137` → o pod excedeu o memory limit. Aumentar o limite via seção 4 ou 5.
+- [Como ajustar recursos de pod e resolver OOM](../como-fazer/ajustar-recursos-de-pod.md)
