@@ -13,4 +13,3 @@ Documentação da orquestração de pipelines via Prefect 3, rodando em Kubernet
 - **[Como fazer](como-fazer/flow-failed-webhook.md)** — configurar a automação Flow Failed Webhook
 - **[Runbooks](runbooks/gestao-de-schedules.md)** — operação e troubleshooting da gestão de schedules
 - **[Metadata onboarding](metadata-onboarding.md)** — como configurar `register_*` em um flow novo para atualizar cobertura temporal
-- **[Migração Prefect 0 → 3](migracao-prefect-3/guia-migracao.md)** — guia de migração, estado atual e pendências
