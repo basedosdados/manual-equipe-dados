@@ -1,0 +1,4716 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação centralizada da equipe dados da Base dos Dados">
+      
+      
+      
+        <link rel="canonical" href="https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/registrar-metadados/">
+      
+      
+        <link rel="prev" href="../ajustar-recursos-de-pod/">
+      
+      
+        <link rel="next" href="../flow-failed-webhook/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Registrar metadados no backend - Manual da Equipe Dados — Base dos Dados</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-de-onboarding-de-metadados-no-backend-data-basis" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../../.." title="Manual da Equipe Dados — Base dos Dados" class="md-header__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manual da Equipe Dados — Base dos Dados
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Registrar metadados no backend
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/basedosdados/manual-equipe-dados" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    basedosdados/manual-equipe-dados
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Manual da Equipe Dados — Base dos Dados" class="md-nav__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Manual da Equipe Dados — Base dos Dados
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/basedosdados/manual-equipe-dados" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    basedosdados/manual-equipe-dados
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../glossario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../onboarding/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Onboarding
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Onboarding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../processos/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Processos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Processos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../processos/como-fazer/revisar-pr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Revisar um PR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../processos/como-fazer/planejar-sprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planejar uma sprint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../processos/referencia/escala-de-pontuacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escala de pontuação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../processos/referencia/respostas-padrao-suporte/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas-padrão de suporte
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infraestrutura
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../bigquery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BigQuery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prefect
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prefect
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_2" id="__nav_5_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explicação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explicação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explicacao/arquitetura-prefect-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura do Prefect 3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explicacao/workers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_3" id="__nav_5_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalar-servidor-prefect-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalar o servidor Prefect 3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configurar-workers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurar os workers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fazer-deploy-de-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fazer deploy de um flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ajustar-recursos-de-pod/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ajustar recursos de pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registrar metadados no backend
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registrar metadados no backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-do-modelo-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral do modelo de dados
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#walkthrough-usando-o-caged-como-caso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Walkthrough — usando o CAGED como caso
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Walkthrough — usando o CAGED como caso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-0-resolver-ids-de-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 0 — Resolver IDs de referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-verificar-se-o-dataset-ja-existe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 1 — Verificar se o dataset já existe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-identificar-o-usuario-autenticado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 2 — Identificar o usuário autenticado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-3-criaratualizar-o-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 3 — Criar/atualizar o Dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-4-criaratualizar-rawdatasources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 4 — Criar/atualizar RawDataSources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-5-criar-a-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 5 — Criar a Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-6-observationlevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 6 — ObservationLevel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-7-upload-de-colunas-a-partir-da-arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 7 — Upload de colunas a partir da arquitetura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-8-cloudtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 8 — CloudTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-9-coverage-datetimerange-e-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 9 — Coverage, DatetimeRange e Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-10-religar-raw_data_source_ids-deferred-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 10 — Religar raw_data_source_ids (deferred update)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-11-verificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 11 — Verificar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencia-de-campos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referência de campos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Referência de campos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rawdatasource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RawDataSource
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observationlevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ObservationLevel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CloudTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-datetimerange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage + DatetimeRange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checkpoint-pos-dev-entre-passos-9-e-10-do-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checkpoint pós-dev (entre passos 9 e 10 do workflow)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#erros-conhecidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros conhecidos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apendice-ordem-de-execucao-resumida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apêndice: ordem de execução resumida
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flow-failed-webhook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurar automação Flow Failed Webhook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_4" id="__nav_5_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/recursos-pods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos dos pods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/gestao-de-schedules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestão de Schedules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/service-accounts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service accounts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_5" id="__nav_5_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/gestao-de-schedules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestão de Schedules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../kubernetes/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4_2" id="__nav_5_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../kubernetes/referencia/comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comandos kubectl
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../kubernetes/referencia/helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-migracao-dbt-rpc-para-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0001 — DBT RPC → CLI
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-pipeline-integrada-com-ambiente-dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0002 — Pipeline integrada com dev
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-manter-staging-no-processo-de-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0003 — Manter staging no processo
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-migracao-prefect-0-para-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0004 — Migração Prefect 0 → 3
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../pipelines/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipelines
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pipelines
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../pipelines/como-fazer/abrir-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abrir uma issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../pipelines/como-fazer/abrir-pr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abrir um PR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../pipelines/como-fazer/atualizar-dependencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atualizar dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../pipelines/adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../observabilidade/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observabilidade
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observabilidade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explicação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explicação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/explicacao/dashboard-central-equipe-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dashboard Central da Equipe Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/explicacao/calculo-status-atualizacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cálculo do status de atualização
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../observabilidade/referencia/metricas/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Métricas
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7_3_1" id="__nav_7_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Métricas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/referencia/metricas/panorama-de-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Panorama de Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/referencia/metricas/atualizacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atualização
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/referencia/metricas/prefect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prefect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/referencia/metricas/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../observabilidade/referencia/auditoria-consultas-bq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auditoria de consultas no BigQuery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../governanca/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governança
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Governança
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../governanca/metadados/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metadados
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metadados
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../governanca/metadados/como-fazer/subir-metadados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subir metadados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../governanca/metadados/adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_2_3" id="__nav_8_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_8_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0001 — Manter tabelas de arquitetura no Drive
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../governanca/qualidade/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Qualidade
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Qualidade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3_2" id="__nav_8_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_8_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../governanca/qualidade/referencia/regras-metadados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regras de metadados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../governanca/acessos-gcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acessos GCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../governanca/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-do-modelo-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral do modelo de dados
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#walkthrough-usando-o-caged-como-caso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Walkthrough — usando o CAGED como caso
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Walkthrough — usando o CAGED como caso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-0-resolver-ids-de-referencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 0 — Resolver IDs de referência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-verificar-se-o-dataset-ja-existe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 1 — Verificar se o dataset já existe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-identificar-o-usuario-autenticado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 2 — Identificar o usuário autenticado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-3-criaratualizar-o-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 3 — Criar/atualizar o Dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-4-criaratualizar-rawdatasources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 4 — Criar/atualizar RawDataSources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-5-criar-a-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 5 — Criar a Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-6-observationlevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 6 — ObservationLevel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-7-upload-de-colunas-a-partir-da-arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 7 — Upload de colunas a partir da arquitetura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-8-cloudtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 8 — CloudTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-9-coverage-datetimerange-e-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 9 — Coverage, DatetimeRange e Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-10-religar-raw_data_source_ids-deferred-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 10 — Religar raw_data_source_ids (deferred update)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-11-verificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Passo 11 — Verificar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencia-de-campos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referência de campos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Referência de campos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rawdatasource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RawDataSource
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observationlevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ObservationLevel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CloudTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-datetimerange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage + DatetimeRange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checkpoint-pos-dev-entre-passos-9-e-10-do-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checkpoint pós-dev (entre passos 9 e 10 do workflow)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#erros-conhecidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros conhecidos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apendice-ordem-de-execucao-resumida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apêndice: ordem de execução resumida
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/basedosdados/manual-equipe-dados/edit/main/docs/infraestrutura/prefect/como-fazer/registrar-metadados.md" title="Editar esta página" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="guia-de-onboarding-de-metadados-no-backend-data-basis">Guia de Onboarding de Metadados no Backend Data Basis<a class="headerlink" href="#guia-de-onboarding-de-metadados-no-backend-data-basis" title="Permanent link">&para;</a></h1>
+<p>Este guia descreve, passo a passo, como popular o backend da Base dos Dados ao
+publicar um novo conjunto de dados — desde a criação do <code>Dataset</code> até a tabela
+no BigQuery (<code>CloudTable</code>), <code>RawDataSource</code>, <code>Coverage</code>, <code>DatetimeRange</code> e
+<code>Update</code>. É a referência canônica para qualquer agente que registre metadados
+em <code>development.backend.basedosdados.org</code> ou <code>backend.basedosdados.org</code>.</p>
+<p>O exemplo usado é o dataset <strong>CAGED — Cadastro Geral de Empregados e
+Desempregados</strong>:</p>
+<ul>
+<li>Slug: <code>caged</code></li>
+<li>ID: <code>562b56a3-0b01-4735-a049-eeac5681f056</code></li>
+<li>Admin (prod): https://backend.basedosdados.org/admin/v1/dataset/562b56a3-0b01-4735-a049-eeac5681f056/change/</li>
+<li>Organização: <code>me</code> (Ministério da Economia)</li>
+<li>Tema: <code>economics</code></li>
+<li>6 <code>RawDataSource</code> (microdados oficiais + power BI estatístico)</li>
+</ul>
+<hr />
+<h2 id="pre-requisitos">Pré-requisitos<a class="headerlink" href="#pre-requisitos" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Arquitetura de colunas já definida em planilha Google Sheets, seguindo
+   <code>.claude/rules/data-basis-style.md</code>.</li>
+<li>Dados já carregados em <code>basedosdados-dev.&lt;gcp_dataset_id&gt;_staging.&lt;table_slug&gt;</code>.</li>
+<li>Modelo dbt rodando com sucesso em <code>dev</code> (vide <code>.claude/rules/dbt-conventions.md</code>).</li>
+<li>Credenciais do backend em <code>~/.basedosdados/credentials.json</code> ou em
+   <code>EMAIL</code>/<code>PASSWORD</code> no ambiente; chame <code>mcp__databasis__auth</code> antes de
+   qualquer operação de escrita.</li>
+</ol>
+<blockquote>
+<p><strong>Ambiente padrão:</strong> <code>dev</code>. Promover para <code>prod</code> somente após aprovação
+humana explícita no checkpoint do workflow.</p>
+</blockquote>
+<hr />
+<h2 id="visao-geral-do-modelo-de-dados">Visão geral do modelo de dados<a class="headerlink" href="#visao-geral-do-modelo-de-dados" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Dataset (1) ──┬── (N) Table ──┬── (N) Column
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>              │                ├── (N) ObservationLevel
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>              │                ├── (1) CloudTable          ← liga ao BigQuery
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>              │                ├── (N) Coverage ── DatetimeRange
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>              │                └── (N) Update
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>              │
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>              ├── (N) RawDataSource ── (N) Coverage
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>              ├── (N) Organization   (M2M)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>              ├── (N) Theme          (M2M)
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>              ├── (N) Tag            (M2M)
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>              └── status_id          (FK)
+</code></pre></div>
+<p>A ordem de criação <strong>importa</strong>:</p>
+<ol>
+<li><code>Dataset</code> (slug, nomes, descrições, FKs de catálogo).</li>
+<li><code>RawDataSource</code> (vinculados ao dataset).</li>
+<li>Para cada tabela:
+   a. <code>Table</code> (sem <code>raw_data_source_ids</code> ainda).
+   b. <code>ObservationLevel</code> (uma por entidade observada).
+   c. Colunas via <code>upload_columns_from_sheet</code>.
+   d. Ajustes coluna-a-coluna (<code>is_partition</code>, <code>is_primary_key</code>, EN/ES).
+   e. <code>CloudTable</code> (ponteiro para BigQuery).
+   f. <code>Coverage</code> + <code>DatetimeRange</code>.
+   g. <code>Update</code> (frequência/lag).
+   h. Re-<code>create_update_table</code> com <code>raw_data_source_ids</code> agora populado.</li>
+<li>(Opcional) <code>reorder_tables</code> e <code>reorder_observation_levels</code>.</li>
+</ol>
+<hr />
+<h2 id="walkthrough-usando-o-caged-como-caso">Walkthrough — usando o CAGED como caso<a class="headerlink" href="#walkthrough-usando-o-caged-como-caso" title="Permanent link">&para;</a></h2>
+<h3 id="passo-0-resolver-ids-de-referencia">Passo 0 — Resolver IDs de referência<a class="headerlink" href="#passo-0-resolver-ids-de-referencia" title="Permanent link">&para;</a></h3>
+<p>Tabelas auxiliares como <code>Status</code>, <code>License</code>, <code>Availability</code>, <code>Language</code>,
+<code>Theme</code>, <code>Organization</code>, <code>Tag</code>, <code>Entity</code>, <code>MeasurementUnitCategory</code> têm IDs
+distintos em dev e prod. <strong>Nunca chumbar IDs no código.</strong> Use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">mcp__databasis__discover_ids</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># ou, mais barato:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">mcp__databasis__lookup_id</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;organization&quot;</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;me&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">mcp__databasis__lookup_id</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;theme&quot;</span><span class="p">,</span>        <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;economics&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">mcp__databasis__lookup_id</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;status&quot;</span><span class="p">,</span>       <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;published&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Exemplo de saída (<code>prod</code>, parcial):</p>
+<table>
+<thead>
+<tr>
+<th>Categoria</th>
+<th>Slug</th>
+<th>UUID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>status</td>
+<td>published</td>
+<td><code>e16221de-ac30-4926-83d3-de219998dab3</code></td>
+</tr>
+<tr>
+<td>license</td>
+<td>cc_by</td>
+<td><code>92211312-c1b7-4d21-80c5-fd6715b70e22</code></td>
+</tr>
+<tr>
+<td>availability</td>
+<td>online</td>
+<td><code>dd396d7d-0264-4c1f-bf0d-6efe2dc89cbe</code></td>
+</tr>
+<tr>
+<td>language</td>
+<td>pt</td>
+<td><code>fb034b5c-97e2-4678-8a89-6dc385d52658</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="passo-1-verificar-se-o-dataset-ja-existe">Passo 1 — Verificar se o dataset já existe<a class="headerlink" href="#passo-1-verificar-se-o-dataset-ja-existe" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ds</span> <span class="o">=</span> <span class="n">mcp__databasis__get_dataset</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="s2">&quot;caged&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Se <code>ds.found == True</code>, capture <code>ds["id"]</code> para passar como <code>id=</code> nas chamadas
+de atualização (operações são idempotentes).</p>
+<h3 id="passo-2-identificar-o-usuario-autenticado">Passo 2 — Identificar o usuário autenticado<a class="headerlink" href="#passo-2-identificar-o-usuario-autenticado" title="Permanent link">&para;</a></h3>
+<p>Necessário para preencher <code>published_by_ids</code> e <code>data_cleaned_by_ids</code> nas
+tabelas:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">me</span> <span class="o">=</span> <span class="n">mcp__databasis__get_authenticated_account</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">account_id</span> <span class="o">=</span> <span class="n">me</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="passo-3-criaratualizar-o-dataset">Passo 3 — Criar/atualizar o <code>Dataset</code><a class="headerlink" href="#passo-3-criaratualizar-o-dataset" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">mcp__databasis__create_update_dataset</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;caged&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">name_pt</span><span class="o">=</span><span class="s2">&quot;Cadastro Geral de Empregados e Desempregados (CAGED)&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">name_en</span><span class="o">=</span><span class="s2">&quot;General Registry of Employed and Unemployed Workers (CAGED)&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">name_es</span><span class="o">=</span><span class="s2">&quot;Registro General de Empleados y Desempleados (CAGED)&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">description_pt</span><span class="o">=</span><span class="s2">&quot;O CAGED, instituído pela Lei nº 4.923/1965, é uma fonte mensal de informações sobre admissões e desligamentos de trabalhadores regidos pela CLT...&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;CAGED is a monthly administrative record of hires and dismissals of CLT-regulated workers in Brazil...&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;El CAGED es un registro administrativo mensual de altas y bajas de trabajadores regidos por la CLT en Brasil...&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">organization_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id_org_me</span><span class="o">&gt;</span><span class="p">],</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">theme_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id_tema_economics</span><span class="o">&gt;</span><span class="p">],</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">tag_ids</span><span class="o">=</span><span class="p">[],</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">status_id</span><span class="o">=&lt;</span><span class="n">id_status_published</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-4-criaratualizar-rawdatasources">Passo 4 — Criar/atualizar <code>RawDataSource</code>s<a class="headerlink" href="#passo-4-criaratualizar-rawdatasources" title="Permanent link">&para;</a></h3>
+<p>O CAGED tem 6 fontes brutas (verificadas via <code>get_raw_data_sources</code>):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Nome</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Microdados originais</td>
+<td>http://pdet.mte.gov.br/microdados-rais-e-caged</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Microdados Antigos</td>
+<td>http://pdet.mte.gov.br/microdados-rais-e-caged</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CAGED Estatístico</td>
+<td>https://app.powerbi.com/view?...</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Microdados Movimentação Fora Prazo</td>
+<td>https://www.gov.br/.../microdados-rais-e-caged</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Microdados Movimentação Excluida</td>
+<td>https://www.gov.br/.../microdados-rais-e-caged</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Microdados Movimentação</td>
+<td>https://www.gov.br/.../microdados-rais-e-caged</td>
+</tr>
+</tbody>
+</table>
+<p>Para cada uma:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">mcp__databasis__create_update_raw_data_source</span><span class="p">(</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">dataset_id</span><span class="o">=&lt;</span><span class="n">dataset_id</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;CAGED - Microdados Movimentação&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/estatisticas-trabalho/microdados-rais-e-caged&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">availability_id</span><span class="o">=&lt;</span><span class="n">id_avail_online</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">language_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id_lang_pt</span><span class="o">&gt;</span><span class="p">],</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">license_id</span><span class="o">=&lt;</span><span class="n">id_license_unknown</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">contains_structured_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">contains_api</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">is_free</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">requires_registration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">required_registration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    <span class="n">required_ip_address</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="p">)</span>
+</code></pre></div>
+<p>Guarde os IDs retornados; serão necessários no passo 9.</p>
+<h3 id="passo-5-criar-a-table">Passo 5 — Criar a <code>Table</code><a class="headerlink" href="#passo-5-criar-a-table" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">table</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_table</span><span class="p">(</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">dataset_id</span><span class="o">=&lt;</span><span class="n">dataset_id</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">name_pt</span><span class="o">=</span><span class="s2">&quot;Microdados de Movimentação&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">name_en</span><span class="o">=</span><span class="s2">&quot;Worker Movement Microdata&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">name_es</span><span class="o">=</span><span class="s2">&quot;Microdatos de Movimiento&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">description_pt</span><span class="o">=</span><span class="s2">&quot;Tabela de microdados...&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">status_id</span><span class="o">=&lt;</span><span class="n">id_status_published</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">published_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">data_cleaned_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="c1"># NÃO passe raw_data_source_ids agora — deixe para o passo 9</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">)</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">table_id</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="passo-6-observationlevel">Passo 6 — <code>ObservationLevel</code><a class="headerlink" href="#passo-6-observationlevel" title="Permanent link">&para;</a></h3>
+<p>Uma chamada por nível de observação (entidade observada). Para o CAGED a
+unidade típica é o trabalhador no município por mês:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">ol_municipio</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_observation_level</span><span class="p">(</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">entity_id</span><span class="o">=&lt;</span><span class="n">id_entity_municipio</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">)</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">ol_mes</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_observation_level</span><span class="p">(</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="n">entity_id</span><span class="o">=&lt;</span><span class="n">id_entity_mes</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-7-upload-de-colunas-a-partir-da-arquitetura">Passo 7 — Upload de colunas a partir da arquitetura<a class="headerlink" href="#passo-7-upload-de-colunas-a-partir-da-arquitetura" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">mcp__databasis__upload_columns_from_sheet</span><span class="p">(</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">architecture_url</span><span class="o">=</span><span class="s2">&quot;https://docs.google.com/spreadsheets/d/&lt;sheet_id&gt;/edit#gid=0&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">observation_levels</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        <span class="s2">&quot;id_municipio&quot;</span><span class="p">:</span> <span class="n">ol_municipio</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="s2">&quot;mes&quot;</span><span class="p">:</span> <span class="n">ol_mes</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="p">}),</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">)</span>
+</code></pre></div>
+<p>Em seguida, ajustes por coluna (apenas campos não cobertos pelo upload em
+lote):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">mcp__databasis__update_column</span><span class="p">(</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">column_id</span><span class="o">=&lt;</span><span class="nb">id</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;ano&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">is_partition</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;Reference year&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;Año de referencia&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-8-cloudtable">Passo 8 — <code>CloudTable</code><a class="headerlink" href="#passo-8-cloudtable" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">mcp__databasis__create_update_cloud_table</span><span class="p">(</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">gcp_project_id</span><span class="o">=</span><span class="s2">&quot;basedosdados&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">gcp_dataset_id</span><span class="o">=</span><span class="s2">&quot;br_me_caged&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">gcp_table_id</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-9-coverage-datetimerange-e-update">Passo 9 — <code>Coverage</code>, <code>DatetimeRange</code> e <code>Update</code><a class="headerlink" href="#passo-9-coverage-datetimerange-e-update" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">cov</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_coverage</span><span class="p">(</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">area_id</span><span class="o">=&lt;</span><span class="n">id_area_br</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">)</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">mcp__databasis__create_update_datetime_range</span><span class="p">(</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">coverage_id</span><span class="o">=</span><span class="n">cov</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">start_year</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span> <span class="n">start_month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">end_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="n">end_month</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="n">is_closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="p">)</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="n">mcp__databasis__create_update_update</span><span class="p">(</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>    <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=&lt;</span><span class="n">id_entity_mes</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    <span class="n">lag</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="n">last_updated</span><span class="o">=</span><span class="s2">&quot;2026-05-25&quot;</span><span class="p">,</span>   <span class="c1"># SEMPRE a data de hoje, não a data do dado</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-10-religar-raw_data_source_ids-deferred-update">Passo 10 — Religar <code>raw_data_source_ids</code> (deferred update)<a class="headerlink" href="#passo-10-religar-raw_data_source_ids-deferred-update" title="Permanent link">&para;</a></h3>
+<p>A M2M de raw sources só é populada num <strong>segundo</strong> <code>create_update_table</code>,
+passando <strong>todos</strong> os campos obrigatórios de novo (a API não suporta update
+parcial):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">mcp__databasis__create_update_table</span><span class="p">(</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="nb">id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">dataset_id</span><span class="o">=&lt;</span><span class="n">dataset_id</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">name_pt</span><span class="o">=</span><span class="s2">&quot;Microdados de Movimentação&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">name_en</span><span class="o">=</span><span class="s2">&quot;Worker Movement Microdata&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">name_es</span><span class="o">=</span><span class="s2">&quot;Microdatos de Movimiento&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="n">description_pt</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">status_id</span><span class="o">=&lt;</span><span class="n">id_status_published</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="n">published_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">data_cleaned_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="n">raw_data_source_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id1</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">id2</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-11-verificar">Passo 11 — Verificar<a class="headerlink" href="#passo-11-verificar" title="Permanent link">&para;</a></h3>
+<p>Verifique no admin:</p>
+<ul>
+<li>prod: https://backend.basedosdados.org/admin/v1/dataset/<id>/change/</li>
+<li>site:  https://basedosdados.org/dataset/<slug></li>
+</ul>
+<p>Ou via MCP:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">mcp__databasis__get_dataset</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="s2">&quot;caged&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="referencia-de-campos">Referência de campos<a class="headerlink" href="#referencia-de-campos" title="Permanent link">&para;</a></h2>
+<h3 id="dataset"><code>Dataset</code><a class="headerlink" href="#dataset" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Origem</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>slug</code></td>
+<td>string</td>
+<td>manual</td>
+<td>Identificador curto (<code>caged</code>, <code>cnuc</code>). <strong>Não usar</strong> <code>&lt;org&gt;_&lt;slug&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>name_pt</code> / <code>name_en</code> / <code>name_es</code></td>
+<td>string</td>
+<td>manual</td>
+<td>Título exibido. Sempre os 3 idiomas.</td>
+</tr>
+<tr>
+<td><code>description_pt</code> / <code>_en</code> / <code>_es</code></td>
+<td>text</td>
+<td>docs da fonte</td>
+<td>1–3 frases; técnico; sem listas.</td>
+</tr>
+<tr>
+<td><code>organization_ids</code></td>
+<td>list[UUID]</td>
+<td><code>lookup_id(category="organization")</code></td>
+<td>M2M. CAGED → <code>me</code>.</td>
+</tr>
+<tr>
+<td><code>theme_ids</code></td>
+<td>list[UUID]</td>
+<td><code>lookup_id(category="theme")</code></td>
+<td>M2M. CAGED → <code>economics</code>.</td>
+</tr>
+<tr>
+<td><code>tag_ids</code></td>
+<td>list[UUID]</td>
+<td><code>lookup_id(category="tag")</code></td>
+<td>M2M; pode ser vazio.</td>
+</tr>
+<tr>
+<td><code>status_id</code></td>
+<td>UUID</td>
+<td><code>discover_ids.status</code></td>
+<td>Use <code>published</code> no fim do onboarding.</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>UUID</td>
+<td><code>get_dataset</code></td>
+<td>Passar apenas em updates.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rawdatasource"><code>RawDataSource</code><a class="headerlink" href="#rawdatasource" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataset_id</code></td>
+<td>UUID</td>
+<td>obrigatório</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>título humano-legível da fonte</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td>string</td>
+<td>link público para a fonte</td>
+</tr>
+<tr>
+<td><code>availability_id</code></td>
+<td>UUID</td>
+<td><code>online</code> / <code>in_person</code> / <code>physical</code> / <code>unknown</code></td>
+</tr>
+<tr>
+<td><code>language_ids</code></td>
+<td>list[UUID]</td>
+<td>idioma do conteúdo da fonte</td>
+</tr>
+<tr>
+<td><code>license_id</code></td>
+<td>UUID</td>
+<td>quando desconhecido, <code>unknown</code></td>
+</tr>
+<tr>
+<td><code>contains_structured_data</code></td>
+<td>bool</td>
+<td><code>True</code> se a fonte fornece dados tabulares</td>
+</tr>
+<tr>
+<td><code>contains_api</code></td>
+<td>bool</td>
+<td>há API pública?</td>
+</tr>
+<tr>
+<td><code>is_free</code></td>
+<td>bool</td>
+<td>sem custo?</td>
+</tr>
+<tr>
+<td><code>requires_registration</code> / <code>required_registration</code></td>
+<td>bool</td>
+<td>usar ambos por compatibilidade</td>
+</tr>
+<tr>
+<td><code>required_ip_address</code></td>
+<td>bool</td>
+<td>precisa de IP institucional?</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>No CAGED, todas as 6 sources são <code>online</code>, <code>pt</code>, gratuitas e sem registro.</p>
+</blockquote>
+<h3 id="table"><code>Table</code><a class="headerlink" href="#table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>slug</code></td>
+<td>string</td>
+<td>snake_case sem prefixo de dataset (<code>microdados_movimentacao</code>)</td>
+</tr>
+<tr>
+<td><code>dataset_id</code></td>
+<td>UUID</td>
+<td>obrigatório</td>
+</tr>
+<tr>
+<td><code>name_pt/en/es</code></td>
+<td>string</td>
+<td>3 idiomas</td>
+</tr>
+<tr>
+<td><code>description_pt/en/es</code></td>
+<td>text</td>
+<td>descrição técnica da granularidade</td>
+</tr>
+<tr>
+<td><code>status_id</code></td>
+<td>UUID</td>
+<td><code>status.published</code> ao publicar</td>
+</tr>
+<tr>
+<td><code>published_by_ids</code></td>
+<td>list[UUID]</td>
+<td>conta autenticada (<code>get_authenticated_account</code>)</td>
+</tr>
+<tr>
+<td><code>data_cleaned_by_ids</code></td>
+<td>list[UUID]</td>
+<td>normalmente a mesma conta</td>
+</tr>
+<tr>
+<td><code>raw_data_source_ids</code></td>
+<td>list[UUID]</td>
+<td><strong>adicionar apenas na chamada deferred</strong></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>UUID</td>
+<td>passar em updates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="observationlevel"><code>ObservationLevel</code><a class="headerlink" href="#observationlevel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table_id</code></td>
+<td>UUID</td>
+<td>tabela alvo</td>
+</tr>
+<tr>
+<td><code>entity_id</code></td>
+<td>UUID</td>
+<td><code>lookup_id(category="entity", slug="municipio"/"mes"/...)</code></td>
+</tr>
+</tbody>
+</table>
+<p>A entidade descreve o que cada linha representa (município, mês, trabalhador,
+estabelecimento). Use <code>reorder_observation_levels</code> se a ordem importar.</p>
+<h3 id="column"><code>Column</code><a class="headerlink" href="#column" title="Permanent link">&para;</a></h3>
+<p>Carregadas em lote via <code>upload_columns_from_sheet</code>. A planilha de
+arquitetura segue <code>.claude/rules/data-basis-style.md</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Coluna da planilha</th>
+<th>Mapeia para</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td><code>Column.name</code></td>
+<td>snake_case</td>
+</tr>
+<tr>
+<td><code>bigquery_type</code></td>
+<td><code>Column.bigquery_type_id</code></td>
+<td>resolve por slug</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>Column.description_pt</code></td>
+<td>tradução para EN/ES via <code>update_column</code></td>
+</tr>
+<tr>
+<td><code>temporal_coverage</code></td>
+<td><code>Column.temporal_coverage</code></td>
+<td>notação <code>2020(1)2024</code></td>
+</tr>
+<tr>
+<td><code>covered_by_dictionary</code></td>
+<td>bool</td>
+<td></td>
+</tr>
+<tr>
+<td><code>directory_column</code></td>
+<td><code>Column.directory_primary_key</code></td>
+<td><code>&lt;dataset&gt;.&lt;table&gt;:&lt;col&gt;</code></td>
+</tr>
+<tr>
+<td><code>measurement_unit</code></td>
+<td><code>Column.measurement_unit</code></td>
+<td>ex.: <code>BRL</code>, <code>year</code></td>
+</tr>
+<tr>
+<td><code>has_sensitive_data</code></td>
+<td>bool</td>
+<td></td>
+</tr>
+<tr>
+<td><code>observations</code></td>
+<td>text</td>
+<td>notas livres</td>
+</tr>
+<tr>
+<td><code>original_name</code></td>
+<td>string</td>
+<td>nome na fonte bruta</td>
+</tr>
+</tbody>
+</table>
+<p>Pós-upload, complete com <code>update_column</code>:</p>
+<ul>
+<li><code>is_partition=True</code> para colunas de partição (<code>ano</code>, <code>mes</code>, <code>sigla_uf</code>, <code>id_municipio</code>).</li>
+<li><code>is_primary_key=True</code> para a PK lógica da granularidade.</li>
+<li><code>description_en</code> / <code>description_es</code> se ainda não estiverem na planilha.</li>
+</ul>
+<h3 id="cloudtable"><code>CloudTable</code><a class="headerlink" href="#cloudtable" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Exemplo (CAGED dev)</th>
+<th>Exemplo (CAGED prod)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table_id</code></td>
+<td>UUID</td>
+<td>id da <code>Table</code></td>
+<td>id da <code>Table</code></td>
+</tr>
+<tr>
+<td><code>gcp_project_id</code></td>
+<td>string</td>
+<td><code>basedosdados-dev</code></td>
+<td><code>basedosdados</code></td>
+</tr>
+<tr>
+<td><code>gcp_dataset_id</code></td>
+<td>string</td>
+<td><code>br_me_caged</code></td>
+<td><code>br_me_caged</code></td>
+</tr>
+<tr>
+<td><code>gcp_table_id</code></td>
+<td>string</td>
+<td><code>microdados_movimentacao</code></td>
+<td><code>microdados_movimentacao</code></td>
+</tr>
+</tbody>
+</table>
+<p>Nota: o <code>gcp_dataset_id</code> segue o padrão <code>&lt;org&gt;_&lt;slug&gt;</code>, <strong>não</strong> o slug puro.</p>
+<h3 id="coverage-datetimerange"><code>Coverage</code> + <code>DatetimeRange</code><a class="headerlink" href="#coverage-datetimerange" title="Permanent link">&para;</a></h3>
+<p><code>Coverage</code> é a "casca" geográfica (área); <code>DatetimeRange</code> é o intervalo
+temporal aninhado.</p>
+<table>
+<thead>
+<tr>
+<th>Campo de Coverage</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table_id</code> ou <code>raw_data_source_id</code></td>
+<td>aninhar em uma das duas</td>
+</tr>
+<tr>
+<td><code>area_id</code></td>
+<td><code>lookup_id(category="area", slug="br")</code> para datasets nacionais</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Campo de DatetimeRange</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>coverage_id</code></td>
+<td>UUID do Coverage</td>
+</tr>
+<tr>
+<td><code>start_year</code> / <code>start_month</code> / <code>start_day</code></td>
+<td>mínimo presente nos dados</td>
+</tr>
+<tr>
+<td><code>end_year</code> / <code>end_month</code> / <code>end_day</code></td>
+<td><code>None</code> se em andamento</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td><code>1</code> = anual; ajuste para mensal/diário</td>
+</tr>
+<tr>
+<td><code>is_closed</code></td>
+<td><code>False</code> se série segue ativa</td>
+</tr>
+</tbody>
+</table>
+<h3 id="update"><code>Update</code><a class="headerlink" href="#update" title="Permanent link">&para;</a></h3>
+<p>Descreve frequência de atualização e <em>lag</em> (atraso típico até a fonte
+publicar uma nova janela).</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table_id</code></td>
+<td>obrigatório</td>
+</tr>
+<tr>
+<td><code>entity_id</code></td>
+<td>unidade do <code>frequency</code>. Mensal → entity <code>mes</code>.</td>
+</tr>
+<tr>
+<td><code>frequency</code></td>
+<td>inteiro; <code>1</code> + entity <code>mes</code> = mensal</td>
+</tr>
+<tr>
+<td><code>lag</code></td>
+<td>dias de atraso entre o período de referência e a publicação</td>
+</tr>
+<tr>
+<td><code>last_updated</code></td>
+<td><strong>data de hoje</strong> — quando o BD subiu, não o max do dado</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="checkpoint-pos-dev-entre-passos-9-e-10-do-workflow">Checkpoint pós-dev (entre passos 9 e 10 do workflow)<a class="headerlink" href="#checkpoint-pos-dev-entre-passos-9-e-10-do-workflow" title="Permanent link">&para;</a></h2>
+<p>Antes de promover para <code>prod</code>, imprima o checklist (formato em
+<code>.claude/rules/onboarding-workflow.md</code>) e aguarde aprovação humana. <strong>Nunca</strong>
+prossiga sem o "approved" explícito.</p>
+<h2 id="erros-conhecidos">Erros conhecidos<a class="headerlink" href="#erros-conhecidos" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>M2M aparentemente vazios</strong> após salvar (organizations, themes, tags,
+  raw_data_source_ids): chamadas idempotentes. Verifique com <code>get_dataset</code>
+  após <code>create_update_*</code>. Se persistir vazio é problema de deploy do
+  backend — registre e siga.</li>
+<li><strong><code>upload_columns_from_sheet</code> em dev</strong> silenciosamente ignora
+  <code>directoryPrimaryKey</code> quando o dataset de diretórios não existe no
+  ambiente. Comportamento esperado.</li>
+<li><strong><code>publishedBy</code> permission denied</strong> em <code>get_dataset</code>: o GraphQL retorna
+  dados parciais com erro em <code>tables.edges[].node.publishedBy</code> para usuários
+  sem permissão de admin. Funcional, mas a MCP atual eleva isso a falha;
+  contornar via <code>search_datasets</code> + <code>get_raw_data_sources</code> quando necessário.</li>
+</ul>
+<hr />
+<h2 id="apendice-ordem-de-execucao-resumida">Apêndice: ordem de execução resumida<a class="headerlink" href="#apendice-ordem-de-execucao-resumida" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>1.  discover_ids                       → IDs de status, theme, org, etc.
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>2.  get_dataset(slug)                  → existe? captura id
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>3.  get_authenticated_account          → account_id
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>4.  create_update_dataset              → dataset_id
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>5.  create_update_raw_data_source ×N   → raw_ids
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>loop por tabela:
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>6.  create_update_table                → table_id (sem raw_ids)
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>7.  create_update_observation_level ×N → ol_ids
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>8.  upload_columns_from_sheet          → colunas em lote
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>9.  update_column ×N                   → is_partition/is_pk/EN/ES
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>10. create_update_cloud_table          → ponteiro BQ
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>11. create_update_coverage             → cov_id
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>12. create_update_datetime_range       → intervalo temporal
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>13. create_update_update               → frequency/lag/last_updated=hoje
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>14. create_update_table(id=...)        → religa raw_data_source_ids
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>fim do loop
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>15. reorder_tables / reorder_obs_levels (opcional)
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>16. checkpoint → aprovação humana → repetir 4–15 em prod
+</code></pre></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
