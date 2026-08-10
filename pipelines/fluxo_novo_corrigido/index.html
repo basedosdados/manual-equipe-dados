@@ -1,0 +1,3860 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação centralizada da equipe dados da Base dos Dados">
+      
+      
+      
+        <link rel="canonical" href="https://basedosdados.github.io/manual-equipe-dados/pipelines/fluxo_novo_corrigido/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Desenho do flow novo — as datas que ele lê e escreve - Manual da Equipe Dados — Base dos Dados</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#desenho-do-flow-novo-as-datas-que-ele-le-e-escreve" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="Manual da Equipe Dados — Base dos Dados" class="md-header__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Manual da Equipe Dados — Base dos Dados
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Desenho do flow novo — as datas que ele lê e escreve
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/basedosdados/manual-equipe-dados" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    basedosdados/manual-equipe-dados
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Manual da Equipe Dados — Base dos Dados" class="md-nav__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Manual da Equipe Dados — Base dos Dados
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/basedosdados/manual-equipe-dados" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    basedosdados/manual-equipe-dados
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../onboarding/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Onboarding
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Onboarding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../processos/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Processos
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Processos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../processos/como-fazer/revisar-pr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Revisar um PR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../processos/como-fazer/planejar-sprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planejar uma sprint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../processos/referencia/escala-de-pontuacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escala de pontuação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../processos/referencia/respostas-padrao-suporte/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas-padrão de suporte
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infraestrutura/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infraestrutura
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/bigquery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BigQuery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infraestrutura/prefect/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prefect
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prefect
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_2" id="__nav_5_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explicação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explicação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/explicacao/arquitetura-prefect-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura do Prefect 3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/explicacao/workers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_3" id="__nav_5_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalar o servidor Prefect 3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/configurar-workers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurar os workers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/fazer-deploy-de-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fazer deploy de um flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/ajustar-recursos-de-pod/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ajustar recursos de pod
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/registrar-metadados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registrar metadados no backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/como-fazer/flow-failed-webhook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurar automação Flow Failed Webhook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_4" id="__nav_5_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/referencia/recursos-pods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos dos pods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/referencia/gestao-de-schedules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestão de Schedules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/referencia/service-accounts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service accounts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3_5" id="__nav_5_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/prefect/runbooks/gestao-de-schedules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestão de Schedules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infraestrutura/kubernetes/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Kubernetes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4_2" id="__nav_5_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/kubernetes/referencia/comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comandos kubectl
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/kubernetes/referencia/helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infraestrutura/adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/adr/0001-migracao-dbt-rpc-para-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0001 — DBT RPC → CLI
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0002 — Pipeline integrada com dev
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/adr/0003-manter-staging-no-processo-de-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0003 — Manter staging no processo
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infraestrutura/adr/0004-migracao-prefect-0-para-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0004 — Migração Prefect 0 → 3
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipelines
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pipelines
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Como fazer
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Como fazer
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../como-fazer/abrir-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abrir uma issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../como-fazer/abrir-pr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abrir um PR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../como-fazer/atualizar-dependencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atualizar dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../observabilidade/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observabilidade
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observabilidade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explicação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explicação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/explicacao/dashboard-central-equipe-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dashboard Central da Equipe Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/explicacao/calculo-status-atualizacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cálculo do status de atualização
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../observabilidade/referencia/metricas/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Métricas
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7_3_1" id="__nav_7_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Métricas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/referencia/metricas/panorama-de-dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Panorama de Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/referencia/metricas/atualizacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atualização
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/referencia/metricas/prefect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prefect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/referencia/metricas/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observabilidade/referencia/auditoria-consultas-bq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auditoria de consultas no BigQuery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../governanca/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governança
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Governança
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../governanca/metadados/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metadados
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metadados
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governanca/metadados/como-fazer/subir-metadados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subir metadados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../governanca/metadados/adr/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_2_3" id="__nav_8_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_8_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0001 — Manter tabelas de arquitetura no Drive
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../governanca/qualidade/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Qualidade
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Qualidade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3_2" id="__nav_8_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_8_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Referência
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governanca/qualidade/referencia/regras-metadados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regras de metadados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governanca/acessos-gcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acessos GCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governanca/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-ideia-central" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A ideia central
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="A ideia central">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#as-duas-especies-de-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As duas espécies de data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onde-cada-data-mora" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onde cada data mora
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#os-dois-momentos-de-escrita" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Os dois momentos de escrita
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-sequencia-completa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A sequência completa
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposta-resolucao-de-datas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposta — resolução de datas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proposta — resolução de datas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#as-tres-formas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As três formas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-contrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O contrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolvers-prontos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolvers prontos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-despacho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O despacho
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custo-da-resolucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custo da resolução
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-fica-sem-valor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que fica sem valor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sugestao-nomear-as-funcoes-pelos-registros-que-gravam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sugestão — nomear as funções pelos registros que gravam
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limite-conhecido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limite conhecido
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ver-tambem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ver também
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/basedosdados/manual-equipe-dados/edit/main/docs/pipelines/fluxo_novo_corrigido.md" title="Editar esta página" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="desenho-do-flow-novo-as-datas-que-ele-le-e-escreve">Desenho do flow novo — as datas que ele lê e escreve<a class="headerlink" href="#desenho-do-flow-novo-as-datas-que-ele-le-e-escreve" title="Permanent link">&para;</a></h1>
+<h2 id="contexto">Contexto<a class="headerlink" href="#contexto" title="Permanent link">&para;</a></h2>
+<p>Este documento descreve o desenho do flow novo de atualização, a ser planejado e
+implementado. Trata da parte que conversa com o backend de metadados: quais registros
+o flow lê para decidir se roda, e quais ele escreve depois de materializar.</p>
+<p>São cinco registros, e quatro deles guardam datas. As datas se parecem — todas são um
+dia do calendário no banco — mas não significam a mesma coisa. Comparar duas de
+significados diferentes produz uma decisão errada que não aparece no painel: o flow
+encerra em estado concluído sem ter ingerido nada.</p>
+<p>A distinção entre essas datas é o que organiza o desenho inteiro.</p>
+<h2 id="a-ideia-central">A ideia central<a class="headerlink" href="#a-ideia-central" title="Permanent link">&para;</a></h2>
+<h3 id="as-duas-especies-de-data">As duas espécies de data<a class="headerlink" href="#as-duas-especies-de-data" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Espécie</th>
+<th>O que é</th>
+<th>Quando muda</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>o mês do dado</strong></td>
+<td>até onde a série vai</td>
+<td>quando a fonte publica um período novo</td>
+</tr>
+<tr>
+<td><strong>o dia em que algo aconteceu</strong></td>
+<td>a fonte publicou, a BD gravou, nós olhamos</td>
+<td>a cada acontecimento</td>
+</tr>
+</tbody>
+</table>
+<p>Cada campo do backend guarda uma das duas espécies, e só ela. Toda comparação é entre
+campos da mesma espécie.</p>
+<blockquote>
+<p>A granularidade da primeira acompanha a da série — mês, dia, ano. "Mês do dado" é a
+forma curta; numa série anual, leia "ano do dado".</p>
+</blockquote>
+<h3 id="onde-cada-data-mora">Onde cada data mora<a class="headerlink" href="#onde-cada-data-mora" title="Permanent link">&para;</a></h3>
+<p>Cinco registros: três descrevem a fonte original, dois descrevem a tabela na BD. O
+caminho de cada um no backend é longo e se repete, então cada registro recebe aqui um
+nome próprio, usado no resto do documento:</p>
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Espécie</th>
+<th>Campo no backend</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SOURCE_PERIOD</code></td>
+<td>mês do dado</td>
+<td><code>RawDataSource.DatetimeRange</code></td>
+</tr>
+<tr>
+<td><code>SOURCE_PUBLISHED_AT</code></td>
+<td>dia em que aconteceu</td>
+<td><code>RawDataSource.Update.latest</code></td>
+</tr>
+<tr>
+<td><code>SOURCE_CHECKED_AT</code></td>
+<td>dia em que aconteceu</td>
+<td><code>Poll.latest</code></td>
+</tr>
+<tr>
+<td><code>TABLE_PERIOD</code></td>
+<td>mês do dado</td>
+<td><code>Table.DatetimeRange</code></td>
+</tr>
+<tr>
+<td><code>TABLE_MATERIALIZED_AT</code></td>
+<td>dia em que aconteceu</td>
+<td><code>Table.Update.latest</code></td>
+</tr>
+</tbody>
+</table>
+<p>O sufixo carrega a espécie: <code>_PERIOD</code> guarda mês do dado, <code>_AT</code> guarda dia em que algo
+aconteceu. Com isso a regra de só comparar iguais fica visível no próprio nome.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph FONTE["a fonte original"]
+        direction TB
+        F1["&lt;b&gt;SOURCE_PERIOD&lt;/b&gt;&lt;br/&gt;até que mês a fonte publicou"]
+        F2["&lt;b&gt;SOURCE_PUBLISHED_AT&lt;/b&gt;&lt;br/&gt;dia em que a fonte publicou"]
+        F3["&lt;b&gt;SOURCE_CHECKED_AT&lt;/b&gt;&lt;br/&gt;dia em que olhamos a fonte"]
+    end
+    subgraph TABELA["a tabela na BD"]
+        direction TB
+        T1["&lt;b&gt;TABLE_PERIOD&lt;/b&gt;&lt;br/&gt;até que mês a tabela tem dados&lt;br/&gt;faixas livre e BD Pro"]
+        T2["&lt;b&gt;TABLE_MATERIALIZED_AT&lt;/b&gt;&lt;br/&gt;dia em que a BD gravou"]
+    end
+    F1 -.-&gt;|"a decisão de rodar&lt;br/&gt;compara só estes dois"| T1
+
+    style F1 fill:#e6f2ff,stroke:#06c,color:#1a1a1a
+    style T1 fill:#e6f2ff,stroke:#06c,color:#1a1a1a</code></pre>
+<p>Terminada a materialização, os dois registros da tabela avançam: <code>TABLE_PERIOD</code>
+alcança o mês que a fonte publicou, e <code>TABLE_MATERIALIZED_AT</code> recebe o dia da
+gravação.</p>
+<p>O que cada registro alimenta na página pública da tabela:</p>
+<table>
+<thead>
+<tr>
+<th>Registro</th>
+<th>Linha no site</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TABLE_MATERIALIZED_AT</code></td>
+<td>Última atualização na Base dos Dados</td>
+</tr>
+<tr>
+<td><code>SOURCE_PUBLISHED_AT</code></td>
+<td>Última atualização na fonte original</td>
+</tr>
+<tr>
+<td><code>SOURCE_CHECKED_AT</code></td>
+<td>Última verificação da fonte original</td>
+</tr>
+<tr>
+<td><code>TABLE_PERIOD</code></td>
+<td>o período dos dados, no topo da página</td>
+</tr>
+</tbody>
+</table>
+<p>Três deles são obrigatórios por regra de negócio — sem eles a publicação da tabela é
+barrada:</p>
+<table>
+<thead>
+<tr>
+<th>Registro</th>
+<th>Regra, em <code>regras-metadados.md</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TABLE_MATERIALIZED_AT</code></td>
+<td>Tables 02 — "Toda <code>Table</code> deve ter <code>last update</code>"</td>
+</tr>
+<tr>
+<td><code>SOURCE_PUBLISHED_AT</code></td>
+<td>RawDataSource 03 — "Toda <code>RawDataSource</code> deve ter <code>last update</code>"</td>
+</tr>
+<tr>
+<td><code>SOURCE_CHECKED_AT</code></td>
+<td>RawDataSource 02 — "Toda <code>RawDataSource</code> deve ter <code>poll</code>"</td>
+</tr>
+</tbody>
+</table>
+<h3 id="os-dois-momentos-de-escrita">Os dois momentos de escrita<a class="headerlink" href="#os-dois-momentos-de-escrita" title="Permanent link">&para;</a></h3>
+<p>O flow escreve metadados em dois pontos, e a posição de cada um em relação à decisão
+de rodar é deliberada.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["&lt;b&gt;rename_flow_run_dataset_table&lt;/b&gt;&lt;br/&gt;nomeia a execução no painel do Prefect&lt;br/&gt;não toca em metadados"] --&gt; C["&lt;b&gt;register_source_coverage(source_resolver)&lt;/b&gt;&lt;br/&gt;grava SOURCE_CHECKED_AT, chama o resolver&lt;br/&gt;e grava o registro da forma devolvida"]
+    R["&lt;b&gt;source_resolver&lt;/b&gt;&lt;br/&gt;função que acha a data na fonte,&lt;br/&gt;escrita por quem faz o flow"] -.-&gt;|"recebido&lt;br/&gt;como parâmetro"| C
+    C --&gt; D{"&lt;b&gt;check_source_is_ahead_of_table&lt;/b&gt;&lt;br/&gt;a fonte está à frente da tabela?&lt;br/&gt;compara conforme a forma"}
+    D --&gt;|"não, e force_run=false"| S1["encerra"]
+    D --&gt;|"sim, ou force_run=true"| E["Baixar e tratar"]
+    E --&gt; F["Subir para dev&lt;br/&gt;dbt run/test em dev"]
+    F --&gt; G{"materialize_after_dump?"}
+    G --&gt;|"false"| S2["encerra"]
+    G --&gt;|"true"| H["Subir para prod&lt;br/&gt;dbt run/test em prod"]
+    H --&gt; I{"update_metadata?"}
+    I --&gt;|"false"| S3["encerra"]
+    I --&gt;|"true"| J["&lt;b&gt;sync_table_coverage&lt;/b&gt;&lt;br/&gt;escreve TABLE_PERIOD&lt;br/&gt;e TABLE_MATERIALIZED_AT"]
+
+    style S1 fill:#ffe6e6,stroke:#c00,color:#1a1a1a
+    style S2 fill:#ffe6e6,stroke:#c00,color:#1a1a1a
+    style S3 fill:#ffe6e6,stroke:#c00,color:#1a1a1a
+    style C fill:#e6f2ff,stroke:#06c,color:#1a1a1a
+    style D fill:#fff2cc,stroke:#d90,color:#1a1a1a
+    style J fill:#e6f2ff,stroke:#06c,color:#1a1a1a
+    style R fill:#f0f0f0,stroke:#666,color:#1a1a1a</code></pre>
+<p>O primeiro passo é de apresentação: renomeia a execução no painel do Prefect para
+<code>Dump: &lt;dataset&gt;.&lt;tabela&gt;</code>, de modo que a lista de execuções seja legível. Não lê nem
+escreve metadados.</p>
+<p>O <code>source_resolver</code> é o único ponto escrito por quem desenvolve o flow — não é uma
+etapa do desenho, e sim uma função que o flow passa adiante. O contrato dele está na
+seção "Proposta — resolução de datas". Do resto do desenho para a frente é tudo
+componente compartilhado.</p>
+<p><strong>Os registros da fonte vêm antes da decisão.</strong> Descrevem o que observamos, e a
+observação aconteceu independentemente de haver novidade. Toda execução grava
+<code>SOURCE_CHECKED_AT</code>, inclusive as que encerram sem fazer nada.</p>
+<p><strong>Os registros da tabela vêm depois de materializar.</strong> Descrevem o que a tabela tem, e
+só podem avançar depois que o dado chegou lá. A decisão de rodar apenas lê: se o flow
+quebra no meio, nenhum registro da tabela avançou e a execução seguinte tenta de novo.</p>
+<h3 id="a-sequencia-completa">A sequência completa<a class="headerlink" href="#a-sequencia-completa" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    participant F as Flow
+    participant S as Fonte original
+    participant B as Backend
+    participant Q as Warehouse
+
+    Note over F,B: register_source_coverage(source_resolver)
+    F-&gt;&gt;B: SOURCE_CHECKED_AT = hoje
+    F-&gt;&gt;S: chama o source_resolver recebido
+    S--&gt;&gt;F: (forma, valor)
+    F-&gt;&gt;B: grava SOURCE_PERIOD ou SOURCE_PUBLISHED_AT,&lt;br/&gt;conforme a forma devolvida
+
+    Note over F,B: check_source_is_ahead_of_table — só lê
+    F-&gt;&gt;B: a fonte está à frente da tabela?&lt;br/&gt;compara conforme a forma
+    B--&gt;&gt;F: não → encerra sem materializar
+
+    F-&gt;&gt;Q: baixa, sobe e materializa em dev, depois em prod
+
+    Note over F,Q: sync_table_coverage
+    F-&gt;&gt;Q: lê o período máximo da tabela materializada
+    F-&gt;&gt;B: TABLE_PERIOD = mês da tabela, nas faixas livre e BD Pro
+    F-&gt;&gt;Q: reaplica as Row Access Policies&lt;br/&gt;só nas tabelas com uma janela em BD Pro
+    F-&gt;&gt;Q: lê o last_modified da tabela
+    F-&gt;&gt;B: TABLE_MATERIALIZED_AT = dia em que a BD gravou</code></pre>
+<p><code>TABLE_MATERIALIZED_AT</code> vem do <code>last_modified</code> da tabela no warehouse, não da data em
+que o flow rodou: assim, execução que não escreveu nada na tabela não anuncia
+atualização.</p>
+<h2 id="proposta-resolucao-de-datas">Proposta — resolução de datas<a class="headerlink" href="#proposta-resolucao-de-datas" title="Permanent link">&para;</a></h2>
+<p>Achar a data na fonte é sempre potencialmente específico: o nome do arquivo, o nome da
+pasta, uma coluna do próprio dado, um cabeçalho HTTP, o tamanho em bytes. Essa parte
+não se encapsula — quem desenvolve o flow implementa, olhando o que a fonte dele
+expõe.</p>
+<p>O que se encapsula é o que fazer com o valor. A proposta é a função de escrita receber
+um parâmetro <code>source_resolver</code>: uma função sem argumentos, escrita do lado do flow,
+que devolve o valor encontrado junto com a forma como ele foi resolvido.</p>
+<h3 id="as-tres-formas">As três formas<a class="headerlink" href="#as-tres-formas" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Forma</th>
+<th>O que a fonte fornece</th>
+<th>Compara com</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>period</code></td>
+<td>até que período publicou</td>
+<td><code>TABLE_PERIOD</code></td>
+</tr>
+<tr>
+<td><code>publication</code></td>
+<td>dia em que publicou</td>
+<td><code>TABLE_MATERIALIZED_AT</code></td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>tamanho em bytes</td>
+<td>último tamanho registrado</td>
+</tr>
+</tbody>
+</table>
+<p>Cada flow escolhe <strong>uma</strong> — a que a fonte dele suporta. As três comparam grandezas da
+mesma espécie, que é a regra que organiza o desenho.</p>
+<h3 id="o-contrato">O contrato<a class="headerlink" href="#o-contrato" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Kind</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;period&quot;</span><span class="p">,</span> <span class="s2">&quot;publication&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">SourceSignal</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Kind</span><span class="p">,</span> <span class="n">date</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">SourceResolver</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">SourceSignal</span><span class="p">]</span>
+</code></pre></div>
+<p><code>None</code> é a forma explícita de "olhamos e não havia o que resolver".</p>
+<p>A forma vem no retorno, não num parâmetro à parte, porque ela é propriedade da
+extração: quem escreveu o resolver sabe se leu um período do nome do arquivo ou um
+<code>Last-Modified</code>. Separar os dois abriria espaço para um resolver de publicação
+declarado como período.</p>
+<h3 id="resolvers-prontos">Resolvers prontos<a class="headerlink" href="#resolvers-prontos" title="Permanent link">&para;</a></h3>
+<p>O grau de reaproveitamento não é igual nas três.</p>
+<p><strong><code>publication</code> e <code>size</code> são protocolo padrão</strong> e funcionam em qualquer fonte que o
+fale:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">resolve_publication</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SourceSignal</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">return</span> <span class="s2">&quot;publication&quot;</span><span class="p">,</span> <span class="n">parsedate_to_datetime</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Last-Modified&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">resolve_size</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SourceSignal</span><span class="p">:</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">return</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">])</span>
+</code></pre></div>
+<p>O mesmo vale para <code>MDTM</code> no FTP e <code>getlastmodified</code> no WebDAV.</p>
+<p><strong><code>period</code> quase nunca é</strong>, porque o período mora na convenção da fonte. O que dá para
+deixar pronto é parametrizado:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">resolve_period</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SourceSignal</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">yyyymm</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">return</span> <span class="s2">&quot;period&quot;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">yyyymm</span><span class="p">,</span> <span class="s2">&quot;%Y%m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+</code></pre></div>
+<p>Helpers como <code>period_from_filenames(files, regex, formato)</code> e
+<code>period_from_column(df, coluna)</code> cobrem boa parte dos casos, mas sempre vai sobrar
+fonte que não cabe — e é para isso que o parâmetro fica aberto.</p>
+<h3 id="o-despacho">O despacho<a class="headerlink" href="#o-despacho" title="Permanent link">&para;</a></h3>
+<p>Quem recebe o resolver desestrutura o par:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">match</span> <span class="n">signal</span><span class="p">:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="k">case</span> <span class="p">(</span><span class="s2">&quot;period&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="n">client</span><span class="o">.</span><span class="n">upsert_raw_source_period</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="k">case</span> <span class="p">(</span><span class="s2">&quot;publication&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="n">client</span><span class="o">.</span><span class="n">upsert_raw_source_update</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">latest</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="k">_</span><span class="p">):</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="n">client</span><span class="o">.</span><span class="n">upsert_raw_source_update</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">table_id</span><span class="p">,</span> <span class="n">latest</span><span class="o">=</span><span class="n">today</span><span class="p">())</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">case</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="k">pass</span>
+</code></pre></div>
+<p>O gate tem a mesma estrutura, trocando a escrita pela comparação da tabela
+correspondente. Acrescentar uma quarta forma é acrescentar uma etiqueta e um ramo em
+cada — o flow e o resto do componente não mudam.</p>
+<p>O <code>source_resolver</code> é chamado <strong>depois</strong> da gravação de <code>SOURCE_CHECKED_AT</code>, para que
+uma resolução que quebre ainda deixe registrado que olhamos.</p>
+<h3 id="custo-da-resolucao">Custo da resolução<a class="headerlink" href="#custo-da-resolucao" title="Permanent link">&para;</a></h3>
+<p>Vale resolver sem baixar sempre que a fonte permitir — listagem de FTP, <code>HEAD</code>,
+<code>PROPFIND</code>, índice do portal. Quando a resolução exige baixar o dado, o gate deixa de
+poupar a coleta e passa a poupar só o upload, o dbt e a materialização. Continua
+valendo, mas é bom não prometer o que não entrega.</p>
+<h3 id="o-que-fica-sem-valor">O que fica sem valor<a class="headerlink" href="#o-que-fica-sem-valor" title="Permanent link">&para;</a></h3>
+<p>A forma escolhida determina quais registros da fonte recebem valor real:</p>
+<table>
+<thead>
+<tr>
+<th>Forma</th>
+<th><code>SOURCE_PERIOD</code></th>
+<th><code>SOURCE_PUBLISHED_AT</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>period</code></td>
+<td>preenchido</td>
+<td>sem valor</td>
+</tr>
+<tr>
+<td><code>publication</code></td>
+<td>sem valor</td>
+<td>preenchido</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>sem valor</td>
+<td>dia da detecção</td>
+</tr>
+</tbody>
+</table>
+<p>Falta decidir o que fazer com o que sobra vazio, porque isso aparece na página da
+tabela. Nada impede aceitar mais de um resolver: uma fonte que exponha período e
+publicação preencheria os dois.</p>
+<h2 id="sugestao-nomear-as-funcoes-pelos-registros-que-gravam">Sugestão — nomear as funções pelos registros que gravam<a class="headerlink" href="#sugestao-nomear-as-funcoes-pelos-registros-que-gravam" title="Permanent link">&para;</a></h2>
+<p>Os nomes das duas funções de escrita dizem "coverage", mas cada uma grava vários
+registros, das duas espécies. O nome não descreve os campos que a função atualiza.</p>
+<p>A proposta é nomear cada função pelo conjunto que ela grava, alinhando o prefixo do
+nome ao prefixo das constantes:</p>
+<table>
+<thead>
+<tr>
+<th>Nome atual</th>
+<th>Proposta</th>
+<th>Grava</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>register_source_coverage</code></td>
+<td><code>record_source_dates</code></td>
+<td><code>SOURCE_PERIOD</code>, <code>SOURCE_PUBLISHED_AT</code>, <code>SOURCE_CHECKED_AT</code></td>
+</tr>
+<tr>
+<td><code>sync_table_coverage</code></td>
+<td><code>record_table_dates</code></td>
+<td><code>TABLE_PERIOD</code>, <code>TABLE_MATERIALIZED_AT</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>check_source_is_ahead_of_table</code> fica como está: já descreve o que faz, e não grava
+nada.</p>
+<p>Uma ressalva: além dos dois registros de data, <code>sync_table_coverage</code> reaplica as Row
+Access Policies das tabelas com janela em BD Pro. Para o nome proposto ficar exato,
+essa reaplicação passa a ser uma chamada própria no flow.</p>
+<p>Os diagramas acima usam os nomes atuais.</p>
+<h2 id="limite-conhecido">Limite conhecido<a class="headerlink" href="#limite-conhecido" title="Permanent link">&para;</a></h2>
+<p>A decisão de rodar lê <code>TABLE_PERIOD</code>, e tabela sem faixa nenhuma é lida como "nunca
+materializou" — o flow segue em frente. Uma tabela sem período declarado, marcada no
+código como <code>NonHistorical</code> por não ter coluna de data confiável, também não tem faixa
+por definição, e cairia nessa leitura em toda execução. Esse tipo de tabela precisa de
+um critério de decisão próprio.</p>
+<h2 id="ver-tambem">Ver também<a class="headerlink" href="#ver-tambem" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>governanca/qualidade/referencia/regras-metadados.md</code>, no manual da equipe — as
+  regras de negócio que cada registro atende</li>
+<li><code>infraestrutura/prefect/como-fazer/registrar-metadados.md</code>, no manual da equipe — o
+  modelo de dados do backend e o passo a passo de preenchimento</li>
+<li><code>pipelines/utils/metadata/poll.py</code>, neste repositório — o ponto de implementação</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

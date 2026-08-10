@@ -2,242 +2,246 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/glossario/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/acessos-gcp/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/custos/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/metadados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/metadados/explicacao-manual-de-estilo/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/metadados/adr/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/metadados/como-fazer/subir-metadados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/qualidade/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/qualidade/referencia/regras-metadados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/0001-migracao-dbt-rpc-para-cli/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/0003-manter-staging-no-processo-de-dados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/0004-migracao-prefect-0-para-3/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/bigquery/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/kubernetes/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/kubernetes/referencia/comandos/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/kubernetes/referencia/helm/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/metadata-onboarding/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/ajustar-recursos-de-pod/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/configurar-workers/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/fazer-deploy-de-flow/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/flow-failed-webhook/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/como-fazer/registrar-metadados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/explicacao/arquitetura-prefect-3/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/explicacao/workers/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/referencia/comandos/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/referencia/gestao-de-schedules/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/referencia/recursos-pods/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/referencia/service-accounts/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/prefect/runbooks/gestao-de-schedules/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/explicacao/calculo-status-atualizacao/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/explicacao/dashboard-central-equipe-dados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/auditoria-consultas-bq/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/metricas/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/metricas/atualizacao/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/metricas/custos/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/metricas/panorama-de-dados/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/observabilidade/referencia/metricas/prefect/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/onboarding/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/onboarding/fluxo-de-dados-e-infraestrutura/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/onboarding/manual-de-estilo/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/onboarding/setup-pipelines/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
+    </url>
+    <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/fluxo_novo_corrigido/</loc>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/adr/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/como-fazer/abrir-issue/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/como-fazer/abrir-pr/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/como-fazer/atualizar-dependencias/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/como-fazer/planejar-sprint/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/como-fazer/revisar-pr/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/referencia/escala-de-pontuacao/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/referencia/respostas-padrao-suporte/</loc>
-         <lastmod>2026-08-05</lastmod>
+         <lastmod>2026-08-10</lastmod>
     </url>
 </urlset>
