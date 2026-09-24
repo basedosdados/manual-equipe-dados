@@ -84,6 +84,7 @@ nav:
       - Explicação:
         - Arquitetura do Prefect 3: infraestrutura/prefect/explicacao/arquitetura-prefect-3.md
         - Workers: infraestrutura/prefect/explicacao/workers.md
+        - VM proxy com IP brasileiro: infraestrutura/prefect/explicacao/vm-proxy-ip-brasileiro.md
       - Como fazer:
         - Instalar o servidor Prefect 3: infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3.md
         - Configurar os workers: infraestrutura/prefect/como-fazer/configurar-workers.md
@@ -108,12 +109,14 @@ nav:
       - "ADR-0002 — Pipeline integrada com dev": infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev.md
       - "ADR-0003 — Manter staging no processo": infraestrutura/adr/0003-manter-staging-no-processo-de-dados.md
       - "ADR-0004 — Migração Prefect 0 → 3": infraestrutura/adr/0004-migracao-prefect-0-para-3.md
+      - "ADR-0005 — VM proxy com IP brasileiro": infraestrutura/adr/0005-vm-proxy-ip-brasileiro.md
   - Pipelines:
     - pipelines/index.md
     - Como fazer:
       - Abrir uma issue: pipelines/como-fazer/abrir-issue.md
       - Abrir um PR: pipelines/como-fazer/abrir-pr.md
       - Atualizar dependências: pipelines/como-fazer/atualizar-dependencias.md
+      - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
     - ADRs:
       - pipelines/adr/index.md
   - Observabilidade:
