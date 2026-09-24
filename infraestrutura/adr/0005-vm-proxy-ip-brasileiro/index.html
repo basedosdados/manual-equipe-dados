@@ -10,25 +10,31 @@
       
       
       
+        <link rel="canonical" href="https://basedosdados.github.io/manual-equipe-dados/infraestrutura/adr/0005-vm-proxy-ip-brasileiro/">
       
+      
+        <link rel="prev" href="../0004-migracao-prefect-0-para-3/">
+      
+      
+        <link rel="next" href="../../../pipelines/">
       
       
         
       
       
-      <link rel="icon" href="/manual-equipe-dados/assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Manual da Equipe Dados — Base dos Dados</title>
+        <title>ADR-0005 — VM proxy com IP brasileiro - Manual da Equipe Dados — Base dos Dados</title>
       
     
     
-      <link rel="stylesheet" href="/manual-equipe-dados/assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="/manual-equipe-dados/assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -47,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("/manual-equipe-dados/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#adr-0005-vm-proxy-com-ip-brasileiro-pra-fontes-que-bloqueiam-ip-estrangeiro" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -83,7 +94,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
-    <a href="/manual-equipe-dados/." title="Manual da Equipe Dados — Base dos Dados" class="md-header__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+    <a href="../../.." title="Manual da Equipe Dados — Base dos Dados" class="md-header__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -103,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              ADR-0005 — VM proxy com IP brasileiro
             
           </span>
         </div>
@@ -221,7 +232,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/manual-equipe-dados/." title="Manual da Equipe Dados — Base dos Dados" class="md-nav__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
+    <a href="../../.." title="Manual da Equipe Dados — Base dos Dados" class="md-nav__button md-logo" aria-label="Manual da Equipe Dados — Base dos Dados" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -251,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -278,7 +289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/glossario/" class="md-nav__link">
+      <a href="../../../glossario/" class="md-nav__link">
         
   
   
@@ -328,7 +339,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/onboarding/" class="md-nav__link ">
+            <a href="../../../onboarding/" class="md-nav__link ">
               
   
   
@@ -401,7 +412,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/processos/" class="md-nav__link ">
+            <a href="../../../processos/" class="md-nav__link ">
               
   
   
@@ -500,7 +511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/processos/como-fazer/revisar-pr/" class="md-nav__link">
+      <a href="../../../processos/como-fazer/revisar-pr/" class="md-nav__link">
         
   
   
@@ -528,7 +539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/processos/como-fazer/planejar-sprint/" class="md-nav__link">
+      <a href="../../../processos/como-fazer/planejar-sprint/" class="md-nav__link">
         
   
   
@@ -619,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/processos/referencia/escala-de-pontuacao/" class="md-nav__link">
+      <a href="../../../processos/referencia/escala-de-pontuacao/" class="md-nav__link">
         
   
   
@@ -647,7 +658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/processos/referencia/respostas-padrao-suporte/" class="md-nav__link">
+      <a href="../../../processos/referencia/respostas-padrao-suporte/" class="md-nav__link">
         
   
   
@@ -687,6 +698,8 @@
       
   
   
+    
+  
   
   
     
@@ -713,15 +726,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/infraestrutura/" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -745,7 +758,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -765,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/bigquery/" class="md-nav__link">
+      <a href="../../bigquery/" class="md-nav__link">
         
   
   
@@ -821,7 +834,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/infraestrutura/prefect/" class="md-nav__link ">
+            <a href="../../prefect/" class="md-nav__link ">
               
   
   
@@ -922,7 +935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/explicacao/arquitetura-prefect-3/" class="md-nav__link">
+      <a href="../../prefect/explicacao/arquitetura-prefect-3/" class="md-nav__link">
         
   
   
@@ -950,7 +963,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/explicacao/workers/" class="md-nav__link">
+      <a href="../../prefect/explicacao/workers/" class="md-nav__link">
         
   
   
@@ -978,7 +991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/explicacao/vm-proxy-ip-brasileiro/" class="md-nav__link">
+      <a href="../../prefect/explicacao/vm-proxy-ip-brasileiro/" class="md-nav__link">
         
   
   
@@ -1077,7 +1090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/instalar-servidor-prefect-3/" class="md-nav__link">
         
   
   
@@ -1105,7 +1118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/configurar-workers/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/configurar-workers/" class="md-nav__link">
         
   
   
@@ -1133,7 +1146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/fazer-deploy-de-flow/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/fazer-deploy-de-flow/" class="md-nav__link">
         
   
   
@@ -1161,7 +1174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/ajustar-recursos-de-pod/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/ajustar-recursos-de-pod/" class="md-nav__link">
         
   
   
@@ -1189,7 +1202,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/registrar-metadados/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/registrar-metadados/" class="md-nav__link">
         
   
   
@@ -1217,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/como-fazer/flow-failed-webhook/" class="md-nav__link">
+      <a href="../../prefect/como-fazer/flow-failed-webhook/" class="md-nav__link">
         
   
   
@@ -1310,7 +1323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/referencia/recursos-pods/" class="md-nav__link">
+      <a href="../../prefect/referencia/recursos-pods/" class="md-nav__link">
         
   
   
@@ -1338,7 +1351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/referencia/gestao-de-schedules/" class="md-nav__link">
+      <a href="../../prefect/referencia/gestao-de-schedules/" class="md-nav__link">
         
   
   
@@ -1366,7 +1379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/referencia/service-accounts/" class="md-nav__link">
+      <a href="../../prefect/referencia/service-accounts/" class="md-nav__link">
         
   
   
@@ -1455,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/prefect/runbooks/gestao-de-schedules/" class="md-nav__link">
+      <a href="../../prefect/runbooks/gestao-de-schedules/" class="md-nav__link">
         
   
   
@@ -1521,7 +1534,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/infraestrutura/kubernetes/" class="md-nav__link ">
+            <a href="../../kubernetes/" class="md-nav__link ">
               
   
   
@@ -1620,7 +1633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/kubernetes/referencia/comandos/" class="md-nav__link">
+      <a href="../../kubernetes/referencia/comandos/" class="md-nav__link">
         
   
   
@@ -1648,7 +1661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/kubernetes/referencia/helm/" class="md-nav__link">
+      <a href="../../kubernetes/referencia/helm/" class="md-nav__link">
         
   
   
@@ -1689,6 +1702,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1714,15 +1729,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/infraestrutura/adr/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1746,7 +1761,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1766,7 +1781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/adr/0001-migracao-dbt-rpc-para-cli/" class="md-nav__link">
+      <a href="../0001-migracao-dbt-rpc-para-cli/" class="md-nav__link">
         
   
   
@@ -1801,7 +1816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev/" class="md-nav__link">
+      <a href="../0002-pipeline-integrada-com-ambiente-dev/" class="md-nav__link">
         
   
   
@@ -1836,7 +1851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/adr/0003-manter-staging-no-processo-de-dados/" class="md-nav__link">
+      <a href="../0003-manter-staging-no-processo-de-dados/" class="md-nav__link">
         
   
   
@@ -1871,7 +1886,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/adr/0004-migracao-prefect-0-para-3/" class="md-nav__link">
+      <a href="../0004-migracao-prefect-0-para-3/" class="md-nav__link">
         
   
   
@@ -1903,10 +1918,44 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/manual-equipe-dados/infraestrutura/adr/0005-vm-proxy-ip-brasileiro/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-0005 — VM proxy com IP brasileiro
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--aceito"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1929,6 +1978,120 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positivas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positivas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negativas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neutras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neutras
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternativas-consideradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativas consideradas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1983,7 +2146,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/pipelines/" class="md-nav__link ">
+            <a href="../../../pipelines/" class="md-nav__link ">
               
   
   
@@ -2086,7 +2249,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/pipelines/como-fazer/abrir-issue/" class="md-nav__link">
+      <a href="../../../pipelines/como-fazer/abrir-issue/" class="md-nav__link">
         
   
   
@@ -2114,7 +2277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/pipelines/como-fazer/abrir-pr/" class="md-nav__link">
+      <a href="../../../pipelines/como-fazer/abrir-pr/" class="md-nav__link">
         
   
   
@@ -2142,7 +2305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/pipelines/como-fazer/atualizar-dependencias/" class="md-nav__link">
+      <a href="../../../pipelines/como-fazer/atualizar-dependencias/" class="md-nav__link">
         
   
   
@@ -2170,7 +2333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/pipelines/como-fazer/usar-proxy-ip-brasileiro/" class="md-nav__link">
+      <a href="../../../pipelines/como-fazer/usar-proxy-ip-brasileiro/" class="md-nav__link">
         
   
   
@@ -2226,7 +2389,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/pipelines/adr/" class="md-nav__link ">
+            <a href="../../../pipelines/adr/" class="md-nav__link ">
               
   
   
@@ -2307,7 +2470,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/observabilidade/" class="md-nav__link ">
+            <a href="../../../observabilidade/" class="md-nav__link ">
               
   
   
@@ -2406,7 +2569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/explicacao/dashboard-central-equipe-dados/" class="md-nav__link">
+      <a href="../../../observabilidade/explicacao/dashboard-central-equipe-dados/" class="md-nav__link">
         
   
   
@@ -2434,7 +2597,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/explicacao/calculo-status-atualizacao/" class="md-nav__link">
+      <a href="../../../observabilidade/explicacao/calculo-status-atualizacao/" class="md-nav__link">
         
   
   
@@ -2553,7 +2716,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/observabilidade/referencia/metricas/" class="md-nav__link ">
+            <a href="../../../observabilidade/referencia/metricas/" class="md-nav__link ">
               
   
   
@@ -2597,7 +2760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/referencia/metricas/panorama-de-dados/" class="md-nav__link">
+      <a href="../../../observabilidade/referencia/metricas/panorama-de-dados/" class="md-nav__link">
         
   
   
@@ -2625,7 +2788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/referencia/metricas/atualizacao/" class="md-nav__link">
+      <a href="../../../observabilidade/referencia/metricas/atualizacao/" class="md-nav__link">
         
   
   
@@ -2653,7 +2816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/referencia/metricas/prefect/" class="md-nav__link">
+      <a href="../../../observabilidade/referencia/metricas/prefect/" class="md-nav__link">
         
   
   
@@ -2681,7 +2844,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/referencia/metricas/custos/" class="md-nav__link">
+      <a href="../../../observabilidade/referencia/metricas/custos/" class="md-nav__link">
         
   
   
@@ -2717,7 +2880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/observabilidade/referencia/auditoria-consultas-bq/" class="md-nav__link">
+      <a href="../../../observabilidade/referencia/auditoria-consultas-bq/" class="md-nav__link">
         
   
   
@@ -2791,7 +2954,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/governanca/" class="md-nav__link ">
+            <a href="../../../governanca/" class="md-nav__link ">
               
   
   
@@ -2859,7 +3022,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/governanca/metadados/" class="md-nav__link ">
+            <a href="../../../governanca/metadados/" class="md-nav__link ">
               
   
   
@@ -2903,7 +3066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/governanca/metadados/como-fazer/subir-metadados/" class="md-nav__link">
+      <a href="../../../governanca/metadados/como-fazer/subir-metadados/" class="md-nav__link">
         
   
   
@@ -2953,7 +3116,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/governanca/metadados/adr/" class="md-nav__link ">
+            <a href="../../../governanca/metadados/adr/" class="md-nav__link ">
               
   
   
@@ -2997,7 +3160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/" class="md-nav__link">
+      <a href="../../../governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/" class="md-nav__link">
         
   
   
@@ -3063,7 +3226,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/manual-equipe-dados/governanca/qualidade/" class="md-nav__link ">
+            <a href="../../../governanca/qualidade/" class="md-nav__link ">
               
   
   
@@ -3160,7 +3323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/governanca/qualidade/referencia/regras-metadados/" class="md-nav__link">
+      <a href="../../../governanca/qualidade/referencia/regras-metadados/" class="md-nav__link">
         
   
   
@@ -3204,7 +3367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/governanca/acessos-gcp/" class="md-nav__link">
+      <a href="../../../governanca/acessos-gcp/" class="md-nav__link">
         
   
   
@@ -3232,7 +3395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/manual-equipe-dados/governanca/custos/" class="md-nav__link">
+      <a href="../../../governanca/custos/" class="md-nav__link">
         
   
   
@@ -3277,6 +3440,110 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positivas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positivas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negativas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neutras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neutras
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternativas-consideradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternativas consideradas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -3289,8 +3556,71 @@
               
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+    <a href="https://github.com/basedosdados/manual-equipe-dados/edit/main/docs/infraestrutura/adr/0005-vm-proxy-ip-brasileiro.md" title="Editar esta página" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="adr-0005-vm-proxy-com-ip-brasileiro-pra-fontes-que-bloqueiam-ip-estrangeiro">ADR-0005 — VM proxy com IP brasileiro pra fontes que bloqueiam IP estrangeiro<a class="headerlink" href="#adr-0005-vm-proxy-com-ip-brasileiro-pra-fontes-que-bloqueiam-ip-estrangeiro" title="Permanent link">&para;</a></h1>
+<h2 id="contexto">Contexto<a class="headerlink" href="#contexto" title="Permanent link">&para;</a></h2>
+<p>O cluster GKE de produção roda em <code>us-central1</code>, então todo tráfego de saída dos flows sai com IP americano. Algumas fontes de dados bloqueiam requisições vindas de IP não-brasileiro — o caso real que motivou essa decisão foi <code>br_rf_cnpj</code> (Receita Federal): as 5 sub-flows do dataset passaram a falhar em produção com <code>ConnectionError: RemoteDisconnected</code> (a fonte derruba a conexão, sem retornar um 403 explícito), enquanto a mesma chamada funcionava normalmente rodando localmente, no Brasil.</p>
+<p>Duas soluções foram avaliadas:</p>
+<ul>
+<li><strong>Cluster GKE novo em São Paulo</strong> (<code>southamerica-east1</code>): resolveria de forma "nativa" — qualquer pod ali já sairia com IP brasileiro — mas exige manter um cluster inteiro à parte: taxa de gerenciamento fixa (~US$73/mês só de controle, antes de qualquer node), upgrades, observabilidade própria.</li>
+<li><strong>VM proxy</strong> (<code>e2-small</code> com Squid, também em <code>southamerica-east1</code>): só a requisição específica bloqueada passa pela VM; o resto do sistema (GKE, GCS, BigQuery, Prefect) continua exatamente como está.</li>
+</ul>
+<h2 id="decisao">Decisão<a class="headerlink" href="#decisao" title="Permanent link">&para;</a></h2>
+<p>Usar uma <strong>VM proxy</strong> (<code>e2-small</code>, Squid, <code>southamerica-east1-a</code>) em vez de um cluster novo.</p>
+<p>O Squid roda como forward proxy autenticado (usuário/senha), sem interceptação de TLS — pra HTTPS, ele só abre um túnel <code>CONNECT</code> e repassa bytes; o handshake TLS acontece direto entre o pod e o destino, o proxy nunca vê o conteúdo da requisição.</p>
+<p>A credencial (<code>BRASIL_PROXY_URL</code>) chega em todo pod do work pool via o secret <code>gcp-credentials</code>, já injetado globalmente — não é preciso configurar nada por flow. Cada dataset decide, no próprio código, se e onde usa o proxy (ver <a href="../../../pipelines/como-fazer/usar-proxy-ip-brasileiro/">Usar o proxy com IP brasileiro</a>).</p>
+<h2 id="consequencias">Consequências<a class="headerlink" href="#consequencias" title="Permanent link">&para;</a></h2>
+<h3 id="positivas">Positivas<a class="headerlink" href="#positivas" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Custo bem menor: ~US$24/mês estimado, contra ~US$95-115/mês do cluster novo (~1/4 a 1/8).</li>
+<li>Não exige manter infraestrutura de cluster adicional (upgrades, observabilidade própria, node pools).</li>
+<li>Fácil de desligar/redimensionar se o padrão de uso mudar — é só uma VM.</li>
+</ul>
+<h3 id="negativas">Negativas<a class="headerlink" href="#negativas" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ponto único de falha: é uma VM só (<code>e2-small</code>). Se ela cair, toda chamada que depende dela falha até a VM voltar.</li>
+<li>Não escala pra volume alto: se muitas fontes/datasets passarem a depender desse proxy ao mesmo tempo, o limite prático seria a banda de rede de uma única VM pequena, não o número de conexões que o Squid aceita.</li>
+<li>Cada dataset precisa aplicar o proxy explicitamente no código das chamadas que precisam dele — não é automático (decisão deliberada, ver Alternativas).</li>
+</ul>
+<h3 id="neutras">Neutras<a class="headerlink" href="#neutras" title="Permanent link">&para;</a></h3>
+<ul>
+<li>A variável <code>BRASIL_PROXY_URL</code> chega em todo pod via secret compartilhado, então tecnicamente está disponível pra qualquer flow — mas só tem efeito se o código explicitamente decidir usá-la.</li>
+</ul>
+<h2 id="alternativas-consideradas">Alternativas consideradas<a class="headerlink" href="#alternativas-consideradas" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Cluster GKE novo em São Paulo</strong> — descartada por custo (~4-8x mais caro) e complexidade de manter mais um cluster, sem workload suficiente pra justificar isso hoje.</li>
+<li><strong>Setar <code>HTTP_PROXY</code>/<code>HTTPS_PROXY</code> como env var global do pod</strong> — descartada: desviaria tráfego não relacionado (upload pro GCS, query no BigQuery, heartbeat da API do Prefect, leitura do Vault) pela VM pequena, sem necessidade e com risco de sobrecarregá-la.</li>
+<li><strong>Work pool dedicado no Brasil</strong> (worker rodando fisicamente em São Paulo, todo pod desse pool já nasce com IP brasileiro) — considerada como evolução futura, não implementada agora: exigiria manter um worker de produção completo fora do GKE (não só um proxy leve), com acesso a credenciais reais (GCS/BigQuery/Vault), e maior custo — uma VM ligada 24/7 mesmo com uso esporádico, diferente dos Jobs efêmeros do GKE (que escalam pra 0 quando ociosos). Só compensaria se o padrão de "precisa de IP brasileiro" crescer bastante.</li>
+</ul>
+<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h2>
+<p>Aceito. Revisitar se o número de fontes bloqueadas por geolocalização crescer o suficiente pra justificar um work pool dedicado.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -3333,10 +3663,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "/manual-equipe-dados/", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "toc.follow"], "search": "/manual-equipe-dados/assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
     
     
-      <script src="/manual-equipe-dados/assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
