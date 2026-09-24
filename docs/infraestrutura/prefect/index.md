@@ -5,6 +5,7 @@ Documentação da orquestração de pipelines via Prefect 3, rodando em Kubernet
 ## O que tem aqui
 
 - **[Explicação](explicacao/workers.md)** — como os workers Prefect 3 funcionam no GKE (work pools, job variables, recursos por pod)
+  - [VM proxy com IP brasileiro](explicacao/vm-proxy-ip-brasileiro.md) — como o Squid resolve bloqueio geográfico de fontes
 - **[Referência](referencia/comandos.md)** — comandos úteis para operar flows, workers e deployments
   - [Recursos dos pods](referencia/recursos-pods.md) — CPU/memória por tipo de flow
   - [Gestão de Schedules](referencia/gestao-de-schedules.md) — sistema de desativação automática de flows com falhas
