@@ -112,11 +112,16 @@ nav:
       - "ADR-0005 — VM proxy com IP brasileiro": infraestrutura/adr/0005-vm-proxy-ip-brasileiro.md
   - Pipelines:
     - pipelines/index.md
+    - Explicação:
+      - Pipeline orientado a eventos: pipelines/explicacao/pipeline-orientado-a-eventos.md
     - Como fazer:
+      - Estruturar um flow de dataset: pipelines/como-fazer/estruturar-um-flow-de-dataset.md
       - Abrir uma issue: pipelines/como-fazer/abrir-issue.md
       - Abrir um PR: pipelines/como-fazer/abrir-pr.md
       - Atualizar dependências: pipelines/como-fazer/atualizar-dependencias.md
       - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
+    - Referência:
+      - stage_dispatch.py: pipelines/referencia/stage-dispatch.md
     - ADRs:
       - pipelines/adr/index.md
   - Observabilidade:
