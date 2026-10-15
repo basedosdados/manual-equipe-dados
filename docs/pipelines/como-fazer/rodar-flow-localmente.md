@@ -14,16 +14,19 @@ Tudo roda nativo, sem Docker. Resolve a pendência registrada na issue
 
 ```sh
 cd pipelines
-scripts/dev_local.sh up                      # sobe tudo, deploya o que você mudou
-export PREFECT_API_URL="http://127.0.0.1:4200/api"
+scripts/dev_local.sh up     # sobe tudo, deploya o que você mudou
 
 # edite o dataset à vontade — não precisa redeployar pra mudança de lógica
 
-uv run prefect deployment run 'check_update: meu_dataset__minha_tabela/dev-check_update'
-# ou: pela UI em http://127.0.0.1:4200, botão "Run" no deployment
+# abra http://127.0.0.1:4200, ache o deployment, clique em "Run"
 
-scripts/dev_local.sh down                    # quando terminar
+scripts/dev_local.sh down   # quando terminar
 ```
+
+Disparar pela UI é o jeito principal — não precisa de nenhum `export` no
+seu terminal pra isso (ver "Rodando um flow" abaixo). Tem uma seção bônus
+mais pra frente pra quem preferir disparar via `prefect deployment run`
+na linha de comando.
 
 O resto deste guia explica cada peça, o que fazer quando algo foge do
 caminho feliz, e por que o sistema é desenhado assim.
@@ -66,12 +69,10 @@ Isso faz, nessa ordem:
    arquivo novo não rastreado) e deploya só o que é diferente. Rápido,
    porque não mexe nos outros ~330 flows do repositório.
 
-Ao final, imprime a variável que você exporta antes de qualquer comando
-manual:
-
-```sh
-export PREFECT_API_URL="http://127.0.0.1:4200/api"
-```
+Pronto — pra disparar um run pela UI (o jeito principal, ver "Rodando um
+flow" abaixo) não precisa de mais nenhum passo. O comando também imprime
+uma linha `export PREFECT_API_URL=...`; ela só importa se você for pela
+linha de comando (ver a seção bônus no fim deste guia).
 
 ### Se você ainda não mudou nada
 
@@ -100,10 +101,15 @@ a pasta manualmente, se quiser recomeçar do zero.
 
 ### Caso 1 — flow monolítico (ainda não migrado pro pipeline em estágios)
 
-Um `@flow` do Prefect 3 já é uma função Python comum, chamável direto —
-não precisa de deployment nenhum pra esse caso. A maioria aceita um
-parâmetro que trava a execução em dev (nomes variam por dataset:
-`materialize_after_dump`, `materialize_to_prod`):
+Se o dataset estava entre os `.py` alterados quando você rodou `up`, ele
+já foi deployado — dispare pela UI igual ao Caso 2: ache o deployment
+pelo nome do flow, clique "Run", preencha os parâmetros que o form pedir
+(a maioria tem um que trava a execução em dev, nomes variam por dataset:
+`materialize_after_dump`, `materialize_to_prod` — deixe como `False`).
+
+Pra um teste pontual sem depender de deploy, um `@flow` do Prefect 3
+também é uma função Python comum, chamável direto (ainda precisa do
+servidor local rodando — `up` — só não de deployment/worker):
 
 ```python
 from pipelines.datasets.br_fgv_igp.flows import br_fgv_igp__igp_di_mes
@@ -111,27 +117,28 @@ from pipelines.datasets.br_fgv_igp.flows import br_fgv_igp__igp_di_mes
 br_fgv_igp__igp_di_mes(materialize_after_dump=False, force_run=True)
 ```
 
-Isso ainda precisa do servidor local rodando (`up`) — só não precisa de
-deployment/worker.
-
 ### Caso 2 — pipeline em estágios (`check_update` → `extract_and_load` → `build_and_promote`)
 
 Datasets já migrados (ver `pipelines/utils/stage_dispatch.py`) despacham
 o próximo estágio via `run_deployment()`, que **exige um deployment
 registrado de verdade** — não dá pra só chamar a função e esperar que o
 dispatch aconteça sozinho. Se você editou esse dataset antes do `up`, já
-está tudo deployado — é só disparar o `check_update`:
+está tudo deployado — é só disparar o `check_update` pela UI:
 
-```sh
-uv run prefect deployment run 'check_update: meu_dataset__minha_tabela/dev-check_update'
-```
+1. Abra `http://127.0.0.1:4200`.
+2. Ache o deployment `check_update: <dataset>__<tabela>` (busca por nome
+   funciona).
+3. Clique em "Run" → "Run now".
 
-Ou pela própria UI (`http://127.0.0.1:4200`), na página do deployment —
-o botão "Run" faz a mesma chamada. Isso dispara a cadeia completa:
-`check_update` decide se há dado novo e, se houver, dispara
-`extract_and_load` e depois `build_and_promote` sozinho — testado na
-prática de ponta a ponta, inclusive com `dbt run`/`dbt test` reais contra
-o BigQuery dev, só escrevendo em `basedosdados-dev`.
+Isso dispara a cadeia completa: `check_update` decide se há dado novo e,
+se houver, dispara `extract_and_load` e depois `build_and_promote`
+sozinho — testado na prática de ponta a ponta, inclusive com `dbt
+run`/`dbt test` reais contra o BigQuery dev, só escrevendo em
+`basedosdados-dev`. Acompanhe o progresso e os logs na própria página do
+flow run que a UI abre.
+
+Prefere a linha de comando? Tem uma seção bônus mais pra frente
+("Disparando pelo `prefect deployment run`") cobrindo isso.
 
 > [!NOTE]
 > **Por que o despacho local não é um `run_deployment()` "de verdade"**:
@@ -177,6 +184,38 @@ Isso lê o código **do disco** (não clona do GitHub, não exige
 commit/push) e registra o deployment com as mesmas tags/schedule que o
 deploy real usaria, só no pool `local-dev`.
 
+## Bônus — disparando pelo `prefect deployment run`
+
+Se preferir a linha de comando em vez da UI:
+
+```sh
+export PREFECT_API_URL="http://127.0.0.1:4200/api"   # ver por que abaixo
+uv run prefect deployment run 'check_update: meu_dataset__minha_tabela/dev-check_update' --watch
+```
+
+`--watch` acompanha os eventos do run até terminar, direto no terminal
+(sem precisar abrir a UI).
+
+### Por que isso precisa de `export PREFECT_API_URL`, e a UI não
+
+`scripts/dev_local.sh up` roda como um **processo separado** — qualquer
+`export` que ele faça dentro de si mesmo (pro servidor/worker que ele
+sobe) não alcança o seu shell interativo depois que o comando termina.
+A UI não sofre disso porque é o **navegador** quem fala com o servidor
+local, não o seu terminal. Já o `prefect deployment run` que você digita
+é outro processo, iniciado por você, que precisa saber pra onde mandar a
+chamada — por isso só ele exige o `export` acima (a própria saída do
+`up` já mostra essa linha, pronta pra copiar).
+
+> [!WARNING]
+> **Confira antes de exportar.** `.env.example`/`.env` já apontam
+> `PREFECT_API_URL` pro local por padrão — mas se alguém no seu terminal
+> já tiver exportado a URL real (`https://prefect3.basedosdados.org/api`,
+> ex. pra rodar `python -m pipelines.diagnostics health`), ela **vence**
+> o que está no `.env`, e qualquer `deployment run`/`deploy_flows.py`
+> manual que você rodar depois vai direto pra produção. Rode `echo
+> $PREFECT_API_URL` antes se tiver dúvida, ou abra um terminal novo.
+
 ## Gotchas conhecidos
 
 > [!IMPORTANT]
@@ -188,18 +227,11 @@ deploy real usaria, só no pool `local-dev`.
 > repositório (ver `.env.example`).
 
 > [!WARNING]
-> **Risco real, não hipotético: o `.env` também define `PREFECT_API_URL`
-> e `PREFECT_API_KEY` apontando pra produção** (é o mesmo arquivo usado
-> pra "Testar uma pipeline na nuvem"). `dev_local.sh` já neutraliza isso
-> sozinho — sourcea o `.env` inteiro e, logo em seguida, **sempre**
-> reatribui `PREFECT_API_URL` pro servidor local e remove
-> `PREFECT_API_KEY` do ambiente, com uma trava que aborta o script se por
-> algum motivo isso não for local. Mas se você for rodar comandos
-> `prefect`/`deploy_flows.py` manualmente num terminal onde já sourceou o
-> `.env` por outro motivo (ex. seguindo a seção "Testar uma pipeline na
-> nuvem" do `CONTRIBUTING.md`), **confira com `echo $PREFECT_API_URL`
-> antes** — se não for `http://127.0.0.1:...`, qualquer deploy ou
-> trigger que você rodar na mão vai direto pra produção.
+> **`PREFECT_API_URL` apontando sem querer pra produção.** `dev_local.sh`
+> já se protege sozinho (sempre reatribui a URL local internamente, com
+> uma trava que aborta se não for local) — o risco real é só no `export`
+> manual que você mesmo faz pra rodar `prefect deployment run` na linha
+> de comando. Ver seção "Bônus" acima.
 
 > [!WARNING]
 > **`~/.prefect/` pertencendo a outro usuário quebra o SQLite.** Se
