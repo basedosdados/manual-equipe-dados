@@ -12,21 +12,29 @@ Tudo roda nativo, sem Docker. Resolve a pendência registrada na issue
 
 ## TL;DR
 
+> [!IMPORTANT]
+> Só funciona pra um dataset **que você já editou, ou acabou de criar**.
+> `up` deploya automaticamente o que for diferente de `origin/main` — sem
+> nenhuma mudança (nem um `.py` novo), ele sobe o servidor mas não
+> deploya dataset nenhum, e não vai ter o que testar.
+
 ```sh
 cd pipelines
-scripts/dev_local.sh up     # sobe tudo, deploya o que você mudou
+# 1. edite um dataset existente, ou crie um novo — isso vira o que o `up` deploya
 
-# edite o dataset à vontade — não precisa redeployar pra mudança de lógica
+scripts/dev_local.sh up     # 2. sobe tudo, deploya só o que você mudou/criou
 
-# abra http://127.0.0.1:4200, ache o deployment, clique em "Run"
+# 3. abra http://127.0.0.1:4200, ache o deployment, clique em "Run"
 
-scripts/dev_local.sh down   # quando terminar
+scripts/dev_local.sh down   # 4. quando terminar
 ```
 
-Disparar pela UI é o jeito principal — não precisa de nenhum `export` no
-seu terminal pra isso (ver "Rodando um flow" abaixo). Tem uma seção bônus
-mais pra frente pra quem preferir disparar via `prefect deployment run`
-na linha de comando.
+Depois do primeiro deploy, edite à vontade — não precisa rodar `up` de
+novo nem redeployar pra mudança de lógica (ver "Editou código depois do
+`up`?" mais abaixo). Disparar pela UI é o jeito principal — não precisa
+de nenhum `export` no seu terminal pra isso (ver "Rodando um flow"
+abaixo). Tem uma seção bônus mais pra frente pra quem preferir disparar
+via `prefect deployment run` na linha de comando.
 
 O resto deste guia explica cada peça, o que fazer quando algo foge do
 caminho feliz, e por que o sistema é desenhado assim.
