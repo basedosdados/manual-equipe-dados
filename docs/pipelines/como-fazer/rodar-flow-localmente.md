@@ -109,15 +109,19 @@ a pasta manualmente, se quiser recomeçar do zero.
 
 ### Caso 1 — flow monolítico (ainda não migrado pro pipeline em estágios)
 
-Se o dataset estava entre os `.py` alterados quando você rodou `up`, ele
-já foi deployado — dispare pela UI igual ao Caso 2: ache o deployment
-pelo nome do flow, clique "Run", preencha os parâmetros que o form pedir
-(a maioria tem um que trava a execução em dev, nomes variam por dataset:
-`materialize_after_dump`, `materialize_to_prod` — deixe como `False`).
+**Roda pela UI igual a qualquer outro flow** — não tem diferença entre
+monolítico e em estágios nesse ponto, o botão "Run" funciona do mesmo
+jeito pra qualquer deployment. Se o dataset estava entre os `.py`
+alterados quando você rodou `up`, ele já foi deployado: ache o
+deployment pelo nome do flow, clique "Run", preencha os parâmetros que o
+form pedir (a maioria tem um que trava a execução em dev, nomes variam
+por dataset: `materialize_after_dump`, `materialize_to_prod` — deixe
+como `False`).
 
-Pra um teste pontual sem depender de deploy, um `@flow` do Prefect 3
-também é uma função Python comum, chamável direto (ainda precisa do
-servidor local rodando — `up` — só não de deployment/worker):
+**Alternativa**, pra um teste pontual sem depender de deploy nenhum: um
+`@flow` do Prefect 3 também é uma função Python comum, chamável direto
+(ainda precisa do servidor local rodando — `up` — só não de
+deployment/worker):
 
 ```python
 from pipelines.datasets.br_fgv_igp.flows import br_fgv_igp__igp_di_mes
