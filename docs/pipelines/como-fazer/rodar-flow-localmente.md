@@ -57,6 +57,12 @@ Na raiz do repositório `pipelines`:
 scripts/dev_local.sh up
 ```
 
+> [!NOTE]
+> **`scripts/dev_local.sh: comando não encontrado` ou `Permission
+> denied`?** Rode `chmod +x scripts/dev_local.sh` uma vez, ou use `bash
+> scripts/dev_local.sh up` direto — funciona independente do bit de
+> execução.
+
 Isso faz, nessa ordem:
 
 1. **Carrega o `.env`** do repositório (Vault, credenciais do GCP) —
@@ -253,13 +259,24 @@ chamada — por isso só ele exige o `export` acima (a própria saída do
 > ao tentar criar o banco. `dev_local.sh` já evita isso usando
 > `.prefect-local/` dentro do próprio repositório, que é sua pasta.
 
+> [!WARNING]
+> **`.prefect-local/` de propriedade de outro usuário.** Variante do
+> gotcha acima, só que dentro do próprio `.prefect-local/`: acontece se
+> uma execução anterior rodou o script com `sudo` por engano, deixando a
+> pasta de propriedade do `root`. `up` detecta isso antes de começar e já
+> avisa com o comando certo pra resolver (`sudo chown -R "$USER"
+> .prefect-local` ou, mais simples, `rm -rf .prefect-local` pra
+> recomeçar do zero — o estado ali é descartável).
+
 > [!NOTE]
-> **`--all` pode ter 1-2 falhas isoladas com `503`.** Com ~330 flows
-> deployados de uma vez, é normal 1-2 falharem (o backend aqui é SQLite
-> via um único processo, não a API real de produção — sob muita escrita
-> concorrente ele engasga). O script avisa qual flow falhou; redeploye só
-> ele com `deploy_flows.py --local --files <arquivo>`. No modo padrão (só
-> o que mudou) isso é raro, já que é bem menos deployment de cada vez.
+> **`--all` pode ter 1-2 falhas isoladas.** Com ~330 flows deployados de
+> uma vez, é normal 1-2 falharem (o backend aqui é SQLite via um único
+> processo, não a API real de produção — sob muita escrita concorrente
+> ele engasga com `503`, mas também já apareceu erro real de algum flow
+> específico). `up` já lista qual(is) falharam e o motivo exato no aviso
+> final — redeploye só eles com `deploy_flows.py --local --files
+> <arquivo>` depois de investigar. No modo padrão (só o que mudou) isso é
+> raro, já que é bem menos deployment de cada vez.
 
 ### Por que não usar `flow.serve()`
 
