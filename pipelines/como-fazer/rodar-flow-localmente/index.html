@@ -13,6 +13,10 @@
         <link rel="canonical" href="https://basedosdados.github.io/manual-equipe-dados/pipelines/como-fazer/rodar-flow-localmente/">
       
       
+        <link rel="prev" href="../usar-proxy-ip-brasileiro/">
+      
+      
+        <link rel="next" href="../../adr/">
       
       
         
@@ -23,7 +27,7 @@
     
     
       
-        <title>Como rodar e desenvolver um flow localmente (Prefect 3) - Manual da Equipe Dados — Base dos Dados</title>
+        <title>Rodar um flow localmente - Manual da Equipe Dados — Base dos Dados</title>
       
     
     
@@ -110,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Como rodar e desenvolver um flow localmente (Prefect 3)
+              Rodar um flow localmente
             
           </span>
         </div>
@@ -1960,6 +1964,8 @@
       
   
   
+    
+  
   
   
     
@@ -1982,11 +1988,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -2014,7 +2020,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2031,8 +2037,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -2044,17 +2052,19 @@
       
         
       
+        
+      
     
     
     
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" checked>
         
           
           <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
@@ -2075,7 +2085,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2193,6 +2203,270 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rodar um flow localmente
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rodar um flow localmente
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tldr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TL;DR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-precisa-de-um-servidor-mesmo-pra-so-testar-uma-funcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que precisa de um servidor, mesmo pra só testar uma função
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-scriptsdev_localsh-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup — scripts/dev_local.sh up
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup — scripts/dev_local.sh up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#se-voce-ainda-nao-mudou-nada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Se você ainda não mudou nada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pra-derrubar-tudo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pra derrubar tudo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rodando-um-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rodando um flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rodando um flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caso-1-flow-monolitico-ainda-nao-migrado-pro-pipeline-em-estagios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso 1 — flow monolítico (ainda não migrado pro pipeline em estágios)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-2-pipeline-em-estagios-check_update-extract_and_load-build_and_promote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso 2 — pipeline em estágios (check_update → extract_and_load → build_and_promote)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editou-codigo-depois-do-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editou código depois do up?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-disparando-pelo-prefect-deployment-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bônus — disparando pelo prefect deployment run
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bônus — disparando pelo prefect deployment run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-que-isso-precisa-de-export-prefect_api_url-e-a-ui-nao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que isso precisa de export PREFECT_API_URL, e a UI não
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gotchas-conhecidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotchas conhecidos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gotchas conhecidos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-que-nao-usar-flowserve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que não usar flow.serve()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-isso-garante-e-o-que-nao-garante" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que isso garante (e o que não garante)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ver-tambem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ver também
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
