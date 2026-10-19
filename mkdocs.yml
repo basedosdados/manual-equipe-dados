@@ -117,6 +117,7 @@ nav:
       - Abrir um PR: pipelines/como-fazer/abrir-pr.md
       - Atualizar dependências: pipelines/como-fazer/atualizar-dependencias.md
       - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
+      - Rodar um flow localmente: pipelines/como-fazer/rodar-flow-localmente.md
     - ADRs:
       - pipelines/adr/index.md
   - Observabilidade:
