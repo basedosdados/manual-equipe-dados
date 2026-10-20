@@ -26,7 +26,7 @@ const approved = labels.data.some(label => label.name === "table-approve");
 
 Sem o label, as etapas são puladas e o job fica verde sem materializar nada.
 Com ele, a staging de dev vai para prod **no estado em que estiver no merge**.
-Aplique o label só com a staging de dev completa e final.
+O label tem que ser aplicado só com a staging de dev completa e final.
 
 ```mermaid
 flowchart TD
@@ -94,13 +94,11 @@ valores sem erro; Parquet é lido por nome.
 - **Promoção pela staging de prod, em vez de escrita direta em `basedosdados`:**
   prod recebe só dados validados em dev
   ([ADR-0002](../../infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev.md)),
-  e a staging de prod serve de réplica e backup informal
+  e a staging de prod serve de backup
   ([ADR-0003](../../infraestrutura/adr/0003-manter-staging-no-processo-de-dados.md)).
 - **O que fica de fora:** testes dbt, metadados no backend e ordem de
-  dependência entre modelos novos do mesmo PR. Há um único backup por tabela,
-  sobrescrito a cada execução.
-- **Alternativa:** o workflow manual `promote-staging` cobre stagings com nome
-  diferente da tabela e materializa o dataset inteiro em ordem de dependências.
+  dependência entre modelos novos do mesmo PR. 
+  
 
 ## Ver também
 
