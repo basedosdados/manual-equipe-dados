@@ -74,5 +74,7 @@ order by ano
 
 ## Ver também
 
+- [Runbook — table-approve falhou](../runbooks/table-approve-falhou.md), para os demais erros
 - [Table-approve](../explicacao/table-approve.md), sobre o funcionamento e as limitações do processo
 - [Abrir um PR](abrir-pr.md), sobre as labels de PR
+- [Referência do table-approve](../referencia/table-approve.md), com caminhos, parâmetros e mensagens de log

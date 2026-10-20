@@ -128,6 +128,10 @@ nav:
       - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
       - Rodar um flow localmente: pipelines/como-fazer/rodar-flow-localmente.md
       - Materializar uma tabela em prod: pipelines/como-fazer/materializar-tabela-em-prod.md
+    - Referência:
+      - Table-approve: pipelines/referencia/table-approve.md
+    - Runbooks:
+      - Table-approve falhou: pipelines/runbooks/table-approve-falhou.md
     - ADRs:
       - pipelines/adr/index.md
   - Observabilidade:

@@ -218,16 +218,10 @@ porque a réplica dos dados em prod funciona como backup informal.
 staging tem nome diferente da tabela publicada e permite materializar o dataset
 inteiro em ordem de dependências.
 
-??? tip "Analogia"
-    Um garçom (o workflow) leva ao salão (prod) apenas os pratos com carimbo da
-    chef (o label). Para cada receita alterada (o modelo dbt), ele troca a
-    prateleira inteira do salão pela da cozinha de testes (a staging de dev) e
-    confere o conteúdo pela etiqueta da primeira caixa (o esquema do primeiro
-    arquivo). Etiqueta desatualizada impede o preparo; o que não estava na
-    cozinha de testes deixa de existir no salão.
-
 ## Ver também
 
 - [Como materializar uma tabela em prod](../como-fazer/materializar-tabela-em-prod.md)
+- [Runbook — table-approve falhou](../runbooks/table-approve-falhou.md)
 - [Abrir um PR](../como-fazer/abrir-pr.md)
 - [Fluxo de dados e infraestrutura](../../onboarding/fluxo-de-dados-e-infraestrutura.md)
+- [Referência do table-approve](../referencia/table-approve.md)
