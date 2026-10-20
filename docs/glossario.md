@@ -38,6 +38,8 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 **Manual de estilo** — conjunto de regras canônicas da BD para nomeação, tipagem, formato e padronização de datasets, tabelas, colunas e diretórios. Mantido publicamente em <https://basedosdados.org/docs/style_data> e aplicado tanto no preenchimento de metadados (backend GraphQL) quanto na estrutura dos modelos dbt. Ver [Manual de estilo — explicação](governanca/metadados/explicacao-manual-de-estilo.md).
 
+**Materializar** — executar um modelo dbt para gravar seu resultado como tabela no BigQuery. Os modelos da BD são materializados como `table`, ou seja, a tabela é recriada a cada `dbt run`. Em dev, o destino é `basedosdados-dev.<dataset>`; em prod, `basedosdados.<dataset>`.
+
 ## N
 
 ## O
@@ -54,9 +56,15 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## S
 
+**Staging** — camada de arquivos tratados que alimenta os modelos dbt, composta pelos arquivos em `gs://<bucket>/staging/<dataset>/<tabela>/` e pela tabela externa `<dataset>_staging.<tabela>` que os lê. Em dev, fica no bucket e no projeto `basedosdados-dev`; em prod, no bucket `basedosdados` e no projeto `basedosdados-staging`. Não confundir com o projeto `basedosdados-staging` nem com o ambiente de staging do backend.
+
 ## T
 
 **Tabela de arquitetura** — planilha no Google Drive em que descrevemos a estrutura de uma tabela antes de subi-la para o BigQuery: nome e descrição das colunas, tipo no BigQuery, cobertura temporal, unidade de medida, presença em diretórios, marcação de dados sensíveis, partições. É o artefato revisado pela equipe antes do `table-approve`. Ver [ADR-0001 — Manter tabelas de arquitetura no Google Drive](governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md).
+
+**Tabela externa** — tabela do BigQuery que não armazena dados e lê os arquivos diretamente do GCS a cada consulta. As tabelas `<dataset>_staging` são externas, com todas as colunas como STRING; CSV é lido por posição das colunas, e Parquet, por nome.
+
+**Table-approve** — workflow do repositório `pipelines` que, no merge de um PR com o label `table-approve`, copia a staging de dev para prod e materializa em `basedosdados` os modelos alterados. Ver [Table-approve](pipelines/explicacao/table-approve.md).
 
 ## U
 
