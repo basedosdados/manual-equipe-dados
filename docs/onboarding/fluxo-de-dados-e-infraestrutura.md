@@ -16,9 +16,9 @@ Guia de onboarding com o retrato dos componentes de infraestrutura usados pela e
 | Orquestrador | [Prefect 1.x](https://docs-v1.prefect.io/) | Agenda e executa [pipelines](../glossario.md#p). Storage dos flows em GCS, runtime em Kubernetes. |
 | Repositório de código | [`basedosdados/pipelines`](https://github.com/basedosdados/pipelines) | Hospeda flows Prefect, modelos dbt e a Action de deploy. |
 | Storage — zona de dev | GCS bucket **`basedosdados-dev`** | Recebe os arquivos tratados pela pipeline (parquet/csv). |
-| Storage — zona de prod | GCS bucket **`basedosdados-staging`** | Recebe os mesmos arquivos após validação, para produção. |
+| Storage — zona de prod | GCS bucket **`basedosdados`**, prefixo `staging/` | Recebe os mesmos arquivos após validação, para produção. |
 | Data warehouse — dev | BigQuery, projeto **`basedosdados-dev`** | Mesmo projeto guarda **as duas camadas**: `<dataset>_staging` (tabelas externas sobre o bucket `basedosdados-dev`) e `<dataset>` (modelos materializados pelo dbt). Usado pela equipe para validação. |
-| Data warehouse — prod (staging) | BigQuery, projeto **`basedosdados-staging`** | Camada de tabelas externas (`<dataset>_staging`) sobre o bucket `basedosdados-staging`. **Não é exposto ao público.** |
+| Data warehouse — prod (staging) | BigQuery, projeto **`basedosdados-staging`** | Camada de tabelas externas (`<dataset>_staging`) sobre `gs://basedosdados/staging/`. **Não é exposto ao público.** |
 | Data warehouse — prod (público) | BigQuery, projeto **`basedosdados`** | Modelos materializados pelo dbt a partir de `basedosdados-staging`. É o projeto consultado pelos usuários no site e no pacote Python. |
 | Transformação e testes | [dbt](https://www.getdbt.com/) | Em dev: lê `basedosdados-dev.<dataset>_staging` e materializa em `basedosdados-dev.<dataset>` (`target=dev`). Em prod: lê `basedosdados-staging.<dataset>_staging` e materializa em `basedosdados.<dataset>` (`target=prod`) — projetos diferentes. |
 | Metadados | API GraphQL Django — `backend.basedosdados.org` (prod) / `staging.backend.basedosdados.org` (staging) | Fonte da verdade dos metadados expostos no site e no pacote Python. |
@@ -34,7 +34,7 @@ flowchart TD
     BQDEVSTG[(BigQuery<br/>basedosdados-dev.dataset_staging)]
     BQDEV[(BigQuery<br/>basedosdados-dev.dataset)]
     GATE{Aprovado?}
-    GCSPROD[(GCS<br/>basedosdados-staging)]
+    GCSPROD[(GCS<br/>basedosdados/staging)]
     BQPRODSTG[(BigQuery<br/>basedosdados-staging.dataset_staging<br/>tabelas externas)]
     BQPROD[(BigQuery<br/>basedosdados.dataset<br/>público)]
     API[(Backend GraphQL<br/>backend.basedosdados.org)]
@@ -80,7 +80,7 @@ sequenceDiagram
     participant SRC as Fonte original
     participant GDEV as GCS<br/>basedosdados-dev
     participant BQD as BQ basedosdados-dev<br/>(staging + materializado)
-    participant GPRD as GCS<br/>basedosdados-staging
+    participant GPRD as GCS<br/>basedosdados/staging
     participant BQPS as BQ basedosdados-staging<br/>(externas)
     participant BQP as BQ basedosdados<br/>(público)
     participant API as Backend GraphQL
@@ -131,10 +131,13 @@ sequenceDiagram
 
 ### Deploy via `table-approve`
 
-Quando a revisão aprova o PR, a label **`table-approve`** é aplicada. A GitHub Action [`cd.yaml`](https://github.com/basedosdados/pipelines/blob/main/.github/workflows/cd.yaml) detecta a label e executa o script `prefect_run_dbt.py`, que:
+Quando a revisão aprova o PR, a label **`table-approve`** é aplicada. No merge para a `main`, o workflow [`table-approve.yaml`](https://github.com/basedosdados/pipelines/blob/main/.github/workflows/table-approve.yaml) verifica a label e executa o script `prefect_run_dbt.py`, que:
 
-1. Sincroniza os arquivos do dev para o bucket `basedosdados` (cópia GCS → GCS).
-2. Roda `dbt run target=prod` apenas para os modelos modificados no PR.
+1. Substitui `gs://basedosdados/staging/<dataset>/<tabela>/` pelos arquivos de `gs://basedosdados-dev/staging/<dataset>/<tabela>/`, com backup da versão anterior em `basedosdados-backup`.
+2. Recria a tabela externa em `basedosdados-staging.<dataset>_staging`.
+3. Roda `dbt run target=prod` apenas para os modelos modificados no PR.
+
+O funcionamento detalhado está em [Table-approve](../pipelines/explicacao/table-approve.md).
 
 ```mermaid
 flowchart LR
@@ -143,8 +146,8 @@ flowchart LR
     BQDS -- dbt run/test target=dev<br/>local ou CI --> BQD[(BQ basedosdados-dev)]
     DEV -->|aplica labels<br/>test-dev-model + check-metadata| PR[PR no GitHub]
     PR -->|revisão aprovada| APP[(Label<br/>table-approve)]
-    APP -->|GitHub Action cd.yaml| SYNC[Sync<br/>GCS dev → GCS prod]
-    SYNC --> GPRD[(GCS<br/>basedosdados-staging)]
+    APP -->|merge: table-approve.yaml| SYNC[Sync<br/>GCS dev → GCS prod]
+    SYNC --> GPRD[(GCS<br/>basedosdados/staging)]
     GPRD -. externa .-> BQPS[(BQ<br/>basedosdados-staging.dataset_staging)]
     APP -->|prefect_run_dbt.py| DBTP[dbt run target=prod]
     BQPS --> DBTP

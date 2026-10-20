@@ -18,7 +18,7 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## D
 
-**Datalake House** — arquitetura híbrida que combina um *data lake* (arquivos brutos/tratados em object storage) com um *data warehouse* (engine SQL com modelos materializados), unidos por tabelas externas. Na BD: os buckets GCS (`basedosdados-dev`, `basedosdados-staging`) são o lake; os projetos BigQuery (`basedosdados-dev`, `basedosdados-staging`, `basedosdados`) são o warehouse; tabelas `<dataset>_staging` são externas e leem direto do GCS, enquanto `<dataset>` são materializadas pelo dbt. Ver [Fluxo de dados e infraestrutura](onboarding/fluxo-de-dados-e-infraestrutura.md).
+**Datalake House** — arquitetura híbrida que combina um *data lake* (arquivos brutos/tratados em object storage) com um *data warehouse* (engine SQL com modelos materializados), unidos por tabelas externas. Na BD: os buckets GCS (`basedosdados-dev`, `basedosdados`) são o lake; os projetos BigQuery (`basedosdados-dev`, `basedosdados-staging`, `basedosdados`) são o warehouse; tabelas `<dataset>_staging` são externas e leem direto do GCS, enquanto `<dataset>` são materializadas pelo dbt. Ver [Fluxo de dados e infraestrutura](onboarding/fluxo-de-dados-e-infraestrutura.md).
 
 ## E
 
@@ -73,8 +73,8 @@ Usada pela equipe para validar dados e modelos antes da promoção para prod. Ve
 
 **Zona de prod** — ambiente de produção na GCP, dividido em **dois projetos BigQuery distintos**:
 
-- **GCS** — bucket `basedosdados-staging` (espelho dos datasets com sufixo _staging `basedosdados-dev` após aprovação).
-- **BigQuery `basedosdados-staging`** — camada de tabelas externas (`<dataset>_staging`) sobre o bucket `basedosdados-staging`. **Não é exposto ao público.**
+- **GCS** — bucket `basedosdados`, prefixo `staging/` (espelho de `gs://basedosdados-dev/staging/` após aprovação).
+- **BigQuery `basedosdados-staging`** — camada de tabelas externas (`<dataset>_staging`) sobre `gs://basedosdados/staging/`. **Não é exposto ao público.**
 - **BigQuery `basedosdados`** — modelos materializados pelo dbt (`target=prod`) a partir de `basedosdados-staging`. É o projeto consultado pelos usuários no site e no pacote Python.
 
 A separação `basedosdados-staging` ↔ `basedosdados` é o que diferencia prod de dev: em prod, externas e materializadas vivem em **projetos diferentes**; em dev, vivem no mesmo projeto.
