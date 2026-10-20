@@ -220,8 +220,5 @@ inteiro em ordem de dependências.
 
 ## Ver também
 
-- [Como materializar uma tabela em prod](../como-fazer/materializar-tabela-em-prod.md)
-- [Runbook — table-approve falhou](../runbooks/table-approve-falhou.md)
 - [Abrir um PR](../como-fazer/abrir-pr.md)
 - [Fluxo de dados e infraestrutura](../../onboarding/fluxo-de-dados-e-infraestrutura.md)
-- [Referência do table-approve](../referencia/table-approve.md)
