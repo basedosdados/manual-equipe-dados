@@ -10,7 +10,7 @@ Pull requests em [`basedosdados/pipelines`](https://github.com/basedosdados/pipe
 |---|---|---|
 | `check-metadata` | Dispara validação de metadados entre BigQuery e API de produção | PRs que alteram colunas, descrições, tipos ou metadados expostos na API |
 | `deploy-flow` | Dispara deploy dos flows alterados no work pool `basedosdados-dev` (Prefect 3 staging) | PRs que modificam flows e precisam ser testados em staging antes do merge |
-| `table-approve` | No merge, copia a staging de dev para prod e materializa em `basedosdados` os modelos `.sql` alterados no PR. Ver [Table-approve](../explicacao/table-approve.md) | PRs cujo merge deve publicar/atualizar tabelas no projeto `basedosdados` |
+| `table-approve` | Dispara `Table.approve()` no merge, promovendo a tabela de staging para produção | PRs cujo merge deve publicar/atualizar tabelas no projeto `basedosdados` |
 | `test-dev-model` | Roda testes DBT nos models modificados em `basedosdados-dev` | PRs que tocam em `models/` e querem validar com dados reais antes do merge |
 | `conflict` | Marcador de PR com conflito de merge a resolver | Aplicada (geralmente automaticamente) quando o PR diverge da base |
 | `hacktoberfest-accepted` | Marca PRs aprovados na Hacktoberfest | Apenas durante a campanha anual da Hacktoberfest |
