@@ -12,3 +12,4 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 - [Abrir um PR](como-fazer/abrir-pr.md)
 - [Atualizar dependências](como-fazer/atualizar-dependencias.md) — Python (`uv`) e dbt packages
 - [Rodar um flow localmente](como-fazer/rodar-flow-localmente.md) — Prefect 3, sem precisar de deploy em dev na nuvem
+- [Materializar uma tabela em prod](como-fazer/materializar-tabela-em-prod.md) — aplicação do label `table-approve`

@@ -58,38 +58,128 @@ flowchart TD
     H -- falha --> X3[Job falha com os logs do Prefect<br/>tabelas seguintes não rodam]
 ```
 
-1. **Gatilho** (`.github/workflows/table-approve.yaml`). O workflow é
-   executado em todo push na `main`. Ele identifica o PR do commit e lê seus
-   labels no momento da execução; o label não dispara o processo. Sem o label,
-   todas as etapas são ignoradas e o job termina com sucesso.
-2. **Seleção das tabelas** (`get_datasets_tables_from_modified_files`). São
-   considerados apenas os arquivos alterados, e não removidos, no formato exato
-   `models/<dataset>/<modelo>.sql`. O nome do diretório define o dataset, e o
-   prefixo `<dataset>__` é removido do nome do arquivo para obter a tabela.
-   `.sql` em subdiretórios, `tests-dbt/` e `macros/` são ignorados.
-3. **Substituição da staging** (`sync_bucket`). Para cada tabela, a staging de
-   prod é copiada para `gs://basedosdados-backup`, removida e substituída pela
-   staging de dev. Se a staging de dev estiver vazia, nada é copiado, o log
-   registra `TABLE was NOT created` e o processo segue com a staging de prod
-   existente.
-4. **Recriação da tabela externa** (`save_header_files` e `push_table_to_bq`).
-   A tabela `basedosdados-staging.<dataset>_staging.<tabela>` é recriada com
-   todas as colunas como STRING. O esquema vem do **primeiro arquivo** do
-   prefixo de dev, em ordem alfabética: em CSV, pela consulta
-   `SELECT * ... LIMIT 1` à tabela externa de dev; em Parquet, pelas colunas do
-   próprio arquivo.
-5. **Materialização** (`run_table_approve` e o flow `run_dbt_model_flow`).
-   Para cada tabela, sequencialmente, um flow do Prefect executa
-   `dbt run --target prod` e exporta o CSV de download. Uma falha encerra o job,
-   com os logs de erro do Prefect no log do GitHub Actions, e as tabelas
-   seguintes não são processadas.
+O workflow está em `.github/workflows/table-approve.yaml`, e as etapas 2 a 5
+estão no script `.github/workflows/scripts/prefect_run_dbt.py`. Os trechos
+abaixo foram reduzidos para destacar o comportamento de cada etapa.
 
-As funções das etapas 2 a 5 estão em
-`.github/workflows/scripts/prefect_run_dbt.py`, exceto o flow, definido em
-`pipelines/utils/execute_dbt_model/flows.py`.
+#### 1. Gatilho
+
+O workflow é executado em todo push na `main`. Em seguida, ele identifica o PR
+que originou o commit e verifica se o label está presente. O label, portanto,
+não dispara o processo: ele é lido no momento da execução. Sem o label, as
+etapas seguintes são ignoradas e o job termina com sucesso.
+
+```yaml
+on:
+  push:
+    branches: [main]   # executa em todo merge na main
+```
+
+```javascript
+// verifica se o PR do commit possui o label
+const approved = labels.data.some(label => label.name === "table-approve");
+```
+
+#### 2. Seleção das tabelas
+
+A função `get_datasets_tables_from_modified_files` considera apenas os arquivos
+`.sql` com exatamente três níveis de caminho, ou seja,
+`models/<dataset>/<modelo>.sql`. Arquivos em subdiretórios, em `tests-dbt/` ou
+em `macros/` ficam de fora. O dataset é o nome do diretório, e a tabela é o
+nome do arquivo sem o prefixo `<dataset>__`.
+
+```python
+# mantém só models/<dataset>/<modelo>.sql
+sql_files = [
+    file
+    for file in modified_files
+    if file.suffix == ".sql"
+    and len(file.parts) == 3
+    and file.parts[0] == "models"
+]
+
+# remove o prefixo <dataset>__ para obter o nome da tabela
+crop_str = f"{dataset_id}__"
+if table_id.startswith(crop_str):
+    table_id = table_id[len(crop_str) :]
+    alias = True
+```
+
+#### 3. Substituição da staging
+
+A função `sync_bucket` copia a staging de prod para o bucket de backup, apaga a
+staging de prod e copia a staging de dev no lugar. Se a staging de dev estiver
+vazia, a função retorna antes de qualquer cópia, o log registra
+`TABLE was NOT created` e o processo continua com a staging de prod existente.
+
+```python
+# staging de dev vazia: nada é copiado
+if len(list(source_ref)) == 0:
+    return True
+
+# staging de prod existente: guarda no backup e apaga
+if len(list(destination_ref)):
+    ref.copy_table(source_bucket_name=destination_bucket_name,
+                   destination_bucket_name=backup_bucket_name, mode=mode)
+    ref.delete_table(not_found_ok=True, mode=mode,
+                     bucket_name=destination_bucket_name)
+
+# copia a staging de dev para prod
+ref.copy_table(source_bucket_name=source_bucket_name,
+               destination_bucket_name=destination_bucket_name, mode=mode)
+```
+
+#### 4. Recriação da tabela externa
+
+A função `save_header_files` percorre os arquivos da staging de dev e para no
+**primeiro** `.csv` ou `.parquet` encontrado. Em CSV, as colunas vêm de uma
+consulta à tabela externa de dev; em Parquet, do próprio arquivo. Com esse
+cabeçalho, `push_table_to_bq` recria a tabela
+`basedosdados-staging.<dataset>_staging.<tabela>`, com todas as colunas como
+STRING.
+
+```python
+# para no primeiro arquivo de dados da staging de dev
+for blob in blobs:
+    if blob_name.endswith((".csv", ".parquet")):
+        break
+
+# CSV: colunas lidas da tabela externa de dev
+query = f"SELECT * FROM `basedosdados-dev.{dataset_id}_staging.{table_id}` LIMIT 1"
+
+# Parquet: o próprio arquivo é usado como cabeçalho
+blob.download_to_filename(file_path)
+```
+
+#### 5. Materialização
+
+Para cada tabela, uma de cada vez, o script dispara o flow do Prefect
+`run_dbt_model_flow`, que executa `dbt run --target prod` e exporta o CSV de
+download. Se um flow falhar, o script exibe os logs de erro do Prefect e
+encerra o job, e as tabelas seguintes não são processadas.
+
+```python
+flow_run = run_deployment(
+    name=DBT_MODEL_DEPLOYMENT,
+    parameters={
+        "dataset_id": dataset_id,
+        "table_id": table_id,
+        "dbt_command": args.dbt_command,     # "run"
+        "dbt_alias": alias,
+        "target": args.materialization_target,   # "prod"
+        "download_csv_file": args.materialization_target == "prod",
+    },
+)
+
+# falha em uma tabela encerra o job
+if state is None or not state.is_completed():
+    print_flow_run_error_logs(str(flow_run.id))
+    raise Exception(...)
+```
 
 As etapas 3 e 4 são executadas para todas as tabelas antes da primeira
-materialização.
+materialização. Assim, se a etapa 5 falhar, a staging de prod de todas as
+tabelas do PR já foi substituída.
 
 ### Alterações de esquema
 
@@ -138,5 +228,6 @@ inteiro em ordem de dependências.
 
 ## Ver também
 
+- [Como materializar uma tabela em prod](../como-fazer/materializar-tabela-em-prod.md)
 - [Abrir um PR](../como-fazer/abrir-pr.md)
 - [Fluxo de dados e infraestrutura](../../onboarding/fluxo-de-dados-e-infraestrutura.md)
