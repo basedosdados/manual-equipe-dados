@@ -16,3 +16,4 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 ## Referência
 
 - [`stage_dispatch.py`](referencia/stage-dispatch.md) — tipos e funções usados para encadear os estágios
+- [Rodar um flow localmente](como-fazer/rodar-flow-localmente.md) — Prefect 3, sem precisar de deploy em dev na nuvem

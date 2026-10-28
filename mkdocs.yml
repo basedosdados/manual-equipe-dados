@@ -63,11 +63,18 @@ plugins:
 exclude_docs: |
   _templates/
 
+validation:
+  nav:
+    omitted_files: warn
+
 nav:
   - Início: index.md
   - Glossário: glossario.md
   - Onboarding:
     - onboarding/index.md
+    - Setup do repositório de pipelines: onboarding/setup-pipelines.md
+    - Fluxo de dados e infraestrutura: onboarding/fluxo-de-dados-e-infraestrutura.md
+    - Manual de estilo: onboarding/manual-de-estilo.md
   - Processos:
     - processos/index.md
     - Como fazer:
@@ -122,6 +129,7 @@ nav:
       - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
     - Referência:
       - stage_dispatch.py: pipelines/referencia/stage-dispatch.md
+      - Rodar um flow localmente: pipelines/como-fazer/rodar-flow-localmente.md
     - ADRs:
       - pipelines/adr/index.md
   - Observabilidade:
@@ -141,6 +149,7 @@ nav:
     - governanca/index.md
     - Metadados:
       - governanca/metadados/index.md
+      - Manual de estilo: governanca/metadados/explicacao-manual-de-estilo.md
       - Subir metadados: governanca/metadados/como-fazer/subir-metadados.md
       - ADRs:
         - governanca/metadados/adr/index.md
