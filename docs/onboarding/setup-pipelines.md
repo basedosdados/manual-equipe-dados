@@ -45,5 +45,5 @@ Depois do ambiente funcionando:
 ## Ver também
 
 - [Glossário](../glossario.md) — definições de **Pipeline**, **Pipeline semi-automatizada** e demais termos usados no manual.
+- [Pipelines / Explicação](../pipelines/explicacao/pipeline-orientado-a-eventos.md) — por que as pipelines são organizadas como são.
 - [CONTRIBUTING.md — manual-equipe-dados](https://github.com/basedosdados/manual-equipe-dados/blob/main/CONTRIBUTING.md) — como contribuir com **este** manual (diferente do CONTRIBUTING do repo de pipelines).
-- [Pipelines / Explicação](../pipelines/explicacao/) — por que as pipelines são organizadas como são.
