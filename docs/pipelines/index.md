@@ -5,6 +5,7 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 ## Explicação
 
 - [Pipeline orientado a eventos](explicacao/pipeline-orientado-a-eventos.md) — por que um flow de dataset é dividido em estágios encadeados e como eles se conectam
+- [Table-approve](explicacao/table-approve.md) — como as tabelas alteradas em um PR são materializadas em prod
 
 ## Como fazer
 
