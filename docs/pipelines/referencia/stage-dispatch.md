@@ -42,7 +42,7 @@ O que `get_latest_update` de um dataset devolve pro `check_update`.
 |---|---|---|
 | `reference_date` | `datetime.date` | Data de referência encontrada na fonte |
 | `extra_download_params` | `dict` (default `{}`) | Campos extra que `extract_load_data` vai precisar |
-| `compare_against` | `str` (default `"coverage"`) | `"coverage"` lê `Coverage.DateTimeRange`; `"table_update"` lê `Table.Update.latest` — necessário pra tabelas `NonHistorical`, sem baseline de coverage confiável |
+| `compare_against` | `str` (default `"coverage"`) | `"coverage"` lê `Coverage.DateTimeRange`; `"table_update"` lê `Table.Update.latest` — necessário pra tabelas `non_historical`, sem baseline de coverage confiável |
 
 ### `ExtractAndLoad` (dataclass)
 
@@ -50,7 +50,6 @@ O que `extract_load_data` de um dataset devolve pro `extract_and_load`.
 
 | Nome | Tipo | Descrição |
 |---|---|---|
-| `coverage` | `dict` | `CoverageSpec.model_dump()` (`AllFree`/`AllBdpro`/`PartBdpro`/`NonHistorical`, ver `pipelines.utils.metadata.domain`) |
 | `data_path` | `str` | Caminho local escrito por `extract_load_data`. Tabela particionada: diretório já na estrutura Hive que será promovida (ex. `data_path/ano=2026/mes=09/dados.csv`) |
 | `prefect_mode` | `str` (default `"prod"`) | `"dev"`/`"prod"` — resolve o projeto BigQuery de destino automaticamente (`MODE_PROJECT`) |
 | `dump_mode` | `str` (default `"append"`) | Modo de escrita no BigQuery |
@@ -155,7 +154,7 @@ def get_latest_update() -> SourceInspection:
     return SourceInspection(reference_date=data_encontrada)
 
 def extract_load_data(download_params: dict) -> ExtractAndLoad:
-    return ExtractAndLoad(coverage=COVERAGE.model_dump(), data_path=caminho_local)
+    return ExtractAndLoad(data_path=caminho_local)
 
 _pipeline = CheckThenExtractLoadPipeline(
     dataset_id=DATASET_ID,

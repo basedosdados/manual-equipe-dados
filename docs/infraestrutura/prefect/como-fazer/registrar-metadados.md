@@ -62,10 +62,11 @@ A ordem de criação **importa**:
    b. `ObservationLevel` (uma por entidade observada).
    c. Colunas via `upload_columns_from_sheet`.
    d. Ajustes coluna-a-coluna (`is_partition`, `is_primary_key`, EN/ES).
-   e. `CloudTable` (ponteiro para BigQuery).
-   f. `Coverage` + `DatetimeRange`.
-   g. `Update` (frequência/lag).
-   h. Re-`create_update_table` com `raw_data_source_ids` agora populado.
+   e. `coverage_entity` nas colunas temporais (`ano`, `mes`, `data`...).
+   f. `CloudTable` (ponteiro para BigQuery).
+   g. `Coverage` + `DatetimeRange`.
+   h. `Update` (frequência/lag).
+   i. Re-`create_update_table` com `raw_data_source_ids` agora populado.
 4. (Opcional) `reorder_tables` e `reorder_observation_levels`.
 
 ---
@@ -234,6 +235,49 @@ mcp__databasis__update_column(
 )
 ```
 
+#### Marcar as colunas temporais (`coverage_entity`)
+
+O pipeline e o `table-approve` não declaram mais a cobertura da tabela no
+código. Os dois chamam `register_table_materialization_task`, que lê do
+backend quais colunas carregam a data e qual o tipo de cobertura. Essa
+informação vem do campo `coverage_entity` de cada coluna.
+
+Marque as colunas que definem a granularidade temporal da tabela:
+
+| Granularidade | Colunas a marcar |
+|---|---|
+| anual | `ano` → `year` |
+| mensal | `ano` → `year`, `mes` → `month` |
+| trimestral | `ano` → `year`, `trimestre` → `quarter` |
+| bimestral | `ano` → `year`, `bimestre` → `bimester` |
+| diária | `data` → `date` |
+
+No CAGED, `ano` → `year` e `mes` → `month`. Tabela sem dimensão temporal
+(ex.: `dicionario`) não recebe marcação.
+
+A MCP ainda não expõe esse campo. Marque pelo Django admin, no campo
+**Coverage entity** da coluna, ou pela mutation `CreateUpdateColumn`:
+
+```graphql
+mutation($input: CreateUpdateColumnInput!) {
+  CreateUpdateColumn(input: $input) {
+    errors { field messages }
+    column { id name coverageEntity { slug } }
+  }
+}
+```
+
+com `input: {id: <column_id>, name: <column_name>, table: <table_id>, coverageEntity: <id_entity>}`.
+O `id_entity` vem de `discover_ids(keys=["entity"])` e muda entre dev e prod.
+
+!!! warning "Marque `ano` antes de `mes`"
+    O backend valida a combinação a cada coluna salva. `{year}` e
+    `{year, month}` são válidas, `{month}` sozinha não é. Marcar `mes`
+    antes de `ano` é rejeitado.
+
+Sem a marcação, nada dá erro: a tabela é tratada como `non_historical`, a
+cobertura temporal não é atualizada e o filtro de BD Pro não é aplicado.
+
 ### Passo 8 — `CloudTable`
 
 ```python
@@ -247,6 +291,10 @@ mcp__databasis__create_update_cloud_table(
 ```
 
 ### Passo 9 — `Coverage`, `DatetimeRange` e `Update`
+
+As `Coverage` definem o tipo de cobertura da tabela: só a aberta
+(`is_closed=False`) é `all_free`; aberta + BD Pro (`is_closed=True`) é
+`part_bdpro`; só BD Pro é `all_bdpro`.
 
 ```python
 cov = mcp__databasis__create_update_coverage(
@@ -308,6 +356,23 @@ Ou via MCP:
 ```python
 mcp__databasis__get_dataset(slug="caged", env="prod")
 ```
+
+Para conferir a cobertura que o pipeline vai ler, consulte `coverageSpec`
+no GraphQL com os IDs do GCP:
+
+```graphql
+query {
+  coverageSpec(datasetId: "br_me_caged", tableId: "microdados_movimentacao") {
+    tier
+    dateColumnKind
+    coverageColumns { name entity }
+  }
+}
+```
+
+Para o CAGED, o esperado é `dateColumnKind="year_month"`, com `ano` e `mes`
+em `coverageColumns`. Uma tabela temporal que retorna `non_historical` não
+foi marcada.
 
 ---
 
@@ -391,6 +456,8 @@ Pós-upload, complete com `update_column`:
 - `is_partition=True` para colunas de partição (`ano`, `mes`, `sigla_uf`, `id_municipio`).
 - `is_primary_key=True` para a PK lógica da granularidade.
 - `description_en` / `description_es` se ainda não estiverem na planilha.
+- `coverage_entity` nas colunas temporais (ver Passo 7). Não vem da
+  planilha nem da MCP.
 
 ### `CloudTable`
 
@@ -471,6 +538,7 @@ loop por tabela:
 7.  create_update_observation_level ×N → ol_ids
 8.  upload_columns_from_sheet          → colunas em lote
 9.  update_column ×N                   → is_partition/is_pk/EN/ES
+9b. coverage_entity (admin/GraphQL)    → ano antes de mes
 10. create_update_cloud_table          → ponteiro BQ
 11. create_update_coverage             → cov_id
 12. create_update_datetime_range       → intervalo temporal
