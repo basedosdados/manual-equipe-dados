@@ -38,9 +38,24 @@ Voltar ao Django e configurar:
 
 - Frequência de atualização
 - Cobertura temporal
+- `Coverage entity` nas colunas temporais (ver abaixo)
 - Vinculação com diretórios
 - Nível de observação
 - Partições no BigQuery (em nível de coluna, quando aplicável)
+
+Em toda tabela com dimensão temporal, preencha o campo `Coverage entity` das colunas de data:
+
+| Granularidade | Colunas |
+|---|---|
+| anual | `ano` → `year` |
+| mensal | `ano` → `year`, `mes` → `month` |
+| trimestral | `ano` → `year`, `trimestre` → `quarter` |
+| bimestral | `ano` → `year`, `bimestre` → `bimester` |
+| diária | `data` → `date` |
+
+Salve `ano` antes de `mes`, `trimestre` ou `bimestre`. O backend rejeita `month` sem `year`.
+
+O pipeline e o `table-approve` leem esse campo para atualizar a cobertura temporal e aplicar o filtro de BD Pro. Sem ele, a cobertura não é atualizada, e não aparece erro.
 
 ### Etapa 4 — Verificação final
 
@@ -56,11 +71,13 @@ A subida está completa quando:
 - Todos os campos obrigatórios estão preenchidos
 - A ordem das colunas no Django bate com a do BigQuery
 - A frequência de atualização e a cobertura temporal estão consistentes com a fonte
+- As colunas temporais têm `Coverage entity` preenchido; a página da tabela no admin lista essas colunas
 
 ## Problemas comuns
 
 - **Campo obrigatório vazio bloqueia publicação** — confira a lista de obrigatórios; só `Arquivos auxiliares` e `Partições no BigQuery` são opcionais.
 - **Ordem de colunas divergente entre Django e BQ** — corrija no Django para refletir o BigQuery, não o contrário.
+- **Erro ao salvar `Coverage entity` em `mes`** — a coluna `ano` ainda não foi marcada como `year`. Marque `ano` primeiro.
 
 ## Ver também
 
