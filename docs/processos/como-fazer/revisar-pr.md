@@ -1,69 +1,181 @@
 ---
 tipo: como-fazer
 titulo: Como revisar um PR de pipeline
-origem: https://github.com/basedosdados/pipelines/wiki/Como-corrigir-um-PR
 ---
 # Como revisar um PR de pipeline
 
-Guia para revisores de Pull Requests no repositório [`basedosdados/pipelines`](https://github.com/basedosdados/pipelines). Aplique este checklist antes de aprovar um PR que adiciona ou modifica uma pipeline.
-
-> O título original do guia era "Como corrigir um PR", mas o conteúdo trata de **revisão**. Renomeado na migração.
+Guia para revisar pull requests no repositório
+[`basedosdados/pipelines`](https://github.com/basedosdados/pipelines) que criam ou alteram uma
+pipeline, um modelo dbt ou os testes de uma tabela. Quem revisa aponta o que mudar; quem abriu o PR
+faz as correções.
 
 ## Pré-requisitos
 
-- Acesso de revisor ao repositório `basedosdados/pipelines`
-- Acesso ao BigQuery do projeto `basedosdados-staging` para inspecionar dados
-- Acesso ao Django de metadados para conferir o registro
+- Acesso de revisor ao repositório `basedosdados/pipelines`.
+- Acesso de leitura ao BigQuery em `basedosdados-dev` e `basedosdados`, à interface do Prefect e
+  ao admin do backend de metadados.
+- Ter lido os [princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md),
+  as [práticas de tratamento](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md)
+  e os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
 
 ## Passos
 
-Percorra as cinco áreas abaixo na ordem. Cada item é uma verificação binária — se algum falhar, deixe comentário no PR e bloqueie o merge até a correção.
+Percorra as etapas na ordem. Cada item é uma verificação: se falhar, deixe um comentário no PR
+apontando o item.
 
-### 1. Verificar `schedule.py`
+### 1. Entender o que o PR muda
 
-- [ ] A frequência de atualização faz sentido para a fonte
-- [ ] Parâmetros e `label` são os de produção
-- [ ] Os demais parâmetros estão consistentes
-- [ ] Não há parâmetro obrigatório no flow que esteja ausente do schedule
+- [ ] A descrição diz o que muda, por quê e qual issue resolve.
+- [ ] As decisões de tratamento (o que foi decidido, o motivo, as alternativas descartadas) estão
+  também no README do conjunto, e não só na descrição do PR.
+- [ ] O PR mexe em um conjunto só. Mudanças em código compartilhado (`pipelines/utils/`, testes
+  genéricos, macros) vêm em PR próprio.
 
-### 2. Verificar `flows.py`
+### 2. Conferir labels e CI
 
-- [ ] Os parâmetros do `flow` estão corretos
-- [ ] Os parâmetros dentro do `materialization_flow` estão corretos
-- [ ] O `time_delta` na task `update_django_metadata` está igual à query no repositório `queries-basedosdados`
-- [ ] `upstream_tasks = wait_upload_table` está presente na task `update_django_metadata`
-- [ ] O nome do flow foi linkado ao final com o `schedule` correto
-- [ ] O arquivo de flow contém **apenas** tasks, parâmetros e cases — nada de lógica embutida (o flow é orquestração, não código)
+As labels são gatilhos de CI ([lista completa](../../pipelines/como-fazer/abrir-pr.md)).
 
-### 3. Verificar no BigQuery
+- [ ] `test-dev-model` está no PR se ele mexe em `models/`, e o check "Test DBT dev model" passou.
+- [ ] `deploy-flow` está no PR se ele mexe em `flows.py`, e o flow foi rodado em dev.
+- [ ] `table-approve` só está no PR se a staging de dev já está completa e final. O workflow só
+  materializa tabelas cujo `.sql` mudou no PR: se o PR não altera o modelo, peça uma mudança
+  mínima no `.sql` ([como funciona](../../pipelines/explicacao/table-approve.md)).
+- [ ] Lint e Pyrefly passaram, e o PR não tem conflito com a `main`. Um erro do Pyrefly costuma
+  apontar argumento que não existe mais, como um parâmetro removido do `ExtractAndLoad`.
+- [ ] Os comentários do CodeRabbit foram lidos e respondidos. Ele aponta riscos reais, mas também
+  casos improváveis: avalie cada um contra o funcionamento da pipeline.
 
-- [ ] Os dados têm a cobertura temporal indicada nos metadados
-- [ ] Os dados estão bem preenchidos (sem colunas inteiras nulas)
+### 3. Revisar o flow
 
-### 4. Verificar nos metadados
+Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/estruturar-um-flow-de-dataset.md).
 
-- [ ] O conjunto tem fonte externa registrada
-- [ ] Todos os campos estão preenchidos. Os únicos opcionais são `Arquivos auxiliares` e `Partições no BigQuery`
-- [ ] O nome da tabela é amigável à leitura (acentos, conjunções, capitalização correta)
-- [ ] A ordem das colunas no Django bate com a do BigQuery
+- [ ] O `flows.py` só orquestra: nenhuma lógica de tratamento dentro dele.
+- [ ] O fluxo é genérico. Particularidades de uma tabela ficam nos dicionários de `constants.py`,
+  e não em `if table_id == "..."` espalhados pelo flow, pelas tasks e pelo `utils.py`. Só ficam no
+  flow os `if` de checagens que precisam aparecer como etapa da execução.
+- [ ] O `check_update` devolve a data de referência real da fonte. Se a fonte não publica data, a
+  data de referência é o dia da coleta no fuso de São Paulo, e essa mesma data vai para a
+  partição e para os metadados.
+- [ ] A frequência do `Cron` combina com a frequência da fonte. Se uma coleta que falha não se
+  repete sozinha, o README diz como disparar a carga à mão.
+- [ ] As tasks não chamam `upload_to_gcs` diretamente: o encapsulamento do `stage_dispatch` faz
+  isso a partir do `data_path`.
 
-### 5. Verificar o tratamento dos dados
+### 4. Revisar a extração em Python
 
-Confira o PR contra os [princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md), as [práticas de tratamento](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md) e os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
+- [ ] A pipeline chama `check_rows_written` antes do upload, com as linhas **lidas** da fonte. Se a
+  função de tratamento devolve as linhas gravadas, a checagem compara gravadas com gravadas e não
+  pega nada.
+- [ ] Não existe parâmetro de tolerância de perda de linhas.
+- [ ] Checagens sobre o dado da fonte seguem o padrão de `pipelines/utils/data_tests/`: uma função
+  que recebe os dados, com docstring (`Args`, `Raises`) e teste unitário, chamada como task no flow
+  para aparecer na execução.
+- [ ] Uma nova tentativa da task (`retries`) não duplica linhas: arquivos gravados em modo append
+  são limpos antes de reprocessar.
 
-- [ ] Toda transformação no `.sql` cabe em um dos quatro tipos de modificação, ou é uma exceção registrada no README do conjunto com o motivo
-- [ ] O PR não remove linhas da fonte (nada de `select distinct` ou filtro sem regra documentada) e, se a pipeline grava arquivos, chama `check_rows_written`
-- [ ] A cobertura temporal da tabela é a mesma da fonte original, ou a exceção está documentada
-- [ ] Em modelo incremental, o PR diz se a mudança precisa de `--full-refresh` e quanto custa
-- [ ] O `schema.yml` tem os testes obrigatórios, sem checagem repetida na mesma coluna e, em tabela grande, com o placeholder de partição
-- [ ] Limiares mais tolerantes que o padrão (`at_least` abaixo de `0.99`, `proportion_allowed_failures` acima de `0`) estão medidos e justificados no README
-- [ ] As decisões de tratamento estão no README do conjunto, e não só na descrição do PR
+### 5. Revisar o modelo dbt
+
+- [ ] Toda transformação no `.sql` cabe em um dos
+  [quatro tipos de modificação](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md#as-unicas-modificacoes-que-fazemos)
+  ou é uma exceção registrada no README do conjunto, com o motivo e o custo de processamento.
+- [ ] Nenhum `select distinct` ou filtro remove linhas da fonte sem uma regra documentada.
+- [ ] O `range` de `partition_by` cobre os próximos anos. Um `end` no passado faz as linhas novas
+  irem para `__UNPARTITIONED__`, e as consultas filtradas por ano passam a ler a tabela inteira.
+- [ ] Em modelo incremental:
+    - o filtro usa a forma padrão (`where <coluna> > (select max(<coluna>) from {{ this }})`), sem
+      `run_query` no `INFORMATION_SCHEMA`;
+    - a coluna de partição da staging não é convertida para `DATE` no filtro, para o BigQuery ler
+      só as pastas novas;
+    - o PR diz se a mudança precisa de `--full-refresh` para o histórico ficar consistente, e
+      quanto ele custa.
+- [ ] O modelo não traz `pre_hook` que apaga as regras de acesso: a service account do dbt tem
+  acesso total à tabela, e as regras são recriadas pelo registro de metadados depois do dbt.
+
+### 6. Revisar os testes dbt
+
+Confira o `schema.yml` contra os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
+
+- [ ] A chave única vem do que cada linha representa. Se o autor testou várias combinações até uma
+  passar, peça para definir a chave a partir do significado da linha.
+- [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
+- [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
+- [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
+  tolerante tem a medição e o motivo no README.
+
+### 7. Conferir o dado em dev
+
+Use o [diagnóstico com evidência](../referencia/diagnostico-com-evidencia.md): fonte, Prefect e
+BigQuery.
+
+- [ ] A cobertura temporal em `basedosdados-dev` é a mesma da fonte original, sem buracos no meio
+  da série.
+- [ ] Nenhuma coluna ficou inteira ou quase inteira nula por erro de leitura ou de cruzamento com
+  diretório.
+- [ ] Dados de execuções de teste não vão para prod. Se o PR tem `table-approve`, a staging de dev
+  só tem as cargas que devem ser publicadas.
+
+### 8. Revisar o README do conjunto
+
+- [ ] Registra as decisões de tratamento, as exceções aos quatro tipos e as medições que
+  justificam limiares de teste.
+- [ ] Cita o documento oficial de todo código novo no dicionário e quando ele aparece nos dados.
+- [ ] Registra o que precisa ser investigado (por exemplo, linhas sem par no diretório) e os
+  pedidos de esclarecimento via LAI.
+- [ ] É direto: explica o que alguém precisa saber para mexer no conjunto, sem narrar o processo.
+  Uma lista de alternativas que não diz por que foram descartadas sai ou ganha a justificativa.
+
+### 9. Conferir os metadados
+
+- [ ] A frequência de atualização no backend combina com a da fonte e com o `Cron`.
+- [ ] Em tabela `part_bdpro`, a faixa paga é definida pela coluna certa (a data que marca cada
+  carga ou período) e as duas coberturas, livre e paga, existem no backend.
+- [ ] O check "Metadata validation" passou, se o PR tem `check-metadata`.
+
+### 10. Escrever a review
+
+1. Deixe um comentário por linha para cada item que falhou, dizendo o que mudar e por quê. Seja
+   direto e cordial: "remover", "por que não colocar só na partição mais recente?".
+2. No corpo da review, resuma os pontos em uma lista e reconheça o que já foi resolvido.
+3. Envie como **Request changes** se algum item bloqueia o merge e como **Comment** se são só
+   sugestões. Confira se não ficou um rascunho pendente: comentários em rascunho não chegam ao
+   autor.
+4. Não corrija o código no lugar do autor. Para testar uma ideia antes de comentar, faça isso fora
+   da branch do PR.
+5. Feedback sobre a forma de trabalhar vai para a conversa individual, não para a review.
 
 ## Verificação
 
-Se todos os itens acima estão marcados, aprove o PR. Se algum falhou, deixe comentário apontando o item específico do checklist.
+O PR pode ser aprovado quando todos os itens das etapas 1 a 9 passam e o CI está verde. Depois do
+merge, confira:
+
+- se o `table-approve` materializou a tabela em `basedosdados` com o período esperado;
+- se o deployment novo foi ativado pelo admin do backend (todo deployment nasce pausado, e
+  despausar direto no Prefect não persiste);
+- se a primeira execução agendada em prod terminou sem erro.
+
+## Problemas comuns
+
+- **O `table-approve` não materializou a tabela** — o PR não alterava o `.sql` do modelo, ou o
+  label foi aplicado com a staging de dev incompleta.
+- **Um teste dbt quebra sem que o código tenha mudado** — a fonte publicou um código novo que não
+  está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste.
+- **O `custom_unique_combinations_of_columns` passa com muitas duplicatas** — o teste calcula a
+  proporção por grupo, não pelo total
+  ([issue #2324](https://github.com/basedosdados/pipelines/issues/2324)).
+- **Consultas filtradas por ano leem a tabela inteira** — o `end` do `partition_by` ficou no
+  passado.
+- **Coletas de teste aparecem em prod** — a staging de dev tinha cargas de teste quando o PR com
+  `table-approve` foi mergeado. Apague essas pastas da staging de dev antes do merge.
 
 ## Ver também
 
-- [Como subir metadados de um conjunto e suas tabelas](../../governanca/metadados/como-fazer/subir-metadados.md) — rotina relacionada de subida de metadados
-- [Princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md) — o porquê da área 5
+- [Princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md)
+  — o porquê das etapas 4 a 8.
+- [Testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md) — a
+  referência da etapa 6.
+- [Abrir um pull request](../../pipelines/como-fazer/abrir-pr.md) — as labels de CI.
+- [Como estruturar um flow de dataset](../../pipelines/como-fazer/estruturar-um-flow-de-dataset.md)
+  — a referência da etapa 3.
+- [Table-approve](../../pipelines/explicacao/table-approve.md) — como o merge leva a tabela para
+  prod.
+- [Diagnóstico com evidência](../referencia/diagnostico-com-evidencia.md) — a referência da etapa 7.
