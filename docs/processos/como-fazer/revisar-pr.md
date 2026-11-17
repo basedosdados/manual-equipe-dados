@@ -27,7 +27,7 @@ apontando o item.
 
 - [ ] A descrição diz o que muda, por quê e qual issue resolve.
 - [ ] As decisões de tratamento (o que foi decidido, o motivo, as alternativas descartadas) estão
-  também no README do conjunto, e não só na descrição do PR.
+  no README do conjunto.
 - [ ] O PR mexe em um conjunto só. Mudanças em código compartilhado (`pipelines/utils/`, testes
   genéricos, macros) vêm em PR próprio.
 
@@ -54,12 +54,8 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
   e não em `if table_id == "..."` espalhados pelo flow, pelas tasks e pelo `utils.py`. Só ficam no
   flow os `if` de checagens que precisam aparecer como etapa da execução.
 - [ ] O `check_update` devolve a data de referência real da fonte. Se a fonte não publica data, a
-  data de referência é o dia da coleta no fuso de São Paulo, e essa mesma data vai para a
-  partição e para os metadados.
-- [ ] A frequência do `Cron` combina com a frequência da fonte. Se uma coleta que falha não se
-  repete sozinha, o README diz como disparar a carga à mão.
-- [ ] As tasks não chamam `upload_to_gcs` diretamente: o encapsulamento do `stage_dispatch` faz
-  isso a partir do `data_path`.
+  data de referência é o dia da coleta no fuso de São Paulo.
+- [ ] A frequência do `Cron` combina com a frequência da fonte.
 
 ### 4. Revisar a extração em Python
 
@@ -79,13 +75,15 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
   [quatro tipos de modificação](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md#as-unicas-modificacoes-que-fazemos)
   ou é uma exceção registrada no README do conjunto, com o motivo e o custo de processamento.
 - [ ] Nenhum `select distinct` ou filtro remove linhas da fonte sem uma regra documentada.
+- [ ] Cada partição (ou cluster) tem pelo menos 1 GB. Se não tiver, a tabela não deve ser
+  particionada.
 - [ ] O `range` de `partition_by` cobre os próximos anos. Um `end` no passado faz as linhas novas
   irem para `__UNPARTITIONED__`, e as consultas filtradas por ano passam a ler a tabela inteira.
 - [ ] Em modelo incremental:
     - o filtro usa a forma padrão (`where <coluna> > (select max(<coluna>) from {{ this }})`), sem
       `run_query` no `INFORMATION_SCHEMA`;
-    - a coluna de partição da staging não é convertida para `DATE` no filtro, para o BigQuery ler
-      só as pastas novas;
+    - a coluna de partição da staging não é convertida para `DATE` no filtro, para reduzir os
+      custos do BigQuery;
     - o PR diz se a mudança precisa de `--full-refresh` para o histórico ficar consistente, e
       quanto ele custa.
 - [ ] O modelo não traz `pre_hook` que apaga as regras de acesso: a service account do dbt tem
@@ -95,12 +93,14 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
 
 Confira o `schema.yml` contra os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
 
-- [ ] A chave única vem do que cada linha representa. Se o autor testou várias combinações até uma
-  passar, peça para definir a chave a partir do significado da linha.
+- [ ] A chave única vem do que cada linha representa.
 - [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
 - [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
 - [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
   tolerante tem a medição e o motivo no README.
+- [ ] Toda exceção nos testes (`ignore_values`, tolerâncias, testes em `warn`) está documentada e
+  justificada no README. Para cada uma, avalie se é um problema que podemos resolver no
+  tratamento ou se é inerente à fonte e deve passar.
 
 ### 7. Conferir o dado em dev
 
@@ -122,26 +122,24 @@ BigQuery.
 - [ ] Registra o que precisa ser investigado (por exemplo, linhas sem par no diretório) e os
   pedidos de esclarecimento via LAI.
 - [ ] É direto: explica o que alguém precisa saber para mexer no conjunto, sem narrar o processo.
-  Uma lista de alternativas que não diz por que foram descartadas sai ou ganha a justificativa.
+  Não inclui lista de alternativas de tratamento que não diz por que foram descartadas.
 
 ### 9. Conferir os metadados
 
 - [ ] A frequência de atualização no backend combina com a da fonte e com o `Cron`.
-- [ ] Em tabela `part_bdpro`, a faixa paga é definida pela coluna certa (a data que marca cada
-  carga ou período) e as duas coberturas, livre e paga, existem no backend.
+- [ ] Em tabela `part_bdpro`, a faixa paga é definida pela coluna certa e as duas coberturas, livre
+  e paga, existem no backend.
 - [ ] O check "Metadata validation" passou, se o PR tem `check-metadata`.
 
 ### 10. Escrever a review
 
 1. Deixe um comentário por linha para cada item que falhou, dizendo o que mudar e por quê. Seja
-   direto e cordial: "remover", "por que não colocar só na partição mais recente?".
+   direto e cordial.
 2. No corpo da review, resuma os pontos em uma lista e reconheça o que já foi resolvido.
 3. Envie como **Request changes** se algum item bloqueia o merge e como **Comment** se são só
-   sugestões. Confira se não ficou um rascunho pendente: comentários em rascunho não chegam ao
-   autor.
-4. Não corrija o código no lugar do autor. Para testar uma ideia antes de comentar, faça isso fora
-   da branch do PR.
-5. Feedback sobre a forma de trabalhar vai para a conversa individual, não para a review.
+   sugestões.
+4. Não corrija o código no lugar do autor. O processo de correção é um processo de aprendizagem
+   para o colega.
 
 ## Verificação
 
@@ -159,11 +157,6 @@ merge, confira:
   label foi aplicado com a staging de dev incompleta.
 - **Um teste dbt quebra sem que o código tenha mudado** — a fonte publicou um código novo que não
   está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste.
-- **O `custom_unique_combinations_of_columns` passa com muitas duplicatas** — o teste calcula a
-  proporção por grupo, não pelo total
-  ([issue #2324](https://github.com/basedosdados/pipelines/issues/2324)).
-- **Consultas filtradas por ano leem a tabela inteira** — o `end` do `partition_by` ficou no
-  passado.
 - **Coletas de teste aparecem em prod** — a staging de dev tinha cargas de teste quando o PR com
   `table-approve` foi mergeado. Apague essas pastas da staging de dev antes do merge.
 
