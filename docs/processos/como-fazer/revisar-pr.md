@@ -17,7 +17,7 @@ Guia para revisores de Pull Requests no repositório [`basedosdados/pipelines`](
 
 ## Passos
 
-Percorra as quatro áreas abaixo na ordem. Cada item é uma verificação binária — se algum falhar, deixe comentário no PR e bloqueie o merge até a correção.
+Percorra as cinco áreas abaixo na ordem. Cada item é uma verificação binária — se algum falhar, deixe comentário no PR e bloqueie o merge até a correção.
 
 ### 1. Verificar `schedule.py`
 
@@ -47,6 +47,18 @@ Percorra as quatro áreas abaixo na ordem. Cada item é uma verificação binár
 - [ ] O nome da tabela é amigável à leitura (acentos, conjunções, capitalização correta)
 - [ ] A ordem das colunas no Django bate com a do BigQuery
 
+### 5. Verificar o tratamento dos dados
+
+Confira o PR contra os [princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md), as [práticas de tratamento](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md) e os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
+
+- [ ] Toda transformação no `.sql` cabe em um dos quatro tipos de modificação, ou é uma exceção registrada no README do conjunto com o motivo
+- [ ] O PR não remove linhas da fonte (nada de `select distinct` ou filtro sem regra documentada) e, se a pipeline grava arquivos, chama `check_rows_written`
+- [ ] A cobertura temporal da tabela é a mesma da fonte original, ou a exceção está documentada
+- [ ] Em modelo incremental, o PR diz se a mudança precisa de `--full-refresh` e quanto custa
+- [ ] O `schema.yml` tem os testes obrigatórios, sem checagem repetida na mesma coluna e, em tabela grande, com o placeholder de partição
+- [ ] Limiares mais tolerantes que o padrão (`at_least` abaixo de `0.99`, `proportion_allowed_failures` acima de `0`) estão medidos e justificados no README
+- [ ] As decisões de tratamento estão no README do conjunto, e não só na descrição do PR
+
 ## Verificação
 
 Se todos os itens acima estão marcados, aprove o PR. Se algum falhou, deixe comentário apontando o item específico do checklist.
@@ -54,3 +66,4 @@ Se todos os itens acima estão marcados, aprove o PR. Se algum falhou, deixe com
 ## Ver também
 
 - [Como subir metadados de um conjunto e suas tabelas](../../governanca/metadados/como-fazer/subir-metadados.md) — rotina relacionada de subida de metadados
+- [Princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md) — o porquê da área 5

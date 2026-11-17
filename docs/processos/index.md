@@ -13,3 +13,4 @@ Fluxo de trabalho operacional da equipe dados: como abrimos issues, revisamos PR
 
 - [Escala de pontuação de tarefas](referencia/escala-de-pontuacao.md)
 - [Respostas-padrão para suporte (Discord / HubSpot)](referencia/respostas-padrao-suporte.md)
+- [Diagnóstico com evidência](referencia/diagnostico-com-evidencia.md)

@@ -83,6 +83,7 @@ nav:
     - Referência:
       - Escala de pontuação: processos/referencia/escala-de-pontuacao.md
       - Respostas-padrão de suporte: processos/referencia/respostas-padrao-suporte.md
+      - Diagnóstico com evidência: processos/referencia/diagnostico-com-evidencia.md
   - Infraestrutura:
     - infraestrutura/index.md
     - BigQuery: infraestrutura/bigquery/index.md
