@@ -1480,6 +1480,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Passo 7 — Upload de colunas a partir da arquitetura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#marcar-as-colunas-temporais-coverage_entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Marcar as colunas temporais (coverage_entity)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4176,6 +4193,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Passo 7 — Upload de colunas a partir da arquitetura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#marcar-as-colunas-temporais-coverage_entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Marcar as colunas temporais (coverage_entity)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4444,10 +4478,11 @@ humana explícita no checkpoint do workflow.</p>
    b. <code>ObservationLevel</code> (uma por entidade observada).
    c. Colunas via <code>upload_columns_from_sheet</code>.
    d. Ajustes coluna-a-coluna (<code>is_partition</code>, <code>is_primary_key</code>, EN/ES).
-   e. <code>CloudTable</code> (ponteiro para BigQuery).
-   f. <code>Coverage</code> + <code>DatetimeRange</code>.
-   g. <code>Update</code> (frequência/lag).
-   h. Re-<code>create_update_table</code> com <code>raw_data_source_ids</code> agora populado.</li>
+   e. <code>coverage_entity</code> nas colunas temporais (<code>ano</code>, <code>mes</code>, <code>data</code>...).
+   f. <code>CloudTable</code> (ponteiro para BigQuery).
+   g. <code>Coverage</code> + <code>DatetimeRange</code>.
+   h. <code>Update</code> (frequência/lag).
+   i. Re-<code>create_update_table</code> com <code>raw_data_source_ids</code> agora populado.</li>
 <li>(Opcional) <code>reorder_tables</code> e <code>reorder_observation_levels</code>.</li>
 </ol>
 <hr />
@@ -4635,57 +4670,117 @@ lote):</p>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;Año de referencia&quot;</span><span class="p">,</span>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="passo-8-cloudtable">Passo 8 — <code>CloudTable</code><a class="headerlink" href="#passo-8-cloudtable" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">mcp__databasis__create_update_cloud_table</span><span class="p">(</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">gcp_project_id</span><span class="o">=</span><span class="s2">&quot;basedosdados&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">gcp_dataset_id</span><span class="o">=</span><span class="s2">&quot;br_me_caged&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">gcp_table_id</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">)</span>
+<h4 id="marcar-as-colunas-temporais-coverage_entity">Marcar as colunas temporais (<code>coverage_entity</code>)<a class="headerlink" href="#marcar-as-colunas-temporais-coverage_entity" title="Permanent link">&para;</a></h4>
+<p>O pipeline e o <code>table-approve</code> não declaram mais a cobertura da tabela no
+código. Os dois chamam <code>register_table_materialization_task</code>, que lê do
+backend quais colunas carregam a data e qual o tipo de cobertura. Essa
+informação vem do campo <code>coverage_entity</code> de cada coluna.</p>
+<p>Marque as colunas que definem a granularidade temporal da tabela:</p>
+<table>
+<thead>
+<tr>
+<th>Granularidade</th>
+<th>Colunas a marcar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>anual</td>
+<td><code>ano</code> → <code>year</code></td>
+</tr>
+<tr>
+<td>mensal</td>
+<td><code>ano</code> → <code>year</code>, <code>mes</code> → <code>month</code></td>
+</tr>
+<tr>
+<td>trimestral</td>
+<td><code>ano</code> → <code>year</code>, <code>trimestre</code> → <code>quarter</code></td>
+</tr>
+<tr>
+<td>bimestral</td>
+<td><code>ano</code> → <code>year</code>, <code>bimestre</code> → <code>bimester</code></td>
+</tr>
+<tr>
+<td>diária</td>
+<td><code>data</code> → <code>date</code></td>
+</tr>
+</tbody>
+</table>
+<p>No CAGED, <code>ano</code> → <code>year</code> e <code>mes</code> → <code>month</code>. Tabela sem dimensão temporal
+(ex.: <code>dicionario</code>) não recebe marcação.</p>
+<p>A MCP ainda não expõe esse campo. Marque pelo Django admin, no campo
+<strong>Coverage entity</strong> da coluna, ou pela mutation <code>CreateUpdateColumn</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">mutation</span><span class="p">(</span><span class="nv">$input</span><span class="p">:</span><span class="w"> </span><span class="nc">CreateUpdateColumnInput</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="n">CreateUpdateColumn</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="nv">$input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="n">errors</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="n">column</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="n">coverageEntity</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">slug</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">}</span>
 </code></pre></div>
-<h3 id="passo-9-coverage-datetimerange-e-update">Passo 9 — <code>Coverage</code>, <code>DatetimeRange</code> e <code>Update</code><a class="headerlink" href="#passo-9-coverage-datetimerange-e-update" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">cov</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_coverage</span><span class="p">(</span>
+<p>com <code>input: {id: &lt;column_id&gt;, name: &lt;column_name&gt;, table: &lt;table_id&gt;, coverageEntity: &lt;id_entity&gt;}</code>.
+O <code>id_entity</code> vem de <code>discover_ids(keys=["entity"])</code> e muda entre dev e prod.</p>
+<div class="admonition warning">
+<p class="admonition-title">Marque <code>ano</code> antes de <code>mes</code></p>
+<p>O backend valida a combinação a cada coluna salva. <code>{year}</code> e
+<code>{year, month}</code> são válidas, <code>{month}</code> sozinha não é. Marcar <code>mes</code>
+antes de <code>ano</code> é rejeitado.</p>
+</div>
+<p>Sem a marcação, nada dá erro: a tabela é tratada como <code>non_historical</code>, a
+cobertura temporal não é atualizada e o filtro de BD Pro não é aplicado.</p>
+<h3 id="passo-8-cloudtable">Passo 8 — <code>CloudTable</code><a class="headerlink" href="#passo-8-cloudtable" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">mcp__databasis__create_update_cloud_table</span><span class="p">(</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">area_id</span><span class="o">=&lt;</span><span class="n">id_area_br</span><span class="o">&gt;</span><span class="p">,</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">)</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">mcp__databasis__create_update_datetime_range</span><span class="p">(</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">coverage_id</span><span class="o">=</span><span class="n">cov</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">start_year</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span> <span class="n">start_month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">end_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="n">end_month</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="n">is_closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="p">)</span>
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="n">mcp__databasis__create_update_update</span><span class="p">(</span>
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>    <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=&lt;</span><span class="n">id_entity_mes</span><span class="o">&gt;</span><span class="p">,</span>
-<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    <span class="n">lag</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
-<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="n">last_updated</span><span class="o">=</span><span class="s2">&quot;2026-05-25&quot;</span><span class="p">,</span>   <span class="c1"># SEMPRE a data de hoje, não a data do dado</span>
-<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="p">)</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">gcp_project_id</span><span class="o">=</span><span class="s2">&quot;basedosdados&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="n">gcp_dataset_id</span><span class="o">=</span><span class="s2">&quot;br_me_caged&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="n">gcp_table_id</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="passo-9-coverage-datetimerange-e-update">Passo 9 — <code>Coverage</code>, <code>DatetimeRange</code> e <code>Update</code><a class="headerlink" href="#passo-9-coverage-datetimerange-e-update" title="Permanent link">&para;</a></h3>
+<p>As <code>Coverage</code> definem o tipo de cobertura da tabela: só a aberta
+(<code>is_closed=False</code>) é <code>all_free</code>; aberta + BD Pro (<code>is_closed=True</code>) é
+<code>part_bdpro</code>; só BD Pro é <code>all_bdpro</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">cov</span> <span class="o">=</span> <span class="n">mcp__databasis__create_update_coverage</span><span class="p">(</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">area_id</span><span class="o">=&lt;</span><span class="n">id_area_br</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="p">)</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">mcp__databasis__create_update_datetime_range</span><span class="p">(</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="n">coverage_id</span><span class="o">=</span><span class="n">cov</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">start_year</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span> <span class="n">start_month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="n">end_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="n">end_month</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="n">is_closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="p">)</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="n">mcp__databasis__create_update_update</span><span class="p">(</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>    <span class="n">table_id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>    <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">entity_id</span><span class="o">=&lt;</span><span class="n">id_entity_mes</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    <span class="n">lag</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>    <span class="n">last_updated</span><span class="o">=</span><span class="s2">&quot;2026-05-25&quot;</span><span class="p">,</span>   <span class="c1"># SEMPRE a data de hoje, não a data do dado</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="passo-10-religar-raw_data_source_ids-deferred-update">Passo 10 — Religar <code>raw_data_source_ids</code> (deferred update)<a class="headerlink" href="#passo-10-religar-raw_data_source_ids-deferred-update" title="Permanent link">&para;</a></h3>
 <p>A M2M de raw sources só é populada num <strong>segundo</strong> <code>create_update_table</code>,
 passando <strong>todos</strong> os campos obrigatórios de novo (a API não suporta update
 parcial):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">mcp__databasis__create_update_table</span><span class="p">(</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="nb">id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">dataset_id</span><span class="o">=&lt;</span><span class="n">dataset_id</span><span class="o">&gt;</span><span class="p">,</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">name_pt</span><span class="o">=</span><span class="s2">&quot;Microdados de Movimentação&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">name_en</span><span class="o">=</span><span class="s2">&quot;Worker Movement Microdata&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">name_es</span><span class="o">=</span><span class="s2">&quot;Microdatos de Movimiento&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="n">description_pt</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">status_id</span><span class="o">=&lt;</span><span class="n">id_status_published</span><span class="o">&gt;</span><span class="p">,</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="n">published_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">data_cleaned_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
-<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="n">raw_data_source_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id1</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">id2</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">mcp__databasis__create_update_table</span><span class="p">(</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="nb">id</span><span class="o">=</span><span class="n">table_id</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;microdados_movimentacao&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">dataset_id</span><span class="o">=&lt;</span><span class="n">dataset_id</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="n">name_pt</span><span class="o">=</span><span class="s2">&quot;Microdados de Movimentação&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">name_en</span><span class="o">=</span><span class="s2">&quot;Worker Movement Microdata&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">name_es</span><span class="o">=</span><span class="s2">&quot;Microdatos de Movimiento&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="n">description_pt</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_en</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">description_es</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="n">status_id</span><span class="o">=&lt;</span><span class="n">id_status_published</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">published_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">data_cleaned_by_ids</span><span class="o">=</span><span class="p">[</span><span class="n">account_id</span><span class="p">],</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>    <span class="n">raw_data_source_ids</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">id1</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">id2</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="passo-11-verificar">Passo 11 — Verificar<a class="headerlink" href="#passo-11-verificar" title="Permanent link">&para;</a></h3>
 <p>Verifique no admin:</p>
@@ -4694,8 +4789,21 @@ parcial):</p>
 <li>site:  https://basedosdados.org/dataset/<slug></li>
 </ul>
 <p>Ou via MCP:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">mcp__databasis__get_dataset</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="s2">&quot;caged&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">mcp__databasis__get_dataset</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="s2">&quot;caged&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="s2">&quot;prod&quot;</span><span class="p">)</span>
 </code></pre></div>
+<p>Para conferir a cobertura que o pipeline vai ler, consulte <code>coverageSpec</code>
+no GraphQL com os IDs do GCP:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">query</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="n">coverageSpec</span><span class="p">(</span><span class="n">datasetId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;br_me_caged&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tableId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;microdados_movimentacao&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="n">tier</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">dateColumnKind</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="n">coverageColumns</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="n">entity</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">}</span>
+</code></pre></div>
+<p>Para o CAGED, o esperado é <code>dateColumnKind="year_month"</code>, com <code>ano</code> e <code>mes</code>
+em <code>coverageColumns</code>. Uma tabela temporal que retorna <code>non_historical</code> não
+foi marcada.</p>
 <hr />
 <h2 id="referencia-de-campos">Referência de campos<a class="headerlink" href="#referencia-de-campos" title="Permanent link">&para;</a></h2>
 <h3 id="dataset"><code>Dataset</code><a class="headerlink" href="#dataset" title="Permanent link">&para;</a></h3>
@@ -4979,6 +5087,8 @@ arquitetura segue <code>.claude/rules/data-basis-style.md</code>:</p>
 <li><code>is_partition=True</code> para colunas de partição (<code>ano</code>, <code>mes</code>, <code>sigla_uf</code>, <code>id_municipio</code>).</li>
 <li><code>is_primary_key=True</code> para a PK lógica da granularidade.</li>
 <li><code>description_en</code> / <code>description_es</code> se ainda não estiverem na planilha.</li>
+<li><code>coverage_entity</code> nas colunas temporais (ver Passo 7). Não vem da
+  planilha nem da MCP.</li>
 </ul>
 <h3 id="cloudtable"><code>CloudTable</code><a class="headerlink" href="#cloudtable" title="Permanent link">&para;</a></h3>
 <table>
@@ -5123,24 +5233,25 @@ prossiga sem o "approved" explícito.</p>
 </ul>
 <hr />
 <h2 id="apendice-ordem-de-execucao-resumida">Apêndice: ordem de execução resumida<a class="headerlink" href="#apendice-ordem-de-execucao-resumida" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>1.  discover_ids                       → IDs de status, theme, org, etc.
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>2.  get_dataset(slug)                  → existe? captura id
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>3.  get_authenticated_account          → account_id
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>4.  create_update_dataset              → dataset_id
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>5.  create_update_raw_data_source ×N   → raw_ids
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>loop por tabela:
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>6.  create_update_table                → table_id (sem raw_ids)
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>7.  create_update_observation_level ×N → ol_ids
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>8.  upload_columns_from_sheet          → colunas em lote
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>9.  update_column ×N                   → is_partition/is_pk/EN/ES
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>10. create_update_cloud_table          → ponteiro BQ
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>11. create_update_coverage             → cov_id
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>12. create_update_datetime_range       → intervalo temporal
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>13. create_update_update               → frequency/lag/last_updated=hoje
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>14. create_update_table(id=...)        → religa raw_data_source_ids
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>fim do loop
-<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>15. reorder_tables / reorder_obs_levels (opcional)
-<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>16. checkpoint → aprovação humana → repetir 4–15 em prod
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>1.  discover_ids                       → IDs de status, theme, org, etc.
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>2.  get_dataset(slug)                  → existe? captura id
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>3.  get_authenticated_account          → account_id
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>4.  create_update_dataset              → dataset_id
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>5.  create_update_raw_data_source ×N   → raw_ids
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>loop por tabela:
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>6.  create_update_table                → table_id (sem raw_ids)
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>7.  create_update_observation_level ×N → ol_ids
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>8.  upload_columns_from_sheet          → colunas em lote
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>9.  update_column ×N                   → is_partition/is_pk/EN/ES
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>9b. coverage_entity (admin/GraphQL)    → ano antes de mes
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>10. create_update_cloud_table          → ponteiro BQ
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>11. create_update_coverage             → cov_id
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>12. create_update_datetime_range       → intervalo temporal
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>13. create_update_update               → frequency/lag/last_updated=hoje
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>14. create_update_table(id=...)        → religa raw_data_source_ids
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>fim do loop
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>15. reorder_tables / reorder_obs_levels (opcional)
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>16. checkpoint → aprovação humana → repetir 4–15 em prod
 </code></pre></div>
 
 

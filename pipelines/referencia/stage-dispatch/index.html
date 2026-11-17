@@ -4209,7 +4209,7 @@ racional de design.</p>
 <tr>
 <td><code>compare_against</code></td>
 <td><code>str</code> (default <code>"coverage"</code>)</td>
-<td><code>"coverage"</code> lê <code>Coverage.DateTimeRange</code>; <code>"table_update"</code> lê <code>Table.Update.latest</code> — necessário pra tabelas <code>NonHistorical</code>, sem baseline de coverage confiável</td>
+<td><code>"coverage"</code> lê <code>Coverage.DateTimeRange</code>; <code>"table_update"</code> lê <code>Table.Update.latest</code> — necessário pra tabelas <code>non_historical</code>, sem baseline de coverage confiável</td>
 </tr>
 </tbody>
 </table>
@@ -4224,11 +4224,6 @@ racional de design.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>coverage</code></td>
-<td><code>dict</code></td>
-<td><code>CoverageSpec.model_dump()</code> (<code>AllFree</code>/<code>AllBdpro</code>/<code>PartBdpro</code>/<code>NonHistorical</code>, ver <code>pipelines.utils.metadata.domain</code>)</td>
-</tr>
 <tr>
 <td><code>data_path</code></td>
 <td><code>str</code></td>
@@ -4422,7 +4417,7 @@ está rodando, nunca configurado pelo dataset.</p>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="k">return</span> <span class="n">SourceInspection</span><span class="p">(</span><span class="n">reference_date</span><span class="o">=</span><span class="n">data_encontrada</span><span class="p">)</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract_load_data</span><span class="p">(</span><span class="n">download_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExtractAndLoad</span><span class="p">:</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="k">return</span> <span class="n">ExtractAndLoad</span><span class="p">(</span><span class="n">coverage</span><span class="o">=</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">data_path</span><span class="o">=</span><span class="n">caminho_local</span><span class="p">)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="k">return</span> <span class="n">ExtractAndLoad</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">caminho_local</span><span class="p">)</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">CheckThenExtractLoadPipeline</span><span class="p">(</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">dataset_id</span><span class="o">=</span><span class="n">DATASET_ID</span><span class="p">,</span>

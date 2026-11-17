@@ -4011,10 +4011,44 @@
 <ul>
 <li>Frequência de atualização</li>
 <li>Cobertura temporal</li>
+<li><code>Coverage entity</code> nas colunas temporais (ver abaixo)</li>
 <li>Vinculação com diretórios</li>
 <li>Nível de observação</li>
 <li>Partições no BigQuery (em nível de coluna, quando aplicável)</li>
 </ul>
+<p>Em toda tabela com dimensão temporal, preencha o campo <code>Coverage entity</code> das colunas de data:</p>
+<table>
+<thead>
+<tr>
+<th>Granularidade</th>
+<th>Colunas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>anual</td>
+<td><code>ano</code> → <code>year</code></td>
+</tr>
+<tr>
+<td>mensal</td>
+<td><code>ano</code> → <code>year</code>, <code>mes</code> → <code>month</code></td>
+</tr>
+<tr>
+<td>trimestral</td>
+<td><code>ano</code> → <code>year</code>, <code>trimestre</code> → <code>quarter</code></td>
+</tr>
+<tr>
+<td>bimestral</td>
+<td><code>ano</code> → <code>year</code>, <code>bimestre</code> → <code>bimester</code></td>
+</tr>
+<tr>
+<td>diária</td>
+<td><code>data</code> → <code>date</code></td>
+</tr>
+</tbody>
+</table>
+<p>Salve <code>ano</code> antes de <code>mes</code>, <code>trimestre</code> ou <code>bimestre</code>. O backend rejeita <code>month</code> sem <code>year</code>.</p>
+<p>O pipeline e o <code>table-approve</code> leem esse campo para atualizar a cobertura temporal e aplicar o filtro de BD Pro. Sem ele, a cobertura não é atualizada, e não aparece erro.</p>
 <h3 id="etapa-4-verificacao-final">Etapa 4 — Verificação final<a class="headerlink" href="#etapa-4-verificacao-final" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Atualizar as tabelas modificadas no BigQuery.</li>
@@ -4028,11 +4062,13 @@
 <li>Todos os campos obrigatórios estão preenchidos</li>
 <li>A ordem das colunas no Django bate com a do BigQuery</li>
 <li>A frequência de atualização e a cobertura temporal estão consistentes com a fonte</li>
+<li>As colunas temporais têm <code>Coverage entity</code> preenchido; a página da tabela no admin lista essas colunas</li>
 </ul>
 <h2 id="problemas-comuns">Problemas comuns<a class="headerlink" href="#problemas-comuns" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Campo obrigatório vazio bloqueia publicação</strong> — confira a lista de obrigatórios; só <code>Arquivos auxiliares</code> e <code>Partições no BigQuery</code> são opcionais.</li>
 <li><strong>Ordem de colunas divergente entre Django e BQ</strong> — corrija no Django para refletir o BigQuery, não o contrário.</li>
+<li><strong>Erro ao salvar <code>Coverage entity</code> em <code>mes</code></strong> — a coluna <code>ano</code> ainda não foi marcada como <code>year</code>. Marque <code>ano</code> primeiro.</li>
 </ul>
 <h2 id="ver-tambem">Ver também<a class="headerlink" href="#ver-tambem" title="Permanent link">&para;</a></h2>
 <ul>

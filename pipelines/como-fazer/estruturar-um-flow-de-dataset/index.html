@@ -4072,27 +4072,20 @@ a eventos (<code>check_update</code> → <code>extract_and_load</code> → <code
 <p>Povoar o arquivo com constantes tais como:
 - <code>DATSET_ID</code>, 
 - um <code>TABLE_ID</code> por tabela, 
-- o tipo de <code>Coverage</code> de cada uma (<code>PartBdpro</code>/<code>AllFree</code>/<code>NonHistorical</code>, ver <code>pipelines/utils/metadata/domain.py</code>);
 - valores imutáveis reaproveitados nas <em>tasks</em> do <em>flow</em>.  </p>
+<p>A cobertura de cada tabela não entra no <code>constants.py</code>. O pipeline busca no backend o tipo de cobertura e as colunas de data. Antes do primeiro run, as colunas temporais da tabela precisam ter <code>coverage_entity</code> marcado no backend de prod (ver <a href="../../../infraestrutura/prefect/como-fazer/registrar-metadados/">Registrar metadados</a>).</p>
 <p><strong>Exemplo:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pipelines.utils.metadata.domain</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">DateFormat</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">DateOnly</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">NonHistorical</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">PartBdpro</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">&quot;br_rf_cnpj&quot;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">EMPRESAS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;empresas&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">ESTABELECIMENTOS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;estabelecimentos&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">SOCIOS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;socios&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">SIMPLES_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;simples&quot;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">DICIONARIO_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;dicionario&quot;</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">&quot;br_rf_cnpj&quot;</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">EMPRESAS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;empresas&quot;</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">ESTABELECIMENTOS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;estabelecimentos&quot;</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">SOCIOS_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;socios&quot;</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">SIMPLES_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;simples&quot;</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">DICIONARIO_TABLE_ID</span> <span class="o">=</span> <span class="s2">&quot;dicionario&quot;</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># Parâmetros de download</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">DOWNLOAD_CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">DOWNLOAD_MAX_RETRIES</span> <span class="o">=</span> <span class="mi">5</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="o">...</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Parâmetros de download</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">DOWNLOAD_CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">DOWNLOAD_MAX_RETRIES</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="o">...</span>
 </code></pre></div>
 <h3 id="2-pipelinesdatasetsdataset_idtaskspyget_latest_update">2. <code>pipelines/datasets/&lt;dataset_id&gt;/tasks.py:get_latest_update</code><a class="headerlink" href="#2-pipelinesdatasetsdataset_idtaskspyget_latest_update" title="Permanent link">&para;</a></h3>
 <p>Descobre a data de referência na fonte e devolve um <code>SourceInspection</code>. <strong>Não
@@ -4124,7 +4117,7 @@ verdade e devolve um <code>ExtractAndLoad</code>.</p>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract_load_data</span><span class="p">(</span><span class="n">download_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExtractAndLoad</span><span class="p">:</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">ref</span> <span class="o">=</span> <span class="n">download_params</span><span class="p">[</span><span class="s2">&quot;reference_date&quot;</span><span class="p">]</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="c1"># baixa o dado de verdade, de forma independente do check_update</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">return</span> <span class="n">ExtractAndLoad</span><span class="p">(</span><span class="n">coverage</span><span class="o">=</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">data_path</span><span class="o">=</span><span class="n">caminho_local</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">return</span> <span class="n">ExtractAndLoad</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">caminho_local</span><span class="p">)</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">return</span> <span class="n">extract_load_data</span>
 </code></pre></div>
 <p><strong>Nunca chama <code>upload_to_gcs</code> diretamente</strong> — o encapsulamento
