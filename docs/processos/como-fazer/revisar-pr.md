@@ -76,7 +76,8 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
   ou é uma exceção registrada no README do conjunto, com o motivo e o custo de processamento.
 - [ ] Nenhum `select distinct` ou filtro remove linhas da fonte sem uma regra documentada.
 - [ ] Cada partição (ou cluster) tem pelo menos 1 GB. Se não tiver, a tabela não deve ser
-  particionada.
+  particionada. O tamanho de cada partição está em `INFORMATION_SCHEMA.PARTITIONS` (coluna
+  `total_logical_bytes`).
 - [ ] O `range` de `partition_by` cobre os próximos anos. Um `end` no passado faz as linhas novas
   irem para `__UNPARTITIONED__`, e as consultas filtradas por ano passam a ler a tabela inteira.
 - [ ] Em modelo incremental:

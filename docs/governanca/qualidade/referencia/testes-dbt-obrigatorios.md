@@ -21,11 +21,10 @@ para PRs novos: tabelas que já estão publicadas se adequam quando forem altera
 
 Regras para todos os testes:
 
-- **Partição nova em tabelas grandes.** Uma tabela é grande quando tem alguma partição maior que
-  1 GB ou tamanho total maior que 5 GB. O tamanho total aparece em "Detalhes" da tabela no
-  console do BigQuery, e o de cada partição em `INFORMATION_SCHEMA.PARTITIONS` (coluna
-  `total_logical_bytes`). Em tabelas grandes, todo teste usa `config: where:` com um dos
-  placeholders de partição (tabela abaixo). Tabelas menores podem rodar os testes na tabela toda.
+- **Partição nova em tabelas grandes.** Uma tabela é grande quando é particionada ou tem tamanho
+  total maior que 5 GB. O tamanho total aparece em "Detalhes" da tabela no console do BigQuery.
+  Em tabelas grandes, todo teste usa `config: where:` com um dos placeholders de partição (tabela
+  abaixo). Tabelas menores podem rodar os testes na tabela toda.
 - **Severidade `error`.** Um teste que falha bloqueia a publicação. `warn` só com justificativa no
   README do conjunto.
 - **Sem repetição.** Uma coluna não passa duas vezes pelo mesmo tipo de checagem (por exemplo,
@@ -127,8 +126,8 @@ models:
                 where: __most_recent_year_month__
 ```
 
-O exemplo é de uma tabela grande (partição maior que 1 GB ou total maior que 5 GB). Numa tabela
-menor, os blocos `config: where:` podem sair.
+O exemplo é de uma tabela grande (particionada ou com mais de 5 GB). Numa tabela menor, os blocos
+`config: where:` podem sair.
 
 ## Ver também
 
