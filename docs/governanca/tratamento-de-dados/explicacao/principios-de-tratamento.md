@@ -37,14 +37,19 @@ Toda modificação no dado da fonte cabe em um destes quatro tipos. Os detalhes 
     - remover colunas com o nome de uma entidade que já tem diretório. Por exemplo, a tabela não
       leva a coluna `municipio` quando já tem `id_municipio`: o nome vem do diretório de municípios
       pelo `id_municipio` e fica escrito do mesmo jeito em todo o datalake.
-2. **Correção de tipo e formato.** Corrigimos o tipo de colunas que a leitura do arquivo da fonte
-   interpretou errado. Por exemplo, um código de município como `3304557` pode ser lido como número
-   decimal e aparecer como `3304557.0`. Como é um código, e não uma quantidade, tiramos o `.0` e
-   guardamos a coluna como texto (`STRING`). Isso inclui:
-    - decimal com ponto, data `YYYY-MM-DD`, hora `HH:MM:SS`, datetime ISO-8601 e nulo vazio;
-    - variáveis categóricas com inicial maiúscula e o resto minúsculo, com acentos, e valores de
-      dicionário sem espaços extras. Isso deixa o dado mais fácil de usar sem alterar nada
-      essencial. Texto livre fica igual ao original.
+2. **Correção de tipo e formato.** Cada valor é guardado com o tipo e o formato do que ele
+   representa, iguais em todo o datalake. Isso inclui:
+    - guardar códigos como texto (`STRING`), e não como número. Ao ler o arquivo da fonte, um código
+      como o de município (`3304557`) pode ser interpretado como número decimal e virar
+      `3304557.0`. Como não se faz conta com um código, tiramos o `.0` e o guardamos como texto:
+      `3304557.0` vira `"3304557"`;
+    - escrever números, datas e horas num formato único: decimal com ponto (`1234,56` vira
+      `1234.56`), data `YYYY-MM-DD` (`31/12/2025` vira `2025-12-31`), hora `HH:MM:SS` e data com
+      hora no padrão ISO-8601. Valor ausente fica nulo;
+    - escrever categorias com inicial maiúscula e o resto minúsculo (`ENSINO MÉDIO` vira
+      `Ensino médio`) e tirar espaços extras dos valores de dicionário. Isso deixa o dado mais
+      fácil de usar sem alterar nada essencial. Texto livre (nomes, endereços, descrições) fica
+      igual ao original.
 3. **Padronização de unidades.** Valores na mesma unidade em todo o datalake. Isso inclui:
     - moedas antigas convertidas para a atual (por exemplo, Cruzeiro para Real);
     - unidades com base 1 (`BRL` em vez de `1000 BRL`);
@@ -90,11 +95,11 @@ Uma transformação que não cabe em nenhum dos quatro tipos não entra no dado 
 
 ## Ver também
 
-- [Práticas de tratamento](referencia-praticas-de-tratamento.md) — como a equipe garante estes
+- [Práticas de tratamento](../referencia/praticas-de-tratamento.md) — como a equipe garante estes
   princípios no pipeline, no dbt e na revisão de PR.
-- [Testes dbt obrigatórios](../qualidade/referencia/testes-dbt-obrigatorios.md) — o conjunto
+- [Testes dbt obrigatórios](../../qualidade/referencia/testes-dbt-obrigatorios.md) — o conjunto
   mínimo de testes de toda tabela e o princípio que cada um protege.
-- [Manual de estilo](../metadados/explicacao-manual-de-estilo.md) — o papel do manual na
+- [Manual de estilo](../../metadados/explicacao-manual-de-estilo.md) — o papel do manual na
   infraestrutura da BD.
 - [Manual de estilo (site público)](https://basedosdados.org/docs/style_data) — fonte canônica das
   regras de formato.

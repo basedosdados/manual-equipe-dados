@@ -157,8 +157,8 @@ nav:
         - "ADR-0001 — Manter tabelas de arquitetura no Drive": governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md
     - Tratamento de dados:
       - governanca/tratamento-de-dados/index.md
-      - Princípios de tratamento: governanca/tratamento-de-dados/explicacao-principios-de-tratamento.md
-      - Práticas de tratamento: governanca/tratamento-de-dados/referencia-praticas-de-tratamento.md
+      - Princípios de tratamento: governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md
+      - Práticas de tratamento: governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md
     - Qualidade:
       - governanca/qualidade/index.md
       - Referência:
