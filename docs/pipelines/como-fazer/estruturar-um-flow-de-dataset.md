@@ -29,19 +29,13 @@ A variante `check_and_download` não tem código real (ver [explicação](../exp
 Povoar o arquivo com constantes tais como:
 - `DATSET_ID`, 
 - um `TABLE_ID` por tabela, 
-- o tipo de `Coverage` de cada uma (`PartBdpro`/`AllFree`/`NonHistorical`, ver `pipelines/utils/metadata/domain.py`);
 - valores imutáveis reaproveitados nas _tasks_ do _flow_.  
+
+A cobertura de cada tabela não entra no `constants.py`. O pipeline busca no backend o tipo de cobertura e as colunas de data. Antes do primeiro run, as colunas temporais da tabela precisam ter `coverage_entity` marcado no backend de prod (ver [Registrar metadados](../../infraestrutura/prefect/como-fazer/registrar-metadados.md)).
 
 **Exemplo:**
 
 ```python
-from pipelines.utils.metadata.domain import (
-    DateFormat,
-    DateOnly,
-    NonHistorical,
-    PartBdpro,
-)
-
 DATASET_ID = "br_rf_cnpj"
 EMPRESAS_TABLE_ID = "empresas"
 ESTABELECIMENTOS_TABLE_ID = "estabelecimentos"
@@ -92,7 +86,7 @@ def make_extract_load_data(table_id):
     def extract_load_data(download_params: dict) -> ExtractAndLoad:
         ref = download_params["reference_date"]
         # baixa o dado de verdade, de forma independente do check_update
-        return ExtractAndLoad(coverage=COVERAGE.model_dump(), data_path=caminho_local)
+        return ExtractAndLoad(data_path=caminho_local)
     return extract_load_data
 ```
 
