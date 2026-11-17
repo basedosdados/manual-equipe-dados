@@ -49,6 +49,18 @@
          <lastmod>2026-11-17</lastmod>
     </url>
     <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/tratamento-de-dados/</loc>
+         <lastmod>2026-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/tratamento-de-dados/explicacao/principios-de-tratamento/</loc>
+         <lastmod>2026-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/governanca/tratamento-de-dados/referencia/praticas-de-tratamento/</loc>
+         <lastmod>2026-11-17</lastmod>
+    </url>
+    <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/infraestrutura/</loc>
          <lastmod>2026-11-17</lastmod>
     </url>
@@ -245,6 +257,10 @@
          <lastmod>2026-11-17</lastmod>
     </url>
     <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/pipelines/referencia/testes-dbt-obrigatorios/</loc>
+         <lastmod>2026-11-17</lastmod>
+    </url>
+    <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/</loc>
          <lastmod>2026-11-17</lastmod>
     </url>
@@ -254,6 +270,10 @@
     </url>
     <url>
          <loc>https://basedosdados.github.io/manual-equipe-dados/processos/como-fazer/revisar-pr/</loc>
+         <lastmod>2026-11-17</lastmod>
+    </url>
+    <url>
+         <loc>https://basedosdados.github.io/manual-equipe-dados/processos/referencia/diagnostico-com-evidencia/</loc>
          <lastmod>2026-11-17</lastmod>
     </url>
     <url>
