@@ -7,3 +7,7 @@ Tutoriais guiados para novos membros da equipe dados. Diferente do resto do manu
 - [Setup do repositório de pipelines](setup-pipelines.md) — o que é o repositório `basedosdados/pipelines` e como deixar o ambiente local pronto para desenvolver.
 - [Fluxo de dados e infraestrutura](fluxo-de-dados-e-infraestrutura.md) — componentes da infra (GCS, BigQuery, Prefect, dbt, backend) e como o dado flui entre dev e prod, com diagramas para pipelines e para códigos semi-automatizados.
 - [Manual de estilo](manual-de-estilo.md) — porta de entrada para as convenções da BD (nomes, tipos, padronização). Leitura obrigatória antes de criar tabela ou preencher metadados.
+
+## Leitura obrigatória antes do primeiro PR
+
+- [Princípios de tratamento de dados](../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md) — o que a BD faz e o que não faz com o dado da fonte.
