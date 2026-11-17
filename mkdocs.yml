@@ -155,9 +155,14 @@ nav:
       - ADRs:
         - governanca/metadados/adr/index.md
         - "ADR-0001 — Manter tabelas de arquitetura no Drive": governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive.md
+    - Tratamento de dados:
+      - governanca/tratamento-de-dados/index.md
+      - Princípios de tratamento: governanca/tratamento-de-dados/explicacao-principios-de-tratamento.md
+      - Práticas de tratamento: governanca/tratamento-de-dados/referencia-praticas-de-tratamento.md
     - Qualidade:
       - governanca/qualidade/index.md
       - Referência:
         - Regras de metadados: governanca/qualidade/referencia/regras-metadados.md
+        - Testes dbt obrigatórios: governanca/qualidade/referencia/testes-dbt-obrigatorios.md
     - Acessos GCP: governanca/acessos-gcp/index.md
     - Custos: governanca/custos/index.md
