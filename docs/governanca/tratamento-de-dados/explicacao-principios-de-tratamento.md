@@ -34,10 +34,13 @@ Toda modificação no dado da fonte cabe em um destes quatro tipos. Os detalhes 
       `id_municipio_tse`);
     - tirar os zeros à esquerda de códigos que são só uma lista de categorias (`01` vira `1`) e
       mantê-los quando os dígitos têm significado (CBO, CEP);
-    - remover colunas de nome de entidades que estão em diretórios (por exemplo, `municipio` quando
-      já existe `id_municipio`), para que o nome seja o mesmo em todo o datalake.
-2. **Correção de tipo e formato.** Um código lido como número (por exemplo, `1234.0`) perde o `.0`
-   e passa a `STRING`. Isso inclui:
+    - remover colunas com o nome de uma entidade que já tem diretório. Por exemplo, a tabela não
+      leva a coluna `municipio` quando já tem `id_municipio`: o nome vem do diretório de municípios
+      pelo `id_municipio` e fica escrito do mesmo jeito em todo o datalake.
+2. **Correção de tipo e formato.** Corrigimos o tipo de colunas que a leitura do arquivo da fonte
+   interpretou errado. Por exemplo, um código de município como `3304557` pode ser lido como número
+   decimal e aparecer como `3304557.0`. Como é um código, e não uma quantidade, tiramos o `.0` e
+   guardamos a coluna como texto (`STRING`). Isso inclui:
     - decimal com ponto, data `YYYY-MM-DD`, hora `HH:MM:SS`, datetime ISO-8601 e nulo vazio;
     - variáveis categóricas com inicial maiúscula e o resto minúsculo, com acentos, e valores de
       dicionário sem espaços extras. Isso deixa o dado mais fácil de usar sem alterar nada
@@ -46,12 +49,16 @@ Toda modificação no dado da fonte cabe em um destes quatro tipos. Os detalhes 
     - moedas antigas convertidas para a atual (por exemplo, Cruzeiro para Real);
     - unidades com base 1 (`BRL` em vez de `1000 BRL`);
     - proporções entre 0 e 100.
-4. **Nomes de coluna e estrutura da tabela.** Renomeamos para que todo o datalake seja consistente
-   entre si. Isso inclui:
-    - formato `long` em vez de `wide`, quando possível;
-    - colunas usadas como partição (`ano`, `sigla_uf`) saem da tabela e viram partição, sem perda
-      de informação;
-    - retirar chaves irrelevantes (por exemplo, `regiao`).
+4. **Nomes de coluna e estrutura da tabela.** Renomeamos e organizamos as colunas para que todo o
+   datalake seja consistente entre si, seguindo estas seções do
+   [Manual de estilo](https://basedosdados.org/docs/style_data):
+    - "Nomeação de variáveis": nomes em minúsculas, sem acentos, com os prefixos permitidos;
+    - "Ordenamento de variáveis": chaves à esquerda, valores quantitativos à direita;
+    - "Formatos de tabelas": formato `long` em vez de `wide`, quando possível;
+    - "Quais variáveis manter, quais adicionar e quais remover": inclui retirar chaves irrelevantes
+      (por exemplo, `regiao`);
+    - "Particionamento de tabelas": colunas usadas como partição (`ano`, `sigla_uf`) saem da tabela
+      e viram partição, sem perda de informação.
 
 Uma transformação que não cabe em nenhum dos quatro tipos não entra no dado publicado.
 
@@ -60,9 +67,9 @@ Uma transformação que não cabe em nenhum dos quatro tipos não entra no dado 
 | Compromisso | O que significa na prática | Caso que motivou |
 |---|---|---|
 | Fidelidade à fonte | Toda transformação que muda um valor publicado (preencher zeros, anular valor malformado, limpar caracteres) é documentada no README do conjunto. Nada muda em silêncio. | PR #2212: limpeza de CEP e de caracteres de controle em `br_rf_cnpj.estabelecimentos` |
-| Nenhuma linha da fonte se perde | Toda linha lida da fonte chega à tabela publicada. Um descarte só é aceito se for uma regra documentada. Isso inclui as duplicatas da fonte: elas ficam na tabela e são descritas no guia de uso. Duplicata criada pelo nosso tratamento é bug e é corrigida. | PR #2212: linhas de `estabelecimentos` com `sigla_uf` fora da lista sumiam sem erro, e um `select distinct` removia duplicatas de `socios` |
+| Nenhuma linha da fonte se perde | Toda linha lida da fonte chega à tabela publicada. Um descarte só é aceito se for uma regra documentada. Isso inclui as duplicatas da fonte: elas ficam na tabela e são descritas no guia de uso. Duplicata criada pelo nosso tratamento é bug e é corrigida. Conferir as linhas também ajuda a encontrar erros de tratamento: uma diferença entre linhas lidas e gravadas aponta um filtro, um join ou uma partição errada. | PR #2212: linhas de `estabelecimentos` com `sigla_uf` fora da lista sumiam sem erro, e um `select distinct` removia duplicatas de `socios` |
 | Cobertura temporal igual à da fonte original | A tabela cobre o mesmo período que a fonte original. Exceção: quando o formato do dado muda muito, o que exigiria muito tratamento, e os dados mais antigos não são tão relevantes para o interesse público. | `br_ms_sih.aihs_reduzidas`: a fonte tem dados desde 2008, a tabela só desde 2009 |
-| Série sem buracos | Um período faltando no meio da série é falha. Se a própria fonte não publicou, isso fica documentado. | Issue [#2322](https://github.com/basedosdados/pipelines/issues/2322): teste de buracos temporais |
+| Série sem buracos | Um período faltando no meio da série é falha. Se a própria fonte não publicou, isso fica documentado no README do conjunto e na descrição da tabela ou no guia de uso. | Issue [#2322](https://github.com/basedosdados/pipelines/issues/2322): teste de buracos temporais |
 | Histórico consistente | Uma mudança de tratamento vale para a série inteira. Quando não dá para reprocessar, a documentação diz a partir de quando ela vale. | PR #2212: modelos incrementais aplicariam a limpeza nova só nas partições futuras |
 
 ## Trade-offs e alternativas consideradas
@@ -70,7 +77,7 @@ Uma transformação que não cabe em nenhum dos quatro tipos não entra no dado 
 - **Tratar o dado para o usuário.** Seria possível entregar tabelas "limpas": sem duplicatas, com
   texto corrigido, com valores suspeitos anulados. Descartamos porque cada limpeza é uma
   interpretação, e quem usa o dado conhece melhor o contexto para fazê-la. Uma limpeza nossa também
-  esconde do usuário um problema que está na fonte.
+  pode tirar alguma informação que não sabemos que é relevante para quem usa o dado.
 - **Copiar a fonte sem nenhuma mudança.** Também descartado: sem padronizar chaves, tipos e unidades,
   duas tabelas que descrevem o mesmo município no mesmo ano não se cruzam. As quatro categorias de
   modificação são o mínimo para o datalake funcionar como um conjunto.

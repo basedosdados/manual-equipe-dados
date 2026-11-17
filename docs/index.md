@@ -208,7 +208,7 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 
 ### [Práticas de tratamento](governanca/tratamento-de-dados/referencia-praticas-de-tratamento.md)
 
-`referência` · As regras de engenharia verificadas na revisão de PR para garantir os princípios de tratamento: entender a chave única antes de testá-la, zero tolerância de perda de linhas (`check_rows_written`), justificativa e custo medido para toda transformação nova, corrigir a causa na medida do problema, testes só na partição nova e sem repetição, decisões registradas no README do conjunto, proveniência de códigos novos e diagnóstico com evidência. Cada prática traz o caso que a motivou e há um exemplo de registro de decisão no README.
+`referência` · As regras de engenharia verificadas na revisão de PR para garantir os princípios de tratamento: entender a chave única antes de testá-la, zero tolerância de perda de linhas (`check_rows_written`), justificativa e custo medido para toda transformação nova, corrigir a causa na medida do problema (ocorrências raras da fonte documentadas, com pedido via LAI ao órgão), testes só na partição nova em tabelas acima de 5 GB e sem repetição, decisões registradas no README do conjunto, proveniência de códigos novos e diagnóstico com evidência antes de afirmar qualquer coisa sobre os dados. Cada prática traz o caso que a motivou e há um exemplo de registro de decisão no README.
 
 ### [Qualidade de dados](governanca/qualidade/index.md)
 
@@ -220,7 +220,7 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 
 ### [Testes dbt obrigatórios](governanca/qualidade/referencia/testes-dbt-obrigatorios.md)
 
-`referência` · O conjunto mínimo de testes dbt que toda tabela publicada deve ter no `schema.yml`, cada um ligado ao princípio de tratamento que protege: `unique_combination_of_columns` com a chave que representa a linha, `not_null` nas colunas de chave, `not_null_proportion_multiple_columns`, `relationships`/`custom_relationships` contra os diretórios, `custom_dictionary_coverage`, `custom_row_count_variation` e `is_row_count_increasing`. Define as regras comuns (só a partição nova via placeholders de `where`, severidade `error`, sem repetir checagem na mesma coluna, limiares medidos), lista os placeholders de partição, a checagem `check_rows_written` fora do dbt e os princípios que ainda não têm teste automático. Traz um `schema.yml` de exemplo.
+`referência` · O conjunto mínimo de testes dbt que toda tabela publicada deve ter no `schema.yml`, cada um ligado ao princípio de tratamento que protege: `unique_combination_of_columns` com a chave que representa a linha (com as exceções de tabela sem chave única e de duplicatas da fonte, via `custom_unique_combinations_of_columns`), `not_null_proportion_multiple_columns` com `at_least: 0.99`, `relationships`/`custom_relationships` contra os diretórios e `custom_dictionary_coverage`. Traz como recomendados, não obrigatórios, `custom_row_count_variation` e `is_row_count_increasing`. Define as regras comuns (placeholders de partição em tabelas acima de 5 GB, severidade `error`, sem repetir checagem na mesma coluna, limiares medidos), lista os placeholders, as checagens fora do dbt (`check_rows_written` e a cobertura temporal no painel do Metabase) e os princípios ainda sem teste automático. Traz um `schema.yml` de exemplo.
 
 ### [Acessos GCP](governanca/acessos-gcp/index.md)
 
