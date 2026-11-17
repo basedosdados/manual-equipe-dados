@@ -103,7 +103,7 @@ README do conjunto registra o que foi feito, o motivo e a partir de quando vale.
 
 - [Práticas de tratamento](../referencia/praticas-de-tratamento.md) — como a equipe garante estes
   princípios no pipeline, no dbt e na revisão de PR.
-- [Testes dbt obrigatórios](../../qualidade/referencia/testes-dbt-obrigatorios.md) — o conjunto
+- [Testes dbt obrigatórios](../../../pipelines/referencia/testes-dbt-obrigatorios.md) — o conjunto
   mínimo de testes de toda tabela e o princípio que cada um protege.
 - [Manual de estilo](../../metadados/explicacao-manual-de-estilo.md) — o papel do manual na
   infraestrutura da BD.

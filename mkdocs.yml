@@ -131,6 +131,7 @@ nav:
       - Usar o proxy com IP brasileiro: pipelines/como-fazer/usar-proxy-ip-brasileiro.md
     - Referência:
       - stage_dispatch.py: pipelines/referencia/stage-dispatch.md
+      - Testes dbt obrigatórios: pipelines/referencia/testes-dbt-obrigatorios.md
       - Rodar um flow localmente: pipelines/como-fazer/rodar-flow-localmente.md
     - ADRs:
       - pipelines/adr/index.md
@@ -164,6 +165,5 @@ nav:
       - governanca/qualidade/index.md
       - Referência:
         - Regras de metadados: governanca/qualidade/referencia/regras-metadados.md
-        - Testes dbt obrigatórios: governanca/qualidade/referencia/testes-dbt-obrigatorios.md
     - Acessos GCP: governanca/acessos-gcp/index.md
     - Custos: governanca/custos/index.md

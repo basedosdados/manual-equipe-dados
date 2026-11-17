@@ -16,7 +16,7 @@ faz as correções.
   ao admin do backend de metadados.
 - Ter lido os [princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md),
   as [práticas de tratamento](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md)
-  e os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
+  e os [testes dbt obrigatórios](../../pipelines/referencia/testes-dbt-obrigatorios.md).
 
 ## Passos
 
@@ -92,7 +92,7 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
 
 ### 6. Revisar os testes dbt
 
-Confira o `schema.yml` contra os [testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md).
+Confira o `schema.yml` contra os [testes dbt obrigatórios](../../pipelines/referencia/testes-dbt-obrigatorios.md).
 
 - [ ] A chave única vem do que cada linha representa.
 - [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
@@ -165,7 +165,7 @@ merge, confira:
 
 - [Princípios de tratamento de dados](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md)
   — o porquê das etapas 4 a 8.
-- [Testes dbt obrigatórios](../../governanca/qualidade/referencia/testes-dbt-obrigatorios.md) — a
+- [Testes dbt obrigatórios](../../pipelines/referencia/testes-dbt-obrigatorios.md) — a
   referência da etapa 6.
 - [Abrir um pull request](../../pipelines/como-fazer/abrir-pr.md) — as labels de CI.
 - [Como estruturar um flow de dataset](../../pipelines/como-fazer/estruturar-um-flow-de-dataset.md)
