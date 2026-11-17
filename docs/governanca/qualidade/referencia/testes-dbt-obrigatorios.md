@@ -54,6 +54,7 @@ Regras para todos os testes:
 > **Atenção:** o `custom_unique_combinations_of_columns` calcula a proporção **por grupo
 > repetido** (linhas de um mesmo valor de chave ÷ total de linhas), não pela soma de todas as
 > duplicatas. Com o padrão de `0.05`, ele quase nunca falha. Use um valor bem baixo e meça antes.
+> A correção do cálculo está na issue [#2324](https://github.com/basedosdados/pipelines/issues/2324).
 
 ### Testes recomendados (não obrigatórios)
 
