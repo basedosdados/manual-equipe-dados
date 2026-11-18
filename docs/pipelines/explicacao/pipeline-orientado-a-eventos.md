@@ -53,14 +53,14 @@ flowchart TD
         Download --> UploadDev["upload_to_gcs\n(staging dev)"]
     end
 
-    UploadDev --> Dispatch2["run_deployment()\ntimeout=0, as_subflow=True"]
+    UploadDev --> Dispatch2["run_deployment()\ntimeout=0, as_subflow=True\nenvia promote_to_prod\n(ver seção abaixo)"]
     Dispatch2 -.->|"dispara"| BP["build_and_promote\n(genérico — 1 só deployment,\ncompartilhado por TODOS os datasets)"]
 
     subgraph podC["Pod C — novo pod, SEMPRE no pool de PROD"]
         BP --> DbtDev["dbt run/test\ntarget=dev"]
-        DbtDev --> PromoteCheck{"promote_to_prod?\n(derivado de onde o\nextract_and_load rodou,\nnão configurável pelo dataset)"}
-        PromoteCheck -->|"Não (rodou em dev)"| End3(["Fim — só dev"])
-        PromoteCheck -->|"Sim (rodou em prod)"| Transfer["transfer_files_to_prod_flow\n(subflow, mesmo pod)"]
+        DbtDev --> PromoteCheck{"promote_to_prod\nrecebido do Pod B\né True?"}
+        PromoteCheck -->|"Não — o Pod B rodou\nno pool de dev"| End3(["Fim — só dev"])
+        PromoteCheck -->|"Sim — o Pod B rodou\nno pool de prod"| Transfer["transfer_files_to_prod_flow\n(subflow, mesmo pod)"]
         Transfer --> DbtProd["dbt run/test\ntarget=prod"]
         DbtProd --> Metadata["register_table_materialization_task\n(atualiza coverage)"]
         Metadata --> End2(["Fim"])
@@ -91,13 +91,47 @@ com o número de datasets (N `check_update` + N `extract_and_load` + 1
 
 ### dev/prod é derivado, não configurado
 
-`deploy_flows.py` marca cada deployment com uma tag `env:dev`/`env:prod` conforme o
-pool de destino. Em runtime, `_dev_prefix()` lê essa tag pra resolver o prefixo
-`dev-` do próximo deployment a disparar. O ponto central de segurança:
-`promote_to_prod` (passado pro `build_and_promote`) **não é um campo que o dataset
-preenche** — é derivado de `_dev_prefix()`, ou seja, de onde o `extract_and_load`
-realmente rodou. Um teste em dev nunca promove pra prod de verdade, por garantia
-estrutural, não por configuração que o código do dataset possa (mal) definir.
+Cada flow de dataset tem dois deployments: um no pool `basedosdados` (prod) e um no
+pool `basedosdados-dev`, com o prefixo `dev-` no nome. Só o deployment de dev recebe
+a tag `env:dev`, que `deploy_flows.py` adiciona no deploy.
+
+O `build_and_promote` é a exceção: existe um deployment só, sempre no pool de prod,
+porque só a service account desse pool pode escrever em prod. Ele não sabe, pelo
+próprio pool, se a execução começou em dev ou em prod. Por isso quem decide é a
+etapa anterior:
+
+```mermaid
+flowchart LR
+    subgraph poolProd["pool basedosdados"]
+        ELP["extract_and_load\n(sem tag env:dev)"]
+    end
+    subgraph poolDev["pool basedosdados-dev"]
+        ELD["dev-extract_and_load\n(tag env:dev)"]
+    end
+    subgraph poolProd2["pool basedosdados"]
+        BP["build_and_promote"]
+    end
+
+    ELP -->|"promote_to_prod=True"| BP
+    ELD -->|"promote_to_prod=False"| BP
+    BP -->|"True"| Prod(["dbt em dev, promove\ne dbt em prod"])
+    BP -->|"False"| Dev(["só dbt em dev"])
+```
+
+Ao terminar, o `extract_and_load` chama `dispatch_build_and_promote`, que monta os
+parâmetros do `build_and_promote` com:
+
+```python
+"promote_to_prod": not _dev_prefix(),
+```
+
+`_dev_prefix()` procura a tag `env:dev` na execução atual. Se a tag está lá,
+`promote_to_prod` é `False`; se não está, é `True`.
+
+O ponto central de segurança: `promote_to_prod` **não é um campo que o dataset
+preenche**. Nem o `flows.py` nem o `ExtractAndLoad` devolvido pelo dataset têm esse
+campo. Um teste em dev nunca promove para prod, por garantia estrutural, e não por
+uma configuração que o código do dataset possa definir errado.
 
 ### Duas variantes
 
