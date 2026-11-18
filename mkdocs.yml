@@ -92,6 +92,7 @@ nav:
       - Explicação:
         - Arquitetura do Prefect 3: infraestrutura/prefect/explicacao/arquitetura-prefect-3.md
         - Workers: infraestrutura/prefect/explicacao/workers.md
+        - Pools e pods de uma execução: infraestrutura/prefect/explicacao/pools-e-pods.md
         - VM proxy com IP brasileiro: infraestrutura/prefect/explicacao/vm-proxy-ip-brasileiro.md
       - Como fazer:
         - Instalar o servidor Prefect 3: infraestrutura/prefect/como-fazer/instalar-servidor-prefect-3.md
