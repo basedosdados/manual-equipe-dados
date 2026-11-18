@@ -501,22 +501,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-pipelines-automatizadas-prefect" class="md-nav__link">
+  <a href="#1-pipelines-automatizadas-prefect-3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Pipelines automatizadas (Prefect)
+        1. Pipelines automatizadas (Prefect 3)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. Pipelines automatizadas (Prefect)">
+    <nav class="md-nav" aria-label="1. Pipelines automatizadas (Prefect 3)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fluxo-de-execucao" class="md-nav__link">
+  <a href="#pipeline-em-estagios-desenho-atual" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fluxo de execução
+        Pipeline em estágios (desenho atual)
       
     </span>
   </a>
@@ -524,10 +524,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variante-com-multiplas-tabelas-dicionario" class="md-nav__link">
+  <a href="#flow-unico-datasets-ainda-nao-migrados" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Variante com múltiplas tabelas + dicionário
+        Flow único (datasets ainda não migrados)
       
     </span>
   </a>
@@ -4082,22 +4082,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-pipelines-automatizadas-prefect" class="md-nav__link">
+  <a href="#1-pipelines-automatizadas-prefect-3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Pipelines automatizadas (Prefect)
+        1. Pipelines automatizadas (Prefect 3)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. Pipelines automatizadas (Prefect)">
+    <nav class="md-nav" aria-label="1. Pipelines automatizadas (Prefect 3)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fluxo-de-execucao" class="md-nav__link">
+  <a href="#pipeline-em-estagios-desenho-atual" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fluxo de execução
+        Pipeline em estágios (desenho atual)
       
     </span>
   </a>
@@ -4105,10 +4105,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variante-com-multiplas-tabelas-dicionario" class="md-nav__link">
+  <a href="#flow-unico-datasets-ainda-nao-migrados" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Variante com múltiplas tabelas + dicionário
+        Flow único (datasets ainda não migrados)
       
     </span>
   </a>
@@ -4209,7 +4209,7 @@
 <h1 id="fluxo-de-dados-e-infraestrutura">Fluxo de dados e infraestrutura<a class="headerlink" href="#fluxo-de-dados-e-infraestrutura" title="Permanent link">&para;</a></h1>
 <p>Guia de onboarding com o retrato dos componentes de infraestrutura usados pela equipe dados e de como o dado se move entre eles, da fonte original até a publicação no projeto <code>basedosdados</code>.</p>
 <blockquote>
-<p>Este documento substitui, para uso interno, a <a href="https://basedosdados.org/docs/colab_infrastructure#sistema-de-ingestão-de-dados">página de infraestrutura da BD</a>, que está defasada.</p>
+<p>Retrato da infraestrutura em novembro de 2026, já no Prefect 3. A <a href="https://basedosdados.org/docs/colab_infrastructure#sistema-de-ingestão-de-dados">página de infraestrutura no site da BD</a> descreve a arquitetura antiga.</p>
 </blockquote>
 <h2 id="componentes-da-infraestrutura">Componentes da infraestrutura<a class="headerlink" href="#componentes-da-infraestrutura" title="Permanent link">&para;</a></h2>
 <table>
@@ -4223,33 +4223,33 @@
 <tbody>
 <tr>
 <td>Orquestrador</td>
-<td><a href="https://docs-v1.prefect.io/">Prefect 1.x</a></td>
-<td>Agenda e executa <a href="../../glossario/#p">pipelines</a>. Storage dos flows em GCS, runtime em Kubernetes.</td>
+<td><a href="https://docs.prefect.io/v3/">Prefect 3</a> — <code>prefect3.basedosdados.org</code></td>
+<td>Agenda e executa as <a href="../../glossario/#p">pipelines</a>. Os flows rodam em pods no Kubernetes, disparados pelos workers. Ver <a href="../../infraestrutura/prefect/explicacao/arquitetura-prefect-3/">Arquitetura do Prefect 3</a>.</td>
 </tr>
 <tr>
 <td>Repositório de código</td>
 <td><a href="https://github.com/basedosdados/pipelines"><code>basedosdados/pipelines</code></a></td>
-<td>Hospeda flows Prefect, modelos dbt e a Action de deploy.</td>
+<td>Hospeda os flows, os modelos dbt e as GitHub Actions de CI, deploy e <code>table-approve</code>.</td>
 </tr>
 <tr>
-<td>Storage — zona de dev</td>
-<td>GCS bucket <strong><code>basedosdados-dev</code></strong></td>
-<td>Recebe os arquivos tratados pela pipeline (parquet/csv).</td>
+<td>Storage — dev</td>
+<td>GCS, bucket <strong><code>basedosdados-dev</code></strong></td>
+<td>Recebe os arquivos tratados (parquet/csv) que alimentam as tabelas externas de dev.</td>
 </tr>
 <tr>
-<td>Storage — zona de prod</td>
-<td>GCS bucket <strong><code>basedosdados-staging</code></strong></td>
-<td>Recebe os mesmos arquivos após validação, para produção.</td>
+<td>Storage — prod</td>
+<td>GCS, bucket <strong><code>basedosdados</code></strong></td>
+<td>Recebe os mesmos arquivos depois da validação em dev. A versão anterior vai para o bucket <code>basedosdados-backup</code>.</td>
 </tr>
 <tr>
 <td>Data warehouse — dev</td>
 <td>BigQuery, projeto <strong><code>basedosdados-dev</code></strong></td>
-<td>Mesmo projeto guarda <strong>as duas camadas</strong>: <code>&lt;dataset&gt;_staging</code> (tabelas externas sobre o bucket <code>basedosdados-dev</code>) e <code>&lt;dataset&gt;</code> (modelos materializados pelo dbt). Usado pela equipe para validação.</td>
+<td>Guarda <strong>as duas camadas</strong>: <code>&lt;dataset&gt;_staging</code> (tabelas externas sobre o bucket <code>basedosdados-dev</code>) e <code>&lt;dataset&gt;</code> (modelos materializados pelo dbt). Usado pela equipe para validação.</td>
 </tr>
 <tr>
 <td>Data warehouse — prod (staging)</td>
 <td>BigQuery, projeto <strong><code>basedosdados-staging</code></strong></td>
-<td>Camada de tabelas externas (<code>&lt;dataset&gt;_staging</code>) sobre o bucket <code>basedosdados-staging</code>. <strong>Não é exposto ao público.</strong></td>
+<td>Tabelas externas <code>&lt;dataset&gt;_staging</code> sobre o bucket <code>basedosdados</code>. <strong>Não é exposto ao público.</strong></td>
 </tr>
 <tr>
 <td>Data warehouse — prod (público)</td>
@@ -4259,7 +4259,7 @@
 <tr>
 <td>Transformação e testes</td>
 <td><a href="https://www.getdbt.com/">dbt</a></td>
-<td>Em dev: lê <code>basedosdados-dev.&lt;dataset&gt;_staging</code> e materializa em <code>basedosdados-dev.&lt;dataset&gt;</code> (<code>target=dev</code>). Em prod: lê <code>basedosdados-staging.&lt;dataset&gt;_staging</code> e materializa em <code>basedosdados.&lt;dataset&gt;</code> (<code>target=prod</code>) — projetos diferentes.</td>
+<td>Em dev (<code>target=dev</code>): lê <code>basedosdados-dev.&lt;dataset&gt;_staging</code> e materializa em <code>basedosdados-dev.&lt;dataset&gt;</code>. Em prod (<code>target=prod</code>): lê <code>basedosdados-staging.&lt;dataset&gt;_staging</code> e materializa em <code>basedosdados.&lt;dataset&gt;</code>.</td>
 </tr>
 <tr>
 <td>Metadados</td>
@@ -4269,7 +4269,7 @@
 <tr>
 <td>CI/CD</td>
 <td>GitHub Actions</td>
-<td>Deploy de flows para o Prefect e materialização em prod via label <code>table-approve</code>.</td>
+<td><code>ci.yaml</code> (testes do PR e labels <code>test-dev-model</code> / <code>check-metadata</code>), <code>cd-prefect3.yaml</code> (deploy dos flows no Prefect 3) e <code>table-approve.yaml</code> (promoção para prod no merge).</td>
 </tr>
 </tbody>
 </table>
@@ -4281,7 +4281,7 @@
     BQDEVSTG[(BigQuery&lt;br/&gt;basedosdados-dev.dataset_staging)]
     BQDEV[(BigQuery&lt;br/&gt;basedosdados-dev.dataset)]
     GATE{Aprovado?}
-    GCSPROD[(GCS&lt;br/&gt;basedosdados-staging)]
+    GCSPROD[(GCS&lt;br/&gt;basedosdados)]
     BQPRODSTG[(BigQuery&lt;br/&gt;basedosdados-staging.dataset_staging&lt;br/&gt;tabelas externas)]
     BQPROD[(BigQuery&lt;br/&gt;basedosdados.dataset&lt;br/&gt;público)]
     API[(Backend GraphQL&lt;br/&gt;backend.basedosdados.org)]
@@ -4291,11 +4291,11 @@
     EXT --&gt; GCSDEV
     GCSDEV -. tabela externa .-&gt; BQDEVSTG
     BQDEVSTG -- dbt run/test&lt;br/&gt;target=dev --&gt; BQDEV
-    BQDEV -- validação&lt;br/&gt;testes dbt --&gt; GATE
+    BQDEV -- testes dbt --&gt; GATE
     GATE -- sim --&gt; GCSPROD
     GCSPROD -. tabela externa .-&gt; BQPRODSTG
     BQPRODSTG -- dbt run&lt;br/&gt;target=prod --&gt; BQPROD
-    EXT -. metadados .-&gt; API
+    BQPROD -. cobertura e atualização .-&gt; API
     BQPROD --&gt; SITE
     API --&gt; SITE
 
@@ -4309,45 +4309,48 @@
         BQPRODSTG
         BQPROD
     end</code></pre>
-<p>A diferença entre <a href="../../glossario/#p">pipeline automatizada</a> e <a href="../../glossario/#p">semi-automatizada</a> está em <strong>como</strong> o portão "Aprovado?" é cruzado e <strong>quem</strong> dispara o <code>dbt run target=prod</code>.</p>
-<h2 id="1-pipelines-automatizadas-prefect">1. Pipelines automatizadas (Prefect)<a class="headerlink" href="#1-pipelines-automatizadas-prefect" title="Permanent link">&para;</a></h2>
-<p>A pipeline roda no schedule definido em <code>schedules.py</code> e executa, num único flow, as duas zonas. Exemplo canônico: <a href="https://github.com/basedosdados/pipelines/blob/main/pipelines/datasets/br_bcb_agencia/flows.py"><code>br_bcb_agencia</code></a>.</p>
-<h3 id="fluxo-de-execucao">Fluxo de execução<a class="headerlink" href="#fluxo-de-execucao" title="Permanent link">&para;</a></h3>
+<p>A diferença entre <a href="../../glossario/#p">pipeline automatizada</a> e <a href="../../glossario/#p">semi-automatizada</a> está em <strong>como</strong> o portão "Aprovado?" é cruzado e <strong>quem</strong> dispara a promoção para prod.</p>
+<h2 id="1-pipelines-automatizadas-prefect-3">1. Pipelines automatizadas (Prefect 3)<a class="headerlink" href="#1-pipelines-automatizadas-prefect-3" title="Permanent link">&para;</a></h2>
+<p>A pipeline roda no schedule declarado no próprio <code>flows.py</code> do dataset (<code>deploy_schedules</code>, com <code>Cron</code>). Hoje convivem dois desenhos de flow.</p>
+<h3 id="pipeline-em-estagios-desenho-atual">Pipeline em estágios (desenho atual)<a class="headerlink" href="#pipeline-em-estagios-desenho-atual" title="Permanent link">&para;</a></h3>
+<p>Os datasets migrados dividem o trabalho em três flows encadeados, cada um no seu pod. Exemplo canônico: <a href="https://github.com/basedosdados/pipelines/blob/main/pipelines/datasets/br_bcb_agencia/flows.py"><code>br_bcb_agencia</code></a>, que usa <code>CheckThenExtractLoadPipeline</code> de <a href="../../pipelines/referencia/stage-dispatch/"><code>stage_dispatch.py</code></a>.</p>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
-    participant SCH as Prefect Schedule
-    participant FLOW as Flow Prefect&lt;br/&gt;(K8s pod)
+    participant SCH as Schedule (cron)
+    participant CU as check_update&lt;br/&gt;(pod pequeno)
     participant SRC as Fonte original
-    participant GDEV as GCS&lt;br/&gt;basedosdados-dev
-    participant BQD as BQ basedosdados-dev&lt;br/&gt;(staging + materializado)
-    participant GPRD as GCS&lt;br/&gt;basedosdados-staging
-    participant BQPS as BQ basedosdados-staging&lt;br/&gt;(externas)
-    participant BQP as BQ basedosdados&lt;br/&gt;(público)
     participant API as Backend GraphQL
+    participant EL as extract_and_load
+    participant GDEV as GCS&lt;br/&gt;basedosdados-dev
+    participant BP as build_and_promote&lt;br/&gt;(pool de prod)
+    participant GPRD as GCS&lt;br/&gt;basedosdados
+    participant BQP as BQ basedosdados&lt;br/&gt;(público)
 
-    SCH-&gt;&gt;FLOW: dispara run
-    FLOW-&gt;&gt;API: check_if_data_is_outdated
-    API--&gt;&gt;FLOW: max_date atual
-    FLOW-&gt;&gt;SRC: download (download_table)
-    FLOW-&gt;&gt;FLOW: clean_data → parquet/csv local
-    FLOW-&gt;&gt;GDEV: create_table_dev_and_upload_to_gcs
-    FLOW-&gt;&gt;BQD: run_dbt(target=dev, run/test)
-    Note over BQD: testes dbt rodam aqui - falha aborta o flow
-    FLOW-&gt;&gt;GPRD: create_table_prod_gcs_and_run_dbt
-    Note right of GPRD: só executa em agente prod (is_running_in_prod)
-    GPRD--&gt;&gt;BQPS: tabela externa em basedosdados-staging.dataset_staging
-    FLOW-&gt;&gt;BQP: dbt run target=prod&lt;br/&gt;(lê basedosdados-staging, materializa em basedosdados)
-    FLOW-&gt;&gt;API: update_django_metadata</code></pre>
+    SCH-&gt;&gt;CU: dispara run
+    CU-&gt;&gt;SRC: qual a data mais recente publicada?
+    CU-&gt;&gt;API: qual a data mais recente na BD?
+    Note over CU: sem dado novo, o flow termina aqui
+    CU-&gt;&gt;EL: run_deployment
+    EL-&gt;&gt;SRC: baixa e trata
+    EL-&gt;&gt;GDEV: upload_to_gcs
+    EL-&gt;&gt;BP: run_deployment
+    BP-&gt;&gt;BP: dbt run/test target=dev
+    Note over BP: teste falhou: nada vai para prod
+    BP-&gt;&gt;GPRD: upload_to_gcs
+    BP-&gt;&gt;BQP: dbt run/test target=prod
+    BP-&gt;&gt;API: register_table_materialization_task</code></pre>
 <p><strong>Pontos importantes:</strong></p>
 <ul>
-<li>O mesmo flow grava em dev <strong>e</strong> prod. A separação é feita pela função <code>is_running_in_prod()</code> dentro de <code>create_table_prod_gcs_and_run_dbt</code> — só o agente Prefect de produção tem a credencial <code>/credentials-prod/prod.json</code> e por isso só ele materializa em <code>basedosdados</code>.</li>
-<li><code>run_dbt(..., dbt_command="run/test")</code> em <code>target=dev</code> é o <strong>gate de qualidade</strong>: se um teste dbt falhar, o passo de prod não acontece.</li>
-<li><code>update_django_metadata</code> atualiza coberturas temporais e flags (ex.: <code>bdpro_filter</code> para tabelas <a href="../../glossario/#b">BD Pro</a>) via GraphQL no backend.</li>
+<li><code>check_update</code> só compara datas. Os pods de download e de dbt sobem apenas quando há dado novo.</li>
+<li><code>build_and_promote</code> é um deployment genérico, compartilhado por todos os datasets migrados, e roda sempre no pool de prod.</li>
+<li>O <code>dbt run/test</code> em <code>target=dev</code> é o <strong>gate de qualidade</strong>: se um teste falhar, o passo de prod não acontece. Em prod, o dbt também roda os testes.</li>
+<li><code>register_table_materialization_task</code> lê o BigQuery e atualiza no backend a cobertura temporal (aberta e BD Pro), as row access policies, quando a tabela tem, e a data da última atualização.</li>
 </ul>
-<h3 id="variante-com-multiplas-tabelas-dicionario">Variante com múltiplas tabelas + dicionário<a class="headerlink" href="#variante-com-multiplas-tabelas-dicionario" title="Permanent link">&para;</a></h3>
-<p><a href="https://github.com/basedosdados/pipelines/blob/main/pipelines/datasets/br_bcb_sicor/flows.py"><code>br_bcb_sicor</code></a> ilustra o padrão "um flow por tabela + flow de dicionário", todos derivados de um template compartilhado (<code>br_bcb_sicor_template</code>). Cada tabela tem seu próprio <code>schedule</code>, mas todas usam o mesmo par <code>create_table_dev_and_upload_to_gcs</code> + <code>create_table_prod_gcs_and_run_dbt</code>. O flow <code>br_bcb_sicor.dicionario</code> segue exatamente o mesmo desenho descrito acima, mas com <code>dump_mode="overwrite"</code>.</p>
+<p>O desenho completo, com o porquê de cada etapa, está em <a href="../../pipelines/explicacao/pipeline-orientado-a-eventos/">Pipeline orientado a eventos</a>. Para escrever um flow nesse formato, veja <a href="../../pipelines/como-fazer/estruturar-um-flow-de-dataset/">Estruturar um flow de dataset</a>.</p>
+<h3 id="flow-unico-datasets-ainda-nao-migrados">Flow único (datasets ainda não migrados)<a class="headerlink" href="#flow-unico-datasets-ainda-nao-migrados" title="Permanent link">&para;</a></h3>
+<p>Os datasets ainda não migrados fazem tudo num flow só, num único pod: baixam, sobem para <code>basedosdados-dev</code> (<code>upload_to_gcs</code>), rodam <code>run_dbt</code> em <code>target=dev</code>, sobem para <code>basedosdados</code>, rodam <code>run_dbt</code> em <code>target=prod</code> e chamam <code>register_table_materialization_task</code>. Os passos e o gate são os mesmos, mas o pod tem o mesmo tamanho do começo ao fim, mesmo nas execuções em que não há dado novo.</p>
 <h2 id="2-codigos-semi-automatizados">2. Códigos semi-automatizados<a class="headerlink" href="#2-codigos-semi-automatizados" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossario/#p">Pipelines semi-automatizadas</a> são modelos dbt + script de carga executados manualmente pelo dev, com a materialização em produção disparada via label de PR.</p>
+<p><a href="../../glossario/#p">Pipelines semi-automatizadas</a> são modelos dbt + script de carga executados manualmente pelo dev, com a materialização em produção disparada pelo merge de um PR com a label <code>table-approve</code>.</p>
 <h3 id="passo-a-passo-do-colaborador">Passo a passo do colaborador<a class="headerlink" href="#passo-a-passo-do-colaborador" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Baixar a pasta template e os dados originais.</li>
@@ -4364,25 +4367,25 @@
 <li>Enviar para revisão.</li>
 </ol>
 <h3 id="deploy-via-table-approve">Deploy via <code>table-approve</code><a class="headerlink" href="#deploy-via-table-approve" title="Permanent link">&para;</a></h3>
-<p>Quando a revisão aprova o PR, a label <strong><code>table-approve</code></strong> é aplicada. A GitHub Action <a href="https://github.com/basedosdados/pipelines/blob/main/.github/workflows/cd.yaml"><code>cd.yaml</code></a> detecta a label e executa o script <code>prefect_run_dbt.py</code>, que:</p>
+<p>Quando a staging de dev está completa e final, a revisão aplica a label <strong><code>table-approve</code></strong>. A label sozinha não dispara nada: a Action <a href="https://github.com/basedosdados/pipelines/blob/main/.github/workflows/table-approve.yaml"><code>table-approve.yaml</code></a> roda em todo push na <code>main</code> e, se o PR mergeado tiver a label, chama o script <code>prefect_run_dbt.py</code>. Para cada modelo <code>.sql</code> alterado no PR, o script dispara no Prefect 3 o flow <code>transfer_files_to_prod_flow</code>, que:</p>
 <ol>
-<li>Sincroniza os arquivos do dev para o bucket <code>basedosdados</code> (cópia GCS → GCS).</li>
-<li>Roda <code>dbt run target=prod</code> apenas para os modelos modificados no PR.</li>
+<li>Faz backup da staging de prod no bucket <code>basedosdados-backup</code> e copia os arquivos de <code>basedosdados-dev</code> para <code>basedosdados</code>.</li>
+<li>Recria a tabela externa em <code>basedosdados-staging.&lt;dataset&gt;_staging</code>.</li>
+<li>Roda <code>dbt run</code> com <code>target=prod</code> e exporta o CSV de download.</li>
+<li>Registra a materialização no backend (cobertura e atualização).</li>
 </ol>
 <pre class="mermaid"><code>flowchart LR
-    DEV[Desenvolvedor] --&gt;|abre PR + sobe dados em dev| GDEV[(GCS&lt;br/&gt;basedosdados-dev)]
-    GDEV -. externa .-&gt; BQDS[(BQ&lt;br/&gt;basedosdados-dev._staging)]
+    DEV[Desenvolvedor] --&gt;|sobe dados em dev| GDEV[(GCS&lt;br/&gt;basedosdados-dev)]
+    GDEV -. externa .-&gt; BQDS[(BQ&lt;br/&gt;basedosdados-dev.dataset_staging)]
     BQDS -- dbt run/test target=dev&lt;br/&gt;local ou CI --&gt; BQD[(BQ basedosdados-dev)]
-    DEV --&gt;|aplica labels&lt;br/&gt;test-dev-model + check-metadata| PR[PR no GitHub]
-    PR --&gt;|revisão aprovada| APP[(Label&lt;br/&gt;table-approve)]
-    APP --&gt;|GitHub Action cd.yaml| SYNC[Sync&lt;br/&gt;GCS dev → GCS prod]
-    SYNC --&gt; GPRD[(GCS&lt;br/&gt;basedosdados-staging)]
+    DEV --&gt;|labels test-dev-model&lt;br/&gt;+ check-metadata| PR[PR no GitHub]
+    PR --&gt;|revisão aplica table-approve&lt;br/&gt;e o PR é mergeado| ACT[Action table-approve.yaml]
+    ACT --&gt;|prefect_run_dbt.py| TF[transfer_files_to_prod_flow&lt;br/&gt;no Prefect 3]
+    TF --&gt; GPRD[(GCS&lt;br/&gt;basedosdados)]
     GPRD -. externa .-&gt; BQPS[(BQ&lt;br/&gt;basedosdados-staging.dataset_staging)]
-    APP --&gt;|prefect_run_dbt.py| DBTP[dbt run target=prod]
-    BQPS --&gt; DBTP
-    DBTP --&gt; BQP[(BQ basedosdados.dataset&lt;br/&gt;público)]
+    BQPS -- dbt run target=prod --&gt; BQP[(BQ basedosdados.dataset&lt;br/&gt;público)]
     DEV --&gt;|metadados under_review| API[(Backend GraphQL)]</code></pre>
-<p>A diferença prática com a pipeline automatizada: o <code>dbt run target=prod</code> é disparado pela <strong>Action</strong>, não pelo flow Prefect, e o gatilho é humano (a label), não um schedule.</p>
+<p>A diferença prática com a pipeline automatizada: a promoção é disparada pela <strong>Action</strong>, no merge, e não pelo schedule; e o gatilho é humano (a label). O flow que faz a cópia e a materialização é o mesmo que o <code>build_and_promote</code> usa. Os detalhes e os riscos (troca da staging antes da materialização, esquema da tabela externa) estão em <a href="../../pipelines/explicacao/table-approve/">Table-approve</a>.</p>
 <h2 id="3-preenchimento-de-metadados-na-api-do-backend">3. Preenchimento de metadados na API do backend<a class="headerlink" href="#3-preenchimento-de-metadados-na-api-do-backend" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p><strong>Antes de preencher qualquer metadado, leia o <a href="../../governanca/metadados/explicacao-manual-de-estilo/">Manual de estilo</a>.</strong> Ele é a referência canônica para nomes de datasets/tabelas/colunas, tipos no BigQuery, formatos de data, padronização de UF/município e estrutura de diretórios. Sem aderência ao manual, os metadados ficam inconsistentes com o que está materializado em <code>basedosdados</code>, e a tabela é barrada na revisão.</p>
@@ -4392,19 +4395,21 @@
 <li><strong>Produção</strong> — <code>https://backend.basedosdados.org/api/v1/graphql</code></li>
 <li><strong>Staging</strong> — <code>https://staging.backend.basedosdados.org/api/v1/graphql</code></li>
 </ul>
-<p>Pontos de contato a partir do código deste repositório:</p>
+<p>Pontos de contato a partir do repositório <code>pipelines</code> (código em <code>pipelines/utils/metadata/</code>):</p>
 <ul>
-<li><strong><code>check_if_data_is_outdated</code></strong> (em pipelines automatizadas): consulta a <code>coverage</code> da tabela no backend para decidir se vale a pena rodar o flow.</li>
-<li><strong><code>update_django_metadata</code></strong>: ao final do flow, atualiza <code>coverage</code> (com <code>time_delta</code>), define <code>coverage_type</code> (<code>all_free</code>, <code>all_bdpro</code>, <code>part_bdpro</code>) e o <code>bq_project</code> associado.</li>
-<li><strong>Fluxo semi-automatizado</strong>: o colaborador edita a tabela direto no admin do backend, deixando-a <code>under_review</code> antes do PR. Após o deploy em prod, a tabela é marcada como <code>published</code>.</li>
+<li><strong><code>check_update</code></strong> (pipeline em estágios): lê do backend a data mais recente da tabela (cobertura ou última atualização) para decidir se há dado novo.</li>
+<li><strong><code>register_table_materialization_task</code></strong>: ao final da materialização em prod, pelo flow ou pelo <code>table-approve</code>, atualiza a cobertura temporal, as row access policies e a data da última atualização.</li>
+<li><strong>Fluxo semi-automatizado</strong>: o colaborador cadastra a tabela no admin do backend, deixando-a <code>under_review</code> antes do PR.</li>
 </ul>
-<p>Para detalhes operacionais de cada operação no backend, consulte o domínio <a href="../../governanca/">Governança</a> (a ser detalhado em runbooks específicos).</p>
+<p>Para o passo a passo, veja <a href="../../governanca/metadados/como-fazer/subir-metadados/">Subir metadados</a> (interface do Django) e <a href="../../infraestrutura/prefect/como-fazer/registrar-metadados/">Registrar metadados no backend</a> (pelo Prefect).</p>
 <h2 id="ver-tambem">Ver também<a class="headerlink" href="#ver-tambem" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../setup-pipelines/">Setup do repositório de pipelines</a> — como preparar o ambiente antes de mexer em qualquer um destes fluxos.</li>
+<li><a href="../../pipelines/explicacao/pipeline-orientado-a-eventos/">Pipeline orientado a eventos</a> — por que o flow foi dividido em três etapas.</li>
+<li><a href="../../pipelines/explicacao/table-approve/">Table-approve</a> — como a promoção de dev para prod funciona no merge.</li>
+<li><a href="../../infraestrutura/prefect/explicacao/arquitetura-prefect-3/">Arquitetura do Prefect 3</a> — servidor, workers e pools.</li>
 <li><a href="../../glossario/">Glossário</a> — definições de <strong>Pipeline</strong>, <strong>Pipeline semi-automatizada</strong>, <strong>BD Pro</strong>.</li>
 <li><a href="https://github.com/basedosdados/pipelines/blob/main/CONTRIBUTING.md"><code>basedosdados/pipelines</code> — CONTRIBUTING.md</a> — referência operacional para o passo a passo do colaborador semi-automatizado.</li>
-<li>Domínio <a href="../../infraestrutura/">Infraestrutura</a> — referências mais detalhadas por componente (buckets, projetos, agentes Prefect).</li>
 </ul>
 
 
