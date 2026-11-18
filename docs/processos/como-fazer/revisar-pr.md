@@ -88,7 +88,8 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
     - o PR diz se a mudança precisa de `--full-refresh` para o histórico ficar consistente, e
       quanto ele custa.
 - [ ] O modelo não traz `pre_hook` que apaga as regras de acesso: a service account do dbt tem
-  acesso total à tabela, e as regras são recriadas pelo registro de metadados depois do dbt.
+  acesso total à tabela, e as regras são recriadas pelo registro de metadados depois do dbt
+  ([ADR-0002 de pipelines](../../pipelines/adr/0002-nao-apagar-regras-de-acesso-no-pre-hook.md)).
 
 ### 6. Revisar os testes dbt
 

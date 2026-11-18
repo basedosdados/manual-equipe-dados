@@ -1,6 +1,6 @@
 # ADRs — Pipelines
 
-Architecture Decision Records sobre decisões que afetam pipelines da Base dos Dados, em especial **deprecações** (quando descontinuamos uma pipeline, por quê, o que a substitui e quem é impactado).
+Architecture Decision Records sobre decisões que afetam as pipelines da Base dos Dados: a arquitetura dos flows, convenções dos modelos dbt e **deprecações** (quando descontinuamos uma pipeline, por quê, o que a substitui e quem é impactado).
 
 Cada ADR é numerado sequencialmente dentro deste domínio (`0001-titulo.md`, `0002-titulo.md`, …) e segue o [template de ADR](https://github.com/basedosdados/manual-equipe-dados/blob/main/docs/_templates/adr.md).
 
@@ -12,4 +12,5 @@ Cada ADR é numerado sequencialmente dentro deste domínio (`0001-titulo.md`, `0
 
 | Nº  | Título                            | Status | Data | PR  |
 | --- | --------------------------------- | ------ | ---- | --- |
-| —   | *(nenhuma ADR registrada ainda)* | —      | —    | —   |
+| [0001](0001-dividir-flows-em-estagios.md) | Dividir os flows de dataset em estágios encadeados | aceito | 2026-10-05 | [#1932](https://github.com/basedosdados/pipelines/pull/1932) |
+| [0002](0002-nao-apagar-regras-de-acesso-no-pre-hook.md) | Não apagar as regras de acesso no pre_hook dos modelos dbt | aceito | 2026-11-17 | [#2298](https://github.com/basedosdados/pipelines/pull/2298) |

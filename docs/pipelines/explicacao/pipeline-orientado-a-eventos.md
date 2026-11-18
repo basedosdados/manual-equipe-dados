@@ -155,57 +155,26 @@ mais recente na fonte) e `extract_load_data` (baixa o dado de verdade). Ver
 
 ## Trade-offs e alternativas consideradas
 
-**`run_deployment()` direto no código, em vez de Automação do Prefect 3 +
-`emit_event()`.** A proposta original encadeava as etapas por Automação —
-prototipado, testado de ponta a ponta com sucesso, e abandonado antes do rollout
-real. Motivos:
+A decisão, as alternativas descartadas e as consequências estão registradas no
+[ADR-0001 — Dividir os flows de dataset em estágios encadeados](../adr/0001-dividir-flows-em-estagios.md).
+Em resumo:
 
-- Escalar automações pra ~82 datasets exigiria um mecanismo próprio de descoberta
-  e sincronização em massa (objetos `Automation` mantidos à parte do código) — uma
-  peça de infraestrutura inteira só pra resolver um problema que `run_deployment()`
-  não tem, já que a lógica de disparo já mora no código de cada dataset.
-- Parâmetros de automação são sempre renderizados via Jinja como string — nunca
-  preservam tipo nativo, exigindo um workaround de serialização JSON manual.
-  `run_deployment(parameters={...})` passa um dict nativo, validado
-  automaticamente pelo schema tipado do flow.
-- `as_subflow=True` linka o run disparado como filho de verdade na árvore de
-  execução do Prefect UI; um run disparado por Automação aparece solto,
-  correlacionado só por tag/tempo.
-- Em troca, perde-se a visão agregada "o que dispara o quê" sem ler código (as
-  automações tinham uma aba própria no Prefect UI), o desacoplamento de falha
-  (hoje, uma falha ao disparar o próximo estágio vira exceção **dentro** do flow
-  upstream, podendo marcá-lo como `Failed` mesmo que o trabalho dele já tivesse
-  sido concluído) e a possibilidade de qualquer evento externo disparar uma etapa.
-  Nenhuma dessas capacidades era usada por algo real no desenho — julgado uma
-  troca razoável para evitar construir infraestrutura de automação em massa que
-  ainda não existia.
-
-**3 pods separados, apesar do overhead de agendamento por hop (~70-90s
-medidos).** Irrelevante contra um trigger agendado (cron) — o problema que a
-arquitetura resolve (desperdício de recurso, cota compartilhada) pesa mais que o
-tempo de subir um pod extra.
-
-**dev e prod no mesmo pod dentro de `build_and_promote`**, em vez de dois flows
-separados (`dev_build`/`prod_build`). Dois flows permitiriam rerrodar só prod se
-prod falhasse — caso raro na prática — mas o custo de um pod extra por execução
-não se justifica. O isolamento de cota BQ entre dev e prod vem do
-`execution_project` do target dbt, não de pods separados.
-
-**`ExtractAndLoad.targets` removido.** A primeira versão deixava o dataset
-declarar, em código, se o resultado deveria promover pra prod (`targets: list[str]
-= ["dev", "prod"]`). Isso era um risco real — o dataset podia "dizer" pra promover
-mesmo rodando num teste em dev. Substituído pela derivação estrutural via
-`_dev_prefix()` (ver "A ideia central" acima).
-
-**Duas variantes, não uma só.** Forçar todo dataset na variante padrão seria
-impossível para fontes que não expõem a data mais recente sem baixar o arquivo
-inteiro (uma fração relevante dos datasets do repo); forçar todos a sempre baixar
-pra checar desperdiçaria a economia de recurso que motivou a arquitetura para as
-fontes que já expõem a data de forma leve.
+- **`run_deployment()` no código, em vez de Automação do Prefect:** mantém o encadeamento no código
+  de cada dataset e o run disparado linkado como subflow, ao custo de não ter uma visão agregada de
+  "o que dispara o quê".
+- **Um pod por estágio:** cada estágio recebe só os recursos de que precisa, ao custo de 70 a 90
+  segundos a mais para subir cada pod.
+- **dev e prod no mesmo pod do `build_and_promote`:** evita um pod a mais por execução; o
+  isolamento de cota vem do `execution_project` do target dbt.
+- **Promoção derivada do pool, e não declarada pelo dataset:** um teste em dev não consegue
+  promover para prod.
+- **Duas variantes:** o check leve não é possível em toda fonte, e baixar sempre desperdiçaria
+  recurso nas que permitem.
 
 ## Ver também
 
 - [Como estruturar um flow de dataset](../como-fazer/estruturar-um-flow-de-dataset.md)
 - [Referência — `stage_dispatch.py`](../referencia/stage-dispatch.md)
+- [ADR-0001 — Dividir os flows de dataset em estágios encadeados](../adr/0001-dividir-flows-em-estagios.md) — a decisão e as alternativas
 - [issue #1867 — Dividir flows monolíticos em estágios](https://github.com/basedosdados/pipelines/issues/1867) (histórico completo da decisão e lista nominal de datasets por categoria de check)
 - [PR #1932 — migração real, testes e revisão](https://github.com/basedosdados/pipelines/pull/1932)

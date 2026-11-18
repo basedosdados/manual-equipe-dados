@@ -26,9 +26,9 @@ Prefect Server
 | `basedosdados-projetos` | `prefect-agent-basedosdados-projetos` | Kubernetes | consolidado em `basedosdados` ✅ |
 | `basedosdados-dev-gcp-vertex` | `prefect-agent-basedosdados-dev-gcp-vertex` | Vertex AI | `basedosdados-dev` ✅ (Kubernetes por ora) |
 
-### ✅ Decisão tomada: consolidar em 2 workers
-
-Após alinhamento com o Pisa: os 3 Kubernetes agents foram consolidados num único worker de produção (`basedosdados`) e um worker de dev (`basedosdados-dev`). Vertex AI não será usado neste momento — os flows de dev rodam em Kubernetes também.
+Os 3 agents Kubernetes foram consolidados num worker de produção (`basedosdados`) e num de dev
+(`basedosdados-dev`), e o Vertex AI não é usado por ora. A decisão e as alternativas estão no
+[ADR-0004](../../adr/0004-migracao-prefect-0-para-3.md).
 
 ---
 

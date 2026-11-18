@@ -144,7 +144,15 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 
 ### [ADRs — Pipelines](pipelines/adr/index.md)
 
-`índice` · Índice dos ADRs sobre decisões que afetam pipelines, em especial **deprecações** — quando descontinuamos uma pipeline, por quê, o que a substitui e quem é impactado. Como os demais índices de ADR, cada registro é numerado sequencialmente e segue o template do repositório. Estabelece regras próprias para deprecações: título no formato `Deprecar pipeline <nome>`, contexto indicando substituto e downstream impactado, e a exigência **obrigatória** de linkar o PR de deprecação no repositório `basedosdados/pipelines` (no front-matter `pr:` e no corpo) — sem PR vinculado, a ADR não é aceita. Ainda não há nenhuma ADR de pipelines registrada; a página traz o índice vazio à espera da primeira.
+`índice` · Índice dos ADRs sobre decisões que afetam as pipelines: a arquitetura dos flows, convenções dos modelos dbt e **deprecações** — quando descontinuamos uma pipeline, por quê, o que a substitui e quem é impactado. Numeração sequencial dentro do domínio, template padrão, e a exigência de que toda ADR de deprecação linke o PR correspondente em `basedosdados/pipelines` (campo `pr:`). Registra a divisão dos flows em estágios (0001) e a decisão de não apagar as regras de acesso no `pre_hook` dos modelos dbt (0002).
+
+### [ADR-0001 — Dividir os flows de dataset em estágios encadeados](pipelines/adr/0001-dividir-flows-em-estagios.md)
+
+`adr` · Decisão (aceita, 2026-10-05, PR #1932) de trocar o flow monolítico de cada dataset por estágios encadeados — `check_update` → `extract_and_load` → `build_and_promote` —, cada um num deployment e num pod próprios. Motivada por quatro problemas registrados na issue #1867: pods de 4 GB subindo só para checar dado novo, a mesma alocação para cargas diferentes, cota de BigQuery de dev compartilhada e reruns custosos. Fixa o encadeamento por `run_deployment()` no código, o `build_and_promote` único e sempre no pool de prod, a promoção derivada do pool e as duas variantes de check. Alternativas descartadas: Automação do Prefect 3 (prototipada e abandonada), dois flows para dev e prod, o dataset declarar a promoção (`ExtractAndLoad.targets`) e uma variante única.
+
+### [ADR-0002 — Não apagar as regras de acesso no pre_hook dos modelos dbt](pipelines/adr/0002-nao-apagar-regras-de-acesso-no-pre-hook.md)
+
+`adr` · Decisão (aceita, 2026-11-17, na revisão do PR #2298) de parar de incluir o `pre_hook` com `DROP ALL ROW ACCESS POLICIES` nos modelos dbt; modelos existentes perdem o `pre_hook` quando forem alterados. Baseada num teste em `basedosdados-dev`: o BigQuery só bloqueia DML de quem não tem acesso total à tabela, e a service account do dbt está no grupo da regra com filtro `TRUE`; o `CREATE OR REPLACE` dos modelos `table` apaga as regras de qualquer forma. A consequência negativa assumida é depender de a service account continuar nesse grupo.
 
 ## Observabilidade
 
