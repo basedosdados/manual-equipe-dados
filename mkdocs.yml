@@ -77,6 +77,8 @@ nav:
     - Manual de estilo: onboarding/manual-de-estilo.md
   - Processos:
     - processos/index.md
+    - Explicação:
+      - Trilha do engenheiro de dados: processos/explicacao/trilha-do-engenheiro-de-dados.md
     - Como fazer:
       - Revisar um PR: processos/como-fazer/revisar-pr.md
       - Planejar uma sprint: processos/como-fazer/planejar-sprint.md
@@ -84,6 +86,7 @@ nav:
       - Escala de pontuação: processos/referencia/escala-de-pontuacao.md
       - Respostas-padrão de suporte: processos/referencia/respostas-padrao-suporte.md
       - Diagnóstico com evidência: processos/referencia/diagnostico-com-evidencia.md
+      - Habilidades do engenheiro de dados: processos/referencia/habilidades-engenheiro-de-dados.md
   - Infraestrutura:
     - infraestrutura/index.md
     - BigQuery: infraestrutura/bigquery/index.md
