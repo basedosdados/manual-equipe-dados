@@ -1,3 +1,7 @@
+---
+tipo: como-fazer
+titulo: Como abrir uma issue no repositório pipelines
+---
 # Abrir uma issue no repositório `pipelines`
 
 Esta página define como abrir issues em [`basedosdados/pipelines`](https://github.com/basedosdados/pipelines) de forma consistente. O objetivo é tornar o backlog filtrável por tipo, priorizável por label e legível à primeira leitura — sem depender de quem abriu a issue.

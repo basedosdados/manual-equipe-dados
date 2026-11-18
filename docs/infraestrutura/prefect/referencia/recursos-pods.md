@@ -1,3 +1,7 @@
+---
+tipo: referencia
+titulo: Recursos dos pods do Prefect 3
+---
 # Prefect 3 — Recursos dos Pods (CPU / Memória)
 
 ---
@@ -46,64 +50,14 @@ for k in ['memory_limit', 'memory_request', 'cpu_limit', 'cpu_request']:
 
 ---
 
-## 4. Alterar o limite global do pool
+## 4. Alterar limites
 
-O `base_job_template` usa variáveis Jinja com defaults no schema — alterar os defaults muda o baseline de todos os flows que não declaram `job_variables`:
-
-```python
-import json, urllib.request, os
-
-api = os.environ['PREFECT_API_URL']
-key = os.environ['PREFECT_API_KEY']
-headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-
-new_defaults = {
-    "memory_limit":   "4Gi",
-    "memory_request": "1Gi",
-    "cpu_limit":      "2",
-    "cpu_request":    "500m",
-}
-
-for pool in ["basedosdados", "basedosdados-dev"]:
-    req = urllib.request.Request(f'{api}/work_pools/{pool}', headers={"Authorization": f"Bearer {key}"})
-    with urllib.request.urlopen(req) as r:
-        d = json.load(r)
-
-    props = d['base_job_template']['variables']['properties']
-    for k, v in new_defaults.items():
-        props[k]['default'] = v
-
-    req = urllib.request.Request(f'{api}/work_pools/{pool}',
-        data=json.dumps({"base_job_template": d['base_job_template']}).encode(),
-        method='PATCH', headers=headers)
-    with urllib.request.urlopen(req) as r:
-        r.read()
-    print(f'✅ {pool} atualizado')
-```
-
----
-
-## 5. Override de recursos por flow específico
-
-Quando um flow precisa de mais memória que o padrão do pool, declare `job_variables` no `flows.py` — sobrescreve só para aquele deployment, sem afetar os demais:
-
-```python
-br_anatel_telefonia_movel__microdados.deploy(
-    name="br_anatel_telefonia_movel__microdados",
-    work_pool_name="basedosdados",
-    job_variables={
-        "memory_limit":   "8Gi",
-        "memory_request": "2Gi",
-    },
-    ...
-)
-```
-
-Apenas os campos que diferem do default precisam ser declarados — `cpu_limit` e `cpu_request` ficam no default do pool.
+Para mudar o limite global do pool ou sobrescrever os recursos de um flow específico (`job_variables`
+no `flows.py`), siga [Como ajustar recursos de pod e resolver OOM](../como-fazer/ajustar-recursos-de-pod.md).
 
 > **Regra:** manter o pool em 4Gi como baseline e usar `job_variables` nos flows que precisam de mais. Não inflar o baseline global para todos.
 
-### Flows com OOM identificados
+## 5. Flows com OOM identificados
 
 | Flow | `memory_limit` sugerido |
 |---|---|
