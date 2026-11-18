@@ -128,6 +128,9 @@ em [Pipeline orientado a eventos](../../../pipelines/explicacao/pipeline-orienta
 
 ## Trade-offs e alternativas consideradas
 
+A decisão de dividir os flows em estágios está no
+[ADR-0001 de pipelines](../../../pipelines/adr/0001-dividir-flows-em-estagios.md).
+
 - **Pods separados por etapa:** cada etapa recebe só os recursos de que precisa, e uma falha na
   promoção pode ser repetida sem baixar o dado de novo. O custo é o tempo de subir um pod a cada
   etapa e mais runs para acompanhar na interface.

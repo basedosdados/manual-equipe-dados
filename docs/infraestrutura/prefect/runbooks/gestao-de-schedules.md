@@ -1,269 +1,127 @@
 ---
 tipo: runbook
-titulo: Runbook — Gestão de Schedules via Backend
-trigger: Flows não sendo desativados automaticamente após falhas consecutivas, ou automação retornando erros (401, 500)
+titulo: Runbook — Schedule de flow não desativa ou não sincroniza
+trigger: Flows não sendo desativados automaticamente após falhas consecutivas, ou automação e sync retornando erros (401, 500)
 ---
+# Runbook — Schedule de flow não desativa ou não sincroniza
+
+## Sintoma
+
+Um destes, observado no Prefect 3, no Django Admin ou nos logs do backend no Grafana:
+
+- um flow falhou duas vezes seguidas (ou falhou no `run_dbt`) e continua com o schedule ativo;
+- o webhook `flow-failed` ou o sync do CI retorna `401`;
+- um flow aparece ativo no Django Admin e pausado no Prefect 3, ou o contrário;
+- o log `Sync complete` não aparece depois de um deploy.
+
+Como o sistema funciona (condições de desativação, endpoints, automação, campos do Django Admin):
+[referência de gestão de schedules](../referencia/gestao-de-schedules.md).
 
-# Gestão de Schedules — Operação e Monitoramento
+## Impacto
 
-Sistema automático que monitora falhas de flows no Prefect 3 e desativa schedules de flows com problemas recorrentes.
+Um flow quebrado que não é desativado continua rodando e falhando a cada execução agendada, gastando
+pods e cota. Um flow que fica pausado por divergência deixa a tabela desatualizada sem alerta.
 
----
+## Diagnóstico
 
-## Visão geral
+1. No Grafana, procure `webhook received` no horário da falha (consulta "Webhook recebido e
+   ações" da referência). Sem registro, a automação não disparou ou o webhook falhou.
+2. Procure `Unauthorized` com `flow-failed` (consulta "Erros de autenticação"). Se aparecer, a
+   chave do bloco está errada.
+3. Depois de um deploy, procure `Sync complete`. Sem registro, veja o log da action
+   `cd-prefect3.yaml` no GitHub: o passo de sync falha em silêncio (`|| echo`).
+4. Para achar divergências entre o banco e o Prefect 3, rode no shell do pod do backend:
 
-```
-PR merged
-   └─ CI deploys flows com paused=True
-         └─ CI chama POST /admin-tools/sync-deployments/
-               └─ Backend ativa/pausa cada flow conforme o banco
+    ```python
+    from backend.apps.admin_data_tools.models import DisabledFlowSchedule
+    from backend.apps.admin_data_tools._prefect3_client import Prefect3Client
 
-Flow falha no Prefect 3
-   └─ Automação "flow-failed-prod-webhook" dispara
-         └─ Chama POST /admin-tools/flow-failed/
-               └─ Backend avalia se deve desativar
-                     └─ Se sim: pausa no Prefect 3 + atualiza banco
-```
+    client = Prefect3Client()
+    for dep in client.iter_deployments():
+        try:
+            record = DisabledFlowSchedule.objects.get(deployment_id=dep['id'])
+            prefect_paused = dep.get('paused', False)
+            db_active = record.is_schedule_active
+            if prefect_paused == db_active:  # estado invertido = divergência
+                print(f'DIVERGÊNCIA: {record.flow_name} | DB active={db_active} | Prefect paused={prefect_paused}')
+        except DisabledFlowSchedule.DoesNotExist:
+            print(f'SEM REGISTRO: {dep["name"]}')
+    ```
 
-O banco de dados é sempre a fonte de verdade. O Prefect 3 é ajustado para refletir o que está no banco.
+## Resolução
 
----
+### Caso A: o webhook retorna 401
 
-## Fluxo de deploy
+1. Confira a `PREFECT3_API_KEY` no sealed secret do backend.
+2. Confira o header de autenticação do bloco `flow-failed-prod` no Prefect 3. As duas chaves precisam
+   ser iguais.
 
-Quando um PR é mergeado no repositório `pipelines` e o CD (`cd-prefect3.yaml`) roda:
+### Caso B: o flow falhou, mas não foi desativado
 
-1. **Deploy dos flows** — `deploy_flows.py` faz deploy de todos os flows com `paused=True`. Isso garante que flows novos nunca entrem ativos por padrão.
+1. Se o diagnóstico mostrou que a automação não disparou ou o webhook deu erro, corrija a causa
+   (Caso A, se for autenticação).
+2. Se a automação ficou fora do ar por um período, force a desativação dos flows com falhas
+   acumuladas, no shell do pod do backend:
 
-2. **Sync com o backend** — o CI chama o endpoint de sync:
-   ```bash
-   curl -X POST https://backend.basedosdados.org/admin-tools/sync-deployments/ \
-     -H "Authorization: Bearer $PREFECT3_AUTH_TOKEN"
-   ```
+    ```python
+    from backend.apps.admin_data_tools.models import DisabledFlowSchedule
+    from backend.apps.admin_data_tools.views import _is_consecutive_failure, _is_dbt_failure
+    from backend.apps.admin_data_tools._prefect3_client import Prefect3Client
+    from datetime import datetime, timezone
 
-3. **O sync aplica o estado do banco no Prefect 3:**
-   - Flow já conhecido + ativo no banco → despausa no Prefect 3
-   - Flow já conhecido + pausado no banco → mantém pausado
-   - Flow novo (não existe no banco) → cria registro pausado, permanece pausado
+    client = Prefect3Client()
+    for record in DisabledFlowSchedule.objects.filter(is_schedule_active=True):
+        runs = client.get_recent_completed_runs(record.deployment_id, limit=2)
+        should_disable = _is_consecutive_failure(runs, record.reactivated_at)
+        if not should_disable and runs:
+            task_runs = client.get_failed_task_runs(runs[0]['id'])
+            should_disable = _is_dbt_failure(task_runs, runs[0]['start_time'], record.reactivated_at)
+        if should_disable:
+            client.set_paused(record.deployment_id, paused=True)
+            record.is_schedule_active = False
+            record.reactivated_at = None
+            record.disabled_at = datetime.now(tz=timezone.utc)
+            record.save(update_fields=['is_schedule_active', 'reactivated_at', 'disabled_at'])
+            print(f'Desativado: {record.flow_name}')
+    ```
 
-> O sync **nunca altera** `is_schedule_active` no banco — só lê. Ele corrige o Prefect 3 para refletir o banco.
+### Caso C: o sync do CI retorna 401
 
-**Verificar no log do backend após deploy:**
-```
-Sync complete: {'created': 0, 'updated': 0, 'activated': 141, 'paused': 53, 'errors': 0}
-```
+1. O secret `PREFECT3_AUTH_TOKEN` do repositório `pipelines` está diferente da `PREFECT3_API_KEY`
+   do pod.
+2. Sele de novo o secret no IAC com a chave correta.
 
----
+### Caso D: o banco e o Prefect 3 divergem
 
-## Endpoints
+1. Rode o sync à mão:
 
-### `POST /admin-tools/sync-deployments/`
+    ```bash
+    curl -X POST https://backend.basedosdados.org/admin-tools/sync-deployments/ \
+      -H "Authorization: Bearer $PREFECT3_AUTH_TOKEN"
+    ```
 
-Sincroniza o Prefect 3 com o estado do banco. Chamado pelo CI após cada deploy.
+2. O sync aplica o estado do banco no Prefect 3. Se o banco estiver errado, corrija o flow no
+   Django Admin antes (marque ou desmarque `is_schedule_active` e, ao reativar, preencha
+   `reactivated_at`).
 
-**Autenticação:** `Authorization: Bearer <PREFECT3_API_KEY>`
+### Caso E: flows que devem ficar pausados voltaram a rodar depois de um deploy
 
-**Resposta:**
-```json
-{"created": 0, "updated": 0, "activated": 141, "paused": 53, "errors": 0}
-```
+1. Rode o script que mantém a lista `SHOULD_BE_PAUSED`:
 
-| Campo | Significado |
-|---|---|
-| `created` | Flows novos registrados no banco (ficam pausados) |
-| `updated` | Flows com `deployment_id` atualizado (re-deploy) |
-| `activated` | Flows que estavam pausados no Prefect 3 mas ativos no banco — despaused |
-| `paused` | Flows pausados no banco, confirmados pausados no Prefect 3 |
-| `errors` | Falhas ao processar um deployment específico |
+    ```bash
+    PREFECT_API_KEY=<chave-compartilhada> python pipelines/tmp/prefect_pause_flows.py
+    ```
 
----
+2. Sincronize o banco para refletir as pausas aplicadas à mão (Caso D).
 
-### `POST /admin-tools/flow-failed/`
+## Após a resolução
 
-Recebe notificações de falha da automação do Prefect 3. Decide se o flow deve ser desativado.
-
-**Autenticação:** `Authorization: Bearer <PREFECT3_API_KEY>`
-
-**Payload (enviado pela automação):**
-```json
-{
-    "deployment_id": "{{ flow_run.deployment_id }}",
-    "flow_run_id": "{{ flow_run.id }}",
-    "flow_run_name": "{{ flow_run.name }}"
-}
-```
-
-**Lógica de desativação (condições OR):**
-
-| Condição | Critério |
-|---|---|
-| Falha no dbt | Task `run_dbt` falhou com erro não ignorável após `reactivated_at` |
-| Falhas consecutivas | Últimos 2 runs terminais falharam e o mais recente é após `reactivated_at` |
-
-**Respostas possíveis:**
-
-| `action` | Significado |
-|---|---|
-| `disabled` | Flow desativado — pausado no Prefect 3 e banco atualizado |
-| `no_action` | Condições não atingidas — flow permanece ativo |
-| `already_paused` | Flow já estava inativo no banco |
-| `ignored_unknown` | `deployment_id` não encontrado no banco |
-
----
-
-## Automação Prefect 3
-
-A automação `flow-failed-prod-webhook` dispara em todo evento `prefect.flow-run.Failed` e chama o endpoint `/admin-tools/flow-failed/`.
-
-| Recurso | Valor |
-|---|---|
-| Automação | `flow-failed-prod-webhook` (id: `a6b04de5`) |
-| Bloco | `flow-failed-prod` (id: `2488ee16`) |
-| Trigger | `prefect.flow-run.Failed` |
-| Autenticação | Bearer token da `PREFECT3_API_KEY` no header do bloco |
-
-> **Staging:** a automação `flow-failed-staging-webhook` existe mas está **desativada** — habilitar apenas para testes.
-
----
-
-## Django Admin
-
-Acesse `https://backend.basedosdados.org/admin/admin_data_tools/disabledflowschedule/` para visualizar e gerenciar os flows.
-
-### Campos do modelo
-
-| Campo | Descrição |
-|---|---|
-| `flow_name` | Nome do deployment no Prefect 3 |
-| `deployment_id` | UUID do deployment no Prefect 3 |
-| `is_schedule_active` | `True` = ativo, `False` = pausado |
-| `disabled_at` | Quando foi desativado (atualizado automaticamente pelo webhook) |
-| `reactivated_at` | Quando foi reativado por um admin — falhas antes dessa data são ignoradas |
-
-### Ativar um flow
-
-1. Abra o flow no Django Admin
-2. Marque `is_schedule_active = True`
-3. Preencha `reactivated_at` com a data/hora atual — isso zera o histórico de falhas anteriores
-4. Salve — o admin chama `set_paused(False)` no Prefect 3 automaticamente
-
-### Desativar um flow
-
-1. Abra o flow no Django Admin
-2. Desmarque `is_schedule_active`
-3. Salve — o admin chama `set_paused(True)` no Prefect 3 automaticamente
-
-> `reactivated_at` é crítico: sem ele, uma falha anterior ao fix do flow pode reativar a desativação imediatamente após a reativação.
-
----
-
-## Monitoramento
-
-### Grafana — Logs da automação
-
-**Webhook recebido e ações:**
-```logql
-{app="$environment"} |~ "webhook received|Disabled.*after failure|Unknown deployment|already_paused" | json | line_format "[{{ .record_time_repr | trunc 16 }}] {{ .record_message }}"
-```
-
-**Erros de autenticação no webhook (indica chave errada no bloco):**
-```logql
-{app="$environment"} |= "Unauthorized" |= "flow-failed" | json | line_format "[{{ .record_time_repr | trunc 16 }}] {{ .record_message }}"
-```
-
-**Sync do CI após deploy:**
-```logql
-{app="$environment"} |= "Sync complete" | json | line_format "[{{ .record_time_repr | trunc 16 }}] {{ .record_message }}"
-```
-
-### Verificar sincronização banco ↔ Prefect 3
-
-Rodar no shell do pod para detectar divergências:
-
-```python
-from backend.apps.admin_data_tools.models import DisabledFlowSchedule
-from backend.apps.admin_data_tools._prefect3_client import Prefect3Client
-
-client = Prefect3Client()
-for dep in client.iter_deployments():
-    try:
-        record = DisabledFlowSchedule.objects.get(deployment_id=dep['id'])
-        prefect_paused = dep.get('paused', False)
-        db_active = record.is_schedule_active
-        if prefect_paused == db_active:  # estado invertido = divergência
-            print(f'DIVERGÊNCIA: {record.flow_name} | DB active={db_active} | Prefect paused={prefect_paused}')
-    except DisabledFlowSchedule.DoesNotExist:
-        print(f'SEM REGISTRO: {dep["name"]}')
-```
-
----
-
-## Operações comuns
-
-### Forçar desativação de flows com falhas acumuladas
-
-Útil após um período em que a automação estava fora (ex: chave errada):
-
-```python
-from backend.apps.admin_data_tools.models import DisabledFlowSchedule
-from backend.apps.admin_data_tools.views import _is_consecutive_failure, _is_dbt_failure
-from backend.apps.admin_data_tools._prefect3_client import Prefect3Client
-from datetime import datetime, timezone
-
-client = Prefect3Client()
-for record in DisabledFlowSchedule.objects.filter(is_schedule_active=True):
-    runs = client.get_recent_completed_runs(record.deployment_id, limit=2)
-    should_disable = _is_consecutive_failure(runs, record.reactivated_at)
-    if not should_disable and runs:
-        task_runs = client.get_failed_task_runs(runs[0]['id'])
-        should_disable = _is_dbt_failure(task_runs, runs[0]['start_time'], record.reactivated_at)
-    if should_disable:
-        client.set_paused(record.deployment_id, paused=True)
-        record.is_schedule_active = False
-        record.reactivated_at = None
-        record.disabled_at = datetime.now(tz=timezone.utc)
-        record.save(update_fields=['is_schedule_active', 'reactivated_at', 'disabled_at'])
-        print(f'Desativado: {record.flow_name}')
-```
-
-### Pausar lista manual de flows problemáticos
-
-Script em `pipelines/tmp/prefect_pause_flows.py` — mantém a lista `SHOULD_BE_PAUSED` com flows que devem ser pausados independente da automação. Rodar após deploys que resetem o estado:
-
-```bash
-PREFECT_API_KEY=<chave-compartilhada> python pipelines/tmp/prefect_pause_flows.py
-```
-
-> Após rodar o script, sincronizar o banco para refletir as pausas aplicadas manualmente.
-
----
-
-## Troubleshooting
-
-| Sintoma | Causa provável | Ação |
-|---|---|---|
-| Webhook retorna 401 | `PREFECT3_API_KEY` no pod ou no bloco do Prefect 3 está errada | Verificar sealed secret + header do bloco `flow-failed-prod` |
-| Flow falhou mas não foi desativado | Automação não disparou ou webhook retornou erro | Checar logs do Grafana — buscar `webhook received` no horário da falha |
-| Sync do CI retorna 401 | `PREFECT3_AUTH_TOKEN` no GitHub ≠ `PREFECT3_API_KEY` no pod | Re-selar o secret no IAC com a chave correta |
-| Flow ativo no banco mas pausado no Prefect | Divergência pós-deploy ou intervenção manual | Rodar sync via curl ou pelo Django shell |
-| `Sync complete` não aparece nos logs após deploy | Step do CI falhou silenciosamente (`\|\| echo`) | Verificar log da action no GitHub |
-
----
-
-## Referência rápida
-
-| Recurso | Valor |
-|---|---|
-| Endpoint sync | `POST https://backend.basedosdados.org/admin-tools/sync-deployments/` |
-| Endpoint webhook | `POST https://backend.basedosdados.org/admin-tools/flow-failed/` |
-| Chave compartilhada | Token de `api_user@basedosdados.org` — Prefect 3 UI → Settings → API Tokens |
-| GitHub secret | `PREFECT3_AUTH_TOKEN` no repositório `pipelines` |
-| Django Admin | `https://backend.basedosdados.org/admin/admin_data_tools/disabledflowschedule/` |
-| Automação prod | `flow-failed-prod-webhook` (id: `a6b04de5`) |
-| Bloco prod | `flow-failed-prod` (id: `2488ee16`) |
-| Automação staging | `flow-failed-staging-webhook` (id: `71ee3136`) — desativada |
+- Confira no Grafana se o próximo `webhook received` ou `Sync complete` aparece sem erro.
+- Se a causa foi uma chave trocada, avise quem gerencia os secrets do IAC.
+- Se a divergência se repetir, abra uma issue no repositório do backend.
 
 ## Ver também
 
-- [Referência — Gestão de Schedules](../referencia/gestao-de-schedules.md)
+- [Referência — Gestão de Schedules](../referencia/gestao-de-schedules.md) — como o sistema
+  funciona, endpoints e campos.
 - [Como configurar a automação Flow Failed Webhook](../como-fazer/flow-failed-webhook.md)

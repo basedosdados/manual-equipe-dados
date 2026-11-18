@@ -202,47 +202,6 @@ for dep in client.iter_deployments():
 
 ---
 
-## Operações comuns
-
-### Forçar desativação de flows com falhas acumuladas
-
-Útil após um período em que a automação estava fora:
-
-```python
-from backend.apps.admin_data_tools.models import DisabledFlowSchedule
-from backend.apps.admin_data_tools.views import _is_consecutive_failure, _is_dbt_failure
-from backend.apps.admin_data_tools._prefect3_client import Prefect3Client
-from datetime import datetime, timezone
-
-client = Prefect3Client()
-for record in DisabledFlowSchedule.objects.filter(is_schedule_active=True):
-    runs = client.get_recent_completed_runs(record.deployment_id, limit=2)
-    should_disable = _is_consecutive_failure(runs, record.reactivated_at)
-    if not should_disable and runs:
-        task_runs = client.get_failed_task_runs(runs[0]['id'])
-        should_disable = _is_dbt_failure(task_runs, runs[0]['start_time'], record.reactivated_at)
-    if should_disable:
-        client.set_paused(record.deployment_id, paused=True)
-        record.is_schedule_active = False
-        record.reactivated_at = None
-        record.disabled_at = datetime.now(tz=timezone.utc)
-        record.save(update_fields=['is_schedule_active', 'reactivated_at', 'disabled_at'])
-        print(f'Desativado: {record.flow_name}')
-```
-
----
-
-## Troubleshooting
-
-| Sintoma | Causa provável | Ação |
-|---|---|---|
-| Flow falhou mas não foi desativado | Automação não disparou ou webhook retornou erro | Checar logs do Grafana — buscar `webhook received` no horário da falha |
-| Sync do CI retorna 401 | Chave errada no secret do pod | Verificar sealed secret no IAC |
-| Flow ativo no banco mas pausado no Prefect | Divergência pós-deploy ou intervenção manual | Rodar sync via Django Admin ou curl |
-| `Sync complete` não aparece nos logs após deploy | Step do CI falhou silenciosamente | Verificar log da action no GitHub |
-
----
-
 ## Referência rápida
 
 | Recurso | Valor |
@@ -255,6 +214,6 @@ for record in DisabledFlowSchedule.objects.filter(is_schedule_active=True):
 
 ## Ver também
 
-- [Runbook — Gestão de Schedules](../runbooks/gestao-de-schedules.md)
+- [Runbook — Schedule de flow não desativa ou não sincroniza](../runbooks/gestao-de-schedules.md) — diagnóstico e resolução de falhas
 - [Como configurar a automação Flow Failed Webhook](../como-fazer/flow-failed-webhook.md)
 - [Prefect — visão geral](../index.md)

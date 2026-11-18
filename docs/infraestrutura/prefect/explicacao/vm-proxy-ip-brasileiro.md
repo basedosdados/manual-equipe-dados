@@ -1,3 +1,7 @@
+---
+tipo: explicacao
+titulo: VM proxy com IP brasileiro
+---
 # VM proxy com IP brasileiro
 
 > Decisão arquitetural e alternativas consideradas: [ADR-0005](../../adr/0005-vm-proxy-ip-brasileiro.md). Uso no código: [Usar o proxy com IP brasileiro](../../../pipelines/como-fazer/usar-proxy-ip-brasileiro.md). Esta página é a referência técnica de como a peça funciona.

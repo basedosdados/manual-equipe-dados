@@ -1,3 +1,7 @@
+---
+tipo: como-fazer
+titulo: Como usar o proxy com IP brasileiro
+---
 # Usar o proxy com IP brasileiro
 
 > Contexto e decisão arquitetural completos em [ADR-0005 — VM proxy com IP brasileiro](../../infraestrutura/adr/0005-vm-proxy-ip-brasileiro.md). Referência técnica de como o Squid funciona: [VM proxy com IP brasileiro (Explicação)](../../infraestrutura/prefect/explicacao/vm-proxy-ip-brasileiro.md). Esta página cobre só o dia a dia de quem escreve flows.

@@ -1,3 +1,7 @@
+---
+tipo: como-fazer
+titulo: Como abrir um pull request no repositório pipelines
+---
 # Abrir um pull request no repositório `pipelines`
 
 > Esta página cobre apenas as **labels específicas de pull requests**. Convenções de título, descrição, revisão e merge serão documentadas em iterações futuras.

@@ -13,9 +13,9 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 - [Abrir uma issue](como-fazer/abrir-issue.md)
 - [Abrir um PR](como-fazer/abrir-pr.md)
 - [Atualizar dependências](como-fazer/atualizar-dependencias.md) — Python (`uv`) e dbt packages
+- [Rodar um flow localmente](como-fazer/rodar-flow-localmente.md) — Prefect 3, sem precisar de deploy em dev na nuvem
 
 ## Referência
 
 - [`stage_dispatch.py`](referencia/stage-dispatch.md) — tipos e funções usados para encadear os estágios
 - [Testes dbt obrigatórios](referencia/testes-dbt-obrigatorios.md) — o conjunto mínimo de testes de toda tabela e o princípio de tratamento que cada um protege
-- [Rodar um flow localmente](como-fazer/rodar-flow-localmente.md) — Prefect 3, sem precisar de deploy em dev na nuvem
