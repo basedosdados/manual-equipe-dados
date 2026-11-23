@@ -95,10 +95,14 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
 Confira o `schema.yml` contra os [testes dbt obrigatórios](../../pipelines/referencia/testes-dbt-obrigatorios.md).
 
 - [ ] A chave única vem do que cada linha representa.
+- [ ] A chave única só tem identificadores (códigos, ids, período de referência), nunca coluna de
+  valor, descrição ou texto livre.
 - [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
 - [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
 - [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
-  tolerante tem a medição e o motivo no README.
+  tolerante tem a medição e o motivo no README, e um limiar abaixo de `0.90` é um caso excepcional com o motivo documentado. Coluna pouco
+  preenchida por natureza vai para o `ignore_values`, com o motivo no README, em vez de baixar o
+  limiar.
 - [ ] Nenhum teste está em `warn` (`severity: warn`, `warn_if`). Todo teste usa a severidade
   padrão, `error`.
 - [ ] Toda exceção nos testes (`ignore_values`, tolerâncias) está documentada e
