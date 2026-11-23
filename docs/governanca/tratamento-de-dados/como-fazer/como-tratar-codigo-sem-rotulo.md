@@ -14,6 +14,7 @@ nunca foi rotulado.
 - Acesso ao CSV do dicionário do conjunto (staging) e, quando existir, ao script que o atualiza
   (por exemplo, `models/<conjunto>/code/update_dicionario.py`).
 - Conta no [Fala.BR](https://falabr.cgu.gov.br/), para o pedido via LAI.
+- Permissão para abrir issues no repositório `basedosdados/pipelines`.
 
 ## Passos
 
@@ -33,21 +34,33 @@ nunca foi rotulado.
    buscar, e o "(nota da BD)" deixa claro que o texto é nosso, não uma categoria do órgão. As
    fontes consultadas ficam no README do conjunto. Mantenha o resto do texto igual em todos os
    conjuntos, para que uma busca por `sem significado nas fontes oficiais` encontre todos os
-   casos. Não deixe o código de fora do
-   dicionário, não coloque o código no `ignore_values` do teste e não mude o teste para `warn`.
+   casos. Não deixe o código de fora do dicionário, não coloque o código no `ignore_values` do
+   teste e não mude o teste para `warn`.
 5. **Abra um pedido via LAI** ao órgão responsável pela base, no Fala.BR, pedindo o significado
    do código e desde quando ele é usado. Um pedido pode cobrir vários códigos.
-6. **Registre no README do conjunto**, na seção de mudanças do dicionário, uma linha por código:
+6. **Abra uma issue para acompanhar o pedido** no repositório `pipelines`, uma por pedido, com o
+   rótulo `pedido-lai` e o título `[Pedido LAI] <conjunto>: <assunto>`. No corpo, coloque:
+    - o órgão e o número do protocolo no Fala.BR;
+    - a data do pedido e o prazo de resposta (20 dias, prorrogáveis por mais 10);
+    - o texto do que foi perguntado;
+    - os códigos cobertos, com `tabela.coluna` e chave, e o PR que os incluiu no dicionário.
+
+    A lista de issues abertas com o rótulo `pedido-lai` é onde a equipe vê o que está pendente.
+    Registre na issue toda movimentação do pedido: prorrogação, resposta, recurso.
+7. **Registre no README do conjunto**, na seção de mudanças do dicionário, uma linha por código:
    tabela e coluna, chave, rótulo, primeira competência, número de linhas, as fontes consultadas
-   e, quando for o caso, o número do protocolo e a data do pedido via LAI.
-7. **Quando a resposta chegar**, troque o rótulo pelo significado informado e cite a resposta (data
-   e protocolo) no README.
+   e, quando for o caso, o protocolo do pedido via LAI e o link da issue.
+8. **Quando a resposta chegar**, troque o rótulo pelo significado informado, cite a resposta (data
+   e protocolo) no README e feche a issue com o link do PR que fez a troca. Se o órgão responder
+   que não sabe o significado, mantenha o rótulo, registre a resposta no README e feche a issue.
 
 ## Verificação
 
 - O `custom_dictionary_coverage` passa com severidade `error`.
 - O README do conjunto tem, para cada código incluído, a fonte do rótulo ou o pedido via LAI em
   aberto.
+- Cada pedido via LAI em aberto tem uma issue aberta com o rótulo `pedido-lai`, com protocolo,
+  data e prazo.
 
 ## Problemas comuns
 
@@ -56,6 +69,10 @@ nunca foi rotulado.
 - **O teste passou a ficar em `warn` para não bloquear a carga** — nenhum teste fica em `warn`
   (ver [Testes dbt obrigatórios](../../../pipelines/referencia/testes-dbt-obrigatorios.md#definicao)).
   Inclua o código com o rótulo de código sem significado e mantenha o teste em `error`.
+- **O prazo do pedido venceu sem resposta** — registre uma reclamação no Fala.BR, anote na issue
+  a data e o novo prazo, e mantenha a issue aberta.
+- **A resposta não diz o significado do código** (resposta genérica ou negativa) — entre com
+  recurso no Fala.BR dentro de 10 dias e registre na issue.
 - **O mesmo código tem significados diferentes ao longo do tempo** — registre os dois períodos no
   README e use o rótulo vigente na competência mais recente, citando a mudança.
 

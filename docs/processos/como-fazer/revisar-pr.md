@@ -123,7 +123,7 @@ BigQuery.
   justificam limiares de teste.
 - [ ] Cita o documento oficial de todo código novo no dicionário e quando ele aparece nos dados.
 - [ ] Registra o que precisa ser investigado (por exemplo, linhas sem par no diretório) e os
-  pedidos de esclarecimento via LAI.
+  pedidos de esclarecimento via LAI, com o link da issue `pedido-lai` que acompanha cada um.
 - [ ] É direto: explica o que alguém precisa saber para mexer no conjunto, sem narrar o processo.
   Não inclui lista de alternativas de tratamento que não diz por que foram descartadas.
 
