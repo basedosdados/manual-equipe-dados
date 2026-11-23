@@ -3729,6 +3729,8 @@
       
         
       
+        
+      
     
     
     
@@ -3823,6 +3825,34 @@
     
   
     Práticas de tratamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código sem rótulo no dicionário
   
 
     
@@ -4286,8 +4316,11 @@ para PRs novos: tabelas que já estão publicadas se adequam quando forem altera
   total maior que 5 GB. O tamanho total aparece em "Detalhes" da tabela no console do BigQuery.
   Em tabelas grandes, todo teste usa <code>config: where:</code> com um dos placeholders de partição (tabela
   abaixo). Tabelas menores podem rodar os testes na tabela toda.</li>
-<li><strong>Severidade <code>error</code>.</strong> Um teste que falha bloqueia a publicação. <code>warn</code> só com justificativa no
-  README do conjunto.</li>
+<li><strong>Severidade <code>error</code>, sem exceção.</strong> Um teste que falha bloqueia a publicação. Nenhum teste fica
+  em <code>warn</code>: ninguém acompanha aviso de teste, então ele só gera custo de processamento. Se uma
+  falha não deve bloquear a carga, o teste não deve existir; se a falha vem da fonte, o limiar é
+  ajustado com a medição registrada no README do conjunto. Código sem rótulo no dicionário segue
+  <a href="../../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/">Como tratar um código sem rótulo no dicionário</a>.</li>
 <li><strong>Sem repetição.</strong> Uma coluna não passa duas vezes pelo mesmo tipo de checagem (por exemplo,
   <code>not_null</code> e <code>not_null_proportion_multiple_columns</code> na mesma coluna).</li>
 <li><strong>Limiares medidos e justificados.</strong> Os valores padrão são <code>at_least: 0.99</code> e

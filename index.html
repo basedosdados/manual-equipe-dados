@@ -962,6 +962,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#como-tratar-um-codigo-sem-rotulo-no-dicionario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como tratar um código sem rótulo no dicionário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qualidade-de-dados" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4298,6 +4309,8 @@
       
         
       
+        
+      
     
     
     
@@ -4392,6 +4405,34 @@
     
   
     Práticas de tratamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código sem rótulo no dicionário
   
 
     
@@ -5308,6 +5349,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#como-tratar-um-codigo-sem-rotulo-no-dicionario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como tratar um código sem rótulo no dicionário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qualidade-de-dados" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5501,11 +5553,13 @@
 <h3 id="adr-0001-manter-tabelas-de-arquitetura-no-google-drive"><a href="governanca/metadados/adr/0001-manter-tabelas-arquitetura-no-drive/">ADR-0001 — Manter tabelas de arquitetura no Google Drive</a><a class="headerlink" href="#adr-0001-manter-tabelas-de-arquitetura-no-google-drive" title="Permanent link">&para;</a></h3>
 <p><code>adr</code> · Decisão (aceita, 2026-05-22) de <strong>manter</strong> as tabelas de arquitetura como planilhas no Google Drive e <strong>não</strong> migrá-las para arquivos YAML versionados no Git. A tabela de arquitetura descreve a estrutura de uma tabela antes de subi-la ao BigQuery (colunas, tipos, cobertura, unidade, diretórios, dados sensíveis, partições) e é o artefato revisado pela equipe. A proposta (issue #1115) de mover para YAML/Git tinha argumentos fortes a favor — histórico versionado, revisão no mesmo fluxo de PR, tipos nativos validáveis por CI, proteção contra edição/exclusão acidental, geração mais direta do <code>schema.yml</code> e revisão por bot/IA. Mas foi descartada pelo peso de dois contra-argumentos: a <strong>ergonomia de edição visual</strong> é muito superior em planilha para tabelas com muitas colunas (o caso comum na BD), e o formato planilha é <strong>próximo do formato tabular</strong> que o usuário vê no site, reduzindo erros percebidos só após o deploy — além da menor barreira para contribuidores externos. As negativas assumidas: seguimos sem versionamento nem trilha de auditoria das arquiteturas, sem validação de CI e com revisão fora do PR de código. Status: aceito, revisitável se o volume crescer ou surgir ferramenta que una edição tabular a versionamento.</p>
 <h3 id="tratamento-de-dados"><a href="governanca/tratamento-de-dados/">Tratamento de dados</a><a class="headerlink" href="#tratamento-de-dados" title="Permanent link">&para;</a></h3>
-<p><code>índice</code> · Mapa do sub-domínio de tratamento de dados: o que a BD faz e o que não faz com o dado da fonte, e como a equipe garante isso no pipeline, no dbt e na revisão de PR. Aponta para a explicação dos <strong>princípios de tratamento</strong> e para a referência das <strong>práticas de tratamento</strong>.</p>
+<p><code>índice</code> · Mapa do sub-domínio de tratamento de dados: o que a BD faz e o que não faz com o dado da fonte, e como a equipe garante isso no pipeline, no dbt e na revisão de PR. Aponta para a explicação dos <strong>princípios de tratamento</strong>, para a referência das <strong>práticas de tratamento</strong> e para o passo a passo de <strong>código sem rótulo no dicionário</strong>.</p>
 <h3 id="principios-de-tratamento-de-dados"><a href="governanca/tratamento-de-dados/explicacao/principios-de-tratamento/">Princípios de tratamento de dados</a><a class="headerlink" href="#principios-de-tratamento-de-dados" title="Permanent link">&para;</a></h3>
 <p><code>explicação</code> · Define o princípio geral da BD: os dados devem ser o mais próximo possível da fonte original, porque quem usa o dado entende melhor o contexto e sabe que informação quer tirar dele. Lista os <strong>quatro tipos de modificação</strong> permitidos (padronização para cruzar bases, correção de tipo e formato, padronização de unidades, nomes de coluna e estrutura da tabela), detalhados no Manual de estilo — o que fica fora deles só entra como exceção documentada no README do conjunto —, e os <strong>compromissos com o dado publicado</strong>: fidelidade à fonte com toda transformação documentada no README do conjunto, nenhuma linha da fonte perdida (duplicatas da fonte incluídas), cobertura temporal igual à da fonte original, série sem buracos e histórico consistente. Fecha com os trade-offs entre facilidade de uso e proximidade da fonte, e entre consistência do histórico e custo de reprocessar.</p>
 <h3 id="praticas-de-tratamento"><a href="governanca/tratamento-de-dados/referencia/praticas-de-tratamento/">Práticas de tratamento</a><a class="headerlink" href="#praticas-de-tratamento" title="Permanent link">&para;</a></h3>
 <p><code>referência</code> · As regras de engenharia verificadas na revisão de PR para garantir os princípios de tratamento: entender a chave única antes de testá-la, zero tolerância de perda de linhas (<code>check_rows_written</code>), justificativa e custo medido para toda transformação nova, corrigir a causa na medida do problema (ocorrências raras da fonte — como referência, menos de 0,1% — documentadas, com pedido de esclarecimento via LAI registrado no README), testes só na partição nova em tabelas grandes e sem repetição, decisões registradas no README do conjunto e proveniência de códigos novos no README. Cada prática traz um exemplo.</p>
+<h3 id="como-tratar-um-codigo-sem-rotulo-no-dicionario"><a href="governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/">Como tratar um código sem rótulo no dicionário</a><a class="headerlink" href="#como-tratar-um-codigo-sem-rotulo-no-dicionario" title="Permanent link">&para;</a></h3>
+<p><code>como-fazer</code> · Passos para quando o <code>custom_dictionary_coverage</code> acusa um código que está nos dados mas não tem rótulo no <code>dicionario</code>: confirmar que o código vem da fonte (e não de zeros à esquerda perdidos, tipo da coluna ou encoding), procurar o significado nos documentos oficiais e, se não houver, incluir o código com o rótulo "Código <chave>: sem significado nas fontes oficiais (nota da BD)" e abrir um pedido via LAI no Fala.BR, acompanhado por uma issue com o rótulo <code>pedido-lai</code> no repositório <code>pipelines</code>. Registra no README do conjunto, na seção de mudanças do dicionário, a fonte ou o protocolo do pedido, e troca o rótulo quando a resposta chega. O teste fica sempre em <code>error</code>: o código não vai para o <code>ignore_values</code> e o teste não vira <code>warn</code>.</p>
 <h3 id="qualidade-de-dados"><a href="governanca/qualidade/">Qualidade de dados</a><a class="headerlink" href="#qualidade-de-dados" title="Permanent link">&para;</a></h3>
 <p><code>índice</code> · Mapa do sub-domínio de qualidade: os testes do modelo dbt e as regras de negócio que governam a qualidade das bases publicadas. Aponta para a referência de <strong>regras de negócio do preenchimento de metadados</strong> (as restrições que uma base deve satisfazer antes de publicar); a referência técnica dos testes dbt fica em Pipelines. Domínio em construção, com tópicos previstos: particularidades de bases anuais grandes (ex.: <code>br_me_rais</code>) e o processo de revisão de qualidade antes de publicar.</p>
 <h3 id="regras-de-negocio-do-preenchimento-de-metadados"><a href="governanca/qualidade/referencia/regras-metadados/">Regras de negócio do preenchimento de metadados</a><a class="headerlink" href="#regras-de-negocio-do-preenchimento-de-metadados" title="Permanent link">&para;</a></h3>

@@ -3773,6 +3773,8 @@
       
         
       
+        
+      
     
     
     
@@ -3867,6 +3869,34 @@
     
   
     Práticas de tratamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código sem rótulo no dicionário
   
 
     
@@ -4428,7 +4458,9 @@ apontando o item.</p>
 <li>[ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um <code>where</code> escrito à mão.</li>
 <li>[ ] <code>at_least</code> é <code>0.99</code> e as colunas de chave não estão no <code>ignore_values</code>. Qualquer limiar mais
   tolerante tem a medição e o motivo no README.</li>
-<li>[ ] Toda exceção nos testes (<code>ignore_values</code>, tolerâncias, testes em <code>warn</code>) está documentada e
+<li>[ ] Nenhum teste está em <code>warn</code> (<code>severity: warn</code>, <code>warn_if</code>). Todo teste usa a severidade
+  padrão, <code>error</code>.</li>
+<li>[ ] Toda exceção nos testes (<code>ignore_values</code>, tolerâncias) está documentada e
   justificada no README. Para cada uma, avalie se é um problema que podemos resolver no
   tratamento ou se é inerente à fonte e deve passar.</li>
 </ul>
@@ -4449,7 +4481,7 @@ BigQuery.</p>
   justificam limiares de teste.</li>
 <li>[ ] Cita o documento oficial de todo código novo no dicionário e quando ele aparece nos dados.</li>
 <li>[ ] Registra o que precisa ser investigado (por exemplo, linhas sem par no diretório) e os
-  pedidos de esclarecimento via LAI.</li>
+  pedidos de esclarecimento via LAI, com o link da issue <code>pedido-lai</code> que acompanha cada um.</li>
 <li>[ ] É direto: explica o que alguém precisa saber para mexer no conjunto, sem narrar o processo.
   Não inclui lista de alternativas de tratamento que não diz por que foram descartadas.</li>
 </ul>
@@ -4484,7 +4516,9 @@ merge, confira:</p>
 <li><strong>O <code>table-approve</code> não materializou a tabela</strong> — o PR não alterava o <code>.sql</code> do modelo, ou o
   label foi aplicado com a staging de dev incompleta.</li>
 <li><strong>Um teste dbt quebra sem que o código tenha mudado</strong> — a fonte publicou um código novo que não
-  está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste.</li>
+  está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste. Se o
+  significado não está em nenhuma fonte, siga
+  <a href="../../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo/">Como tratar um código sem rótulo no dicionário</a>.</li>
 <li><strong>Coletas de teste aparecem em prod</strong> — a staging de dev tinha cargas de teste quando o PR com
   <code>table-approve</code> foi mergeado. Apague essas pastas da staging de dev antes do merge.</li>
 </ul>
