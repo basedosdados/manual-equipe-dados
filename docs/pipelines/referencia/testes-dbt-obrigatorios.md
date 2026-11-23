@@ -35,7 +35,7 @@ Regras para todos os testes:
 - **Limiares medidos e justificados.** Os valores padrão são `at_least: 0.99` e
   `proportion_allowed_failures: 0`. Um valor mais tolerante só entra depois de medir a proporção
   real, com a medição e o motivo pelo qual é aceitável tolerar aquelas falhas registrados no
-  README do conjunto. No `at_least`, o valor nunca fica abaixo de `0.90`
+  README do conjunto. No `at_least`, um valor abaixo de `0.90` é exceção
   ([limiar do `not_null_proportion_multiple_columns`](#limiar-do-not_null_proportion_multiple_columns)).
 
 ## Schema / Parâmetros
@@ -45,7 +45,7 @@ Regras para todos os testes:
 | Teste | Aplica em | Parâmetros principais | Princípio que protege |
 |---|---|---|---|
 | `dbt_utils.unique_combination_of_columns` | Toda tabela, com a chave única que representa a linha ([exceções](#excecoes-a-chave-unica)) | `combination_of_columns` | Nenhuma linha da fonte se perde (duplicata criada pelo tratamento é bug); [entender antes de testar](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md) |
-| `not_null_proportion_multiple_columns` | Toda tabela | `at_least: 0.99` (o padrão do teste é `0.05`, mas estamos alterando isso para `0.99`, por isso passe o valor ao incluir o teste; mudança do padrão na issue [#2323](https://github.com/basedosdados/pipelines/issues/2323)); nunca abaixo de `0.90` ([limiar](#limiar-do-not_null_proportion_multiple_columns)); `ignore_values`: incluir colunas com grande proporção de nulos por natureza, como colunas que só são preenchidas em uma parcela das linhas, com o motivo no README | Correção de tipo e formato: o teste valida que nenhum `safe_cast` incorreto virou nulo sem erro. Ele também captura mudança de layout na fonte, quando uma coluna é excluída |
+| `not_null_proportion_multiple_columns` | Toda tabela | `at_least: 0.99` (o padrão do teste é `0.05`, mas estamos alterando isso para `0.99`, por isso passe o valor ao incluir o teste; mudança do padrão na issue [#2323](https://github.com/basedosdados/pipelines/issues/2323)); abaixo de `0.90` só em casos excepcionais ([limiar](#limiar-do-not_null_proportion_multiple_columns)); `ignore_values`: incluir colunas com grande proporção de nulos por natureza, como colunas que só são preenchidas em uma parcela das linhas, com o motivo no README | Correção de tipo e formato: o teste valida que nenhum `safe_cast` incorreto virou nulo sem erro. Ele também captura mudança de layout na fonte, quando uma coluna é excluída |
 | `relationships` ou `custom_relationships` | Toda coluna padronizada para cruzar bases (`id_municipio`, `sigla_uf`, `cnae`, `cbo`…) contra o diretório | `to`, `field`, `ignore_values`, `proportion_allowed_failures` (padrão `0`) | Padronização para cruzar bases |
 | `custom_dictionary_coverage` | Toda tabela com colunas descritas no `dicionario` do conjunto | `dictionary_model`, `columns_covered_by_dictionary` | Padronização para cruzar bases: o dicionário cobre todas as chaves da tabela |
 
@@ -80,8 +80,10 @@ cruzamento que não casou. Um limiar baixo não testa nada: com `at_least: 0.05`
 de nulos passa.
 
 - O padrão é `0.99`.
-- Nunca use um valor abaixo de `0.90`. Entre `0.90` e `0.99`, só com a medição e o motivo no README
-  do conjunto.
+- Entre `0.90` e `0.99`, só com a medição e o motivo no README do conjunto.
+- Abaixo de `0.90`, só em casos excepcionais, com a medição e o motivo documentados no README. Por
+  exemplo, uma tabela que é inteira pouco preenchida por natureza, em que nenhuma coluna fora da
+  chave chega a `0.90`. Um valor baixo só porque o teste falhou não é motivo.
 - O `at_least` vale para todas as colunas do teste. Uma coluna que tem motivo para ser pouco
   preenchida (por exemplo, `id_municipio` em eleição geral, que não tem município) não baixa o
   limiar das outras: ela vai para o `ignore_values`, com o motivo documentado no README.
