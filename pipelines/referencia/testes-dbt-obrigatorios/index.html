@@ -2719,10 +2719,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#colunas-da-chave-unica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Colunas da chave única
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#excecoes-a-chave-unica" class="md-nav__link">
     <span class="md-ellipsis">
       
         Exceções à chave única
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limiar-do-not_null_proportion_multiple_columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limiar do not_null_proportion_multiple_columns
       
     </span>
   </a>
@@ -4172,10 +4194,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#colunas-da-chave-unica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Colunas da chave única
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#excecoes-a-chave-unica" class="md-nav__link">
     <span class="md-ellipsis">
       
         Exceções à chave única
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limiar-do-not_null_proportion_multiple_columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limiar do not_null_proportion_multiple_columns
       
     </span>
   </a>
@@ -4326,7 +4370,8 @@ para PRs novos: tabelas que já estão publicadas se adequam quando forem altera
 <li><strong>Limiares medidos e justificados.</strong> Os valores padrão são <code>at_least: 0.99</code> e
   <code>proportion_allowed_failures: 0</code>. Um valor mais tolerante só entra depois de medir a proporção
   real, com a medição e o motivo pelo qual é aceitável tolerar aquelas falhas registrados no
-  README do conjunto.</li>
+  README do conjunto. No <code>at_least</code>, um valor abaixo de <code>0.90</code> é exceção
+  (<a href="#limiar-do-not_null_proportion_multiple_columns">limiar do <code>not_null_proportion_multiple_columns</code></a>).</li>
 </ul>
 <h2 id="schema-parametros">Schema / Parâmetros<a class="headerlink" href="#schema-parametros" title="Permanent link">&para;</a></h2>
 <h3 id="testes-obrigatorios">Testes obrigatórios<a class="headerlink" href="#testes-obrigatorios" title="Permanent link">&para;</a></h3>
@@ -4349,7 +4394,7 @@ para PRs novos: tabelas que já estão publicadas se adequam quando forem altera
 <tr>
 <td><code>not_null_proportion_multiple_columns</code></td>
 <td>Toda tabela</td>
-<td><code>at_least: 0.99</code> (o padrão do teste é <code>0.05</code>, mas estamos alterando isso para <code>0.99</code>, por isso passe o valor ao incluir o teste; mudança do padrão na issue <a href="https://github.com/basedosdados/pipelines/issues/2323">#2323</a>); <code>ignore_values</code>: incluir colunas com grande proporção de nulos por natureza, como colunas que só são preenchidas em uma parcela das linhas</td>
+<td><code>at_least: 0.99</code> (o padrão do teste é <code>0.05</code>, mas estamos alterando isso para <code>0.99</code>, por isso passe o valor ao incluir o teste; mudança do padrão na issue <a href="https://github.com/basedosdados/pipelines/issues/2323">#2323</a>); abaixo de <code>0.90</code> só em casos excepcionais (<a href="#limiar-do-not_null_proportion_multiple_columns">limiar</a>); <code>ignore_values</code>: incluir colunas com grande proporção de nulos por natureza, como colunas que só são preenchidas em uma parcela das linhas, com o motivo no README</td>
 <td>Correção de tipo e formato: o teste valida que nenhum <code>safe_cast</code> incorreto virou nulo sem erro. Ele também captura mudança de layout na fonte, quando uma coluna é excluída</td>
 </tr>
 <tr>
@@ -4366,6 +4411,12 @@ para PRs novos: tabelas que já estão publicadas se adequam quando forem altera
 </tr>
 </tbody>
 </table>
+<h3 id="colunas-da-chave-unica">Colunas da chave única<a class="headerlink" href="#colunas-da-chave-unica" title="Permanent link">&para;</a></h3>
+<p>O <code>combination_of_columns</code> só tem colunas que identificam a unidade da informação: códigos, ids e
+o período de referência. Coluna de valor (valor, quantidade, medida), descrição e texto livre
+nunca entram: são características de um item, e dois itens diferentes podem ter o mesmo valor. Se
+os identificadores não bastam, a tabela cai em uma das <a href="#excecoes-a-chave-unica">exceções</a>
+abaixo (<a href="../../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento/">prática</a>).</p>
 <h3 id="excecoes-a-chave-unica">Exceções à chave única<a class="headerlink" href="#excecoes-a-chave-unica" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Tabela sem chave única</strong> (por exemplo, <code>br_me_rais.microdados_vinculos</code>): não leva o teste, e a
@@ -4382,6 +4433,21 @@ duplicatas, e por isso falha menos do que deveria. A correção está na issue
 quando necessário, com um <code>proportion_allowed_failures</code> bem baixo (o padrão de <code>0.05</code> é alto
 demais).</p>
 </blockquote>
+<h3 id="limiar-do-not_null_proportion_multiple_columns">Limiar do <code>not_null_proportion_multiple_columns</code><a class="headerlink" href="#limiar-do-not_null_proportion_multiple_columns" title="Permanent link">&para;</a></h3>
+<p>O <code>at_least</code> existe para validar que as colunas estão bem preenchidas, ou seja, que o tratamento
+não perdeu valores: um <code>safe_cast</code> que virou nulo, uma coluna que mudou de nome na fonte, um
+cruzamento que não casou. Um limiar baixo não testa nada: com <code>at_least: 0.05</code>, uma coluna com 95%
+de nulos passa.</p>
+<ul>
+<li>O padrão é <code>0.99</code>.</li>
+<li>Entre <code>0.90</code> e <code>0.99</code>, só com a medição e o motivo no README do conjunto.</li>
+<li>Abaixo de <code>0.90</code>, só em casos excepcionais, com a medição e o motivo documentados no README. Por
+  exemplo, uma tabela que é inteira pouco preenchida por natureza, em que nenhuma coluna fora da
+  chave chega a <code>0.90</code>. Um valor baixo só porque o teste falhou não é motivo.</li>
+<li>O <code>at_least</code> vale para todas as colunas do teste. Uma coluna que tem motivo para ser pouco
+  preenchida (por exemplo, <code>id_municipio</code> em eleição geral, que não tem município) não baixa o
+  limiar das outras: ela vai para o <code>ignore_values</code>, com o motivo documentado no README.</li>
+</ul>
 <h3 id="testes-recomendados-nao-obrigatorios">Testes recomendados (não obrigatórios)<a class="headerlink" href="#testes-recomendados-nao-obrigatorios" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

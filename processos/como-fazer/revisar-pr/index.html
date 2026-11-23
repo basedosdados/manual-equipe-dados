@@ -4454,10 +4454,14 @@ apontando o item.</p>
 <p>Confira o <code>schema.yml</code> contra os <a href="../../../pipelines/referencia/testes-dbt-obrigatorios/">testes dbt obrigatórios</a>.</p>
 <ul>
 <li>[ ] A chave única vem do que cada linha representa.</li>
+<li>[ ] A chave única só tem identificadores (códigos, ids, período de referência), nunca coluna de
+  valor, descrição ou texto livre.</li>
 <li>[ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.</li>
 <li>[ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um <code>where</code> escrito à mão.</li>
 <li>[ ] <code>at_least</code> é <code>0.99</code> e as colunas de chave não estão no <code>ignore_values</code>. Qualquer limiar mais
-  tolerante tem a medição e o motivo no README.</li>
+  tolerante tem a medição e o motivo no README, e um limiar abaixo de <code>0.90</code> é um caso excepcional com o motivo documentado. Coluna pouco
+  preenchida por natureza vai para o <code>ignore_values</code>, com o motivo no README, em vez de baixar o
+  limiar.</li>
 <li>[ ] Nenhum teste está em <code>warn</code> (<code>severity: warn</code>, <code>warn_if</code>). Todo teste usa a severidade
   padrão, <code>error</code>.</li>
 <li>[ ] Toda exceção nos testes (<code>ignore_values</code>, tolerâncias) está documentada e

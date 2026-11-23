@@ -4160,6 +4160,11 @@ README do conjunto.</p>
 <td>Uma tabela de sócios em que cada linha é um sócio de uma empresa numa data de referência: a chave sai dessa definição, não de tentativa e erro</td>
 </tr>
 <tr>
+<td>A chave única só tem identificadores</td>
+<td>Na chave única entram só as colunas que identificam a unidade da informação: códigos, ids e o período de referência. Coluna de valor (valor, quantidade, medida) nunca entra, nem descrição ou texto livre: são características de um item, não o que o identifica. Se os identificadores não distinguem as linhas, a tabela não tem chave única ou a chave é aproximada, e isso fica documentado no README; não se completa a chave com valores para o teste passar.</td>
+<td>Em <code>bens_candidato</code>, a chave com <code>descricao_item</code> e <code>valor_item</code> reprova dois imóveis iguais do mesmo candidato, que são dois bens diferentes. O que identifica o bem é o número de ordem dele na declaração</td>
+</tr>
+<tr>
 <td>Zero tolerância de perda de linhas</td>
 <td>O pipeline chama <code>check_rows_written</code> (<code>pipelines/utils/data_tests/rows.py</code>) para conferir linhas lidas contra linhas gravadas e falha se diferirem. Não existe parâmetro de tolerância.</td>
 <td>Uma checagem com um parâmetro que aceita perder uma fração das linhas</td>
