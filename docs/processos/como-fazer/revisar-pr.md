@@ -100,7 +100,9 @@ Confira o `schema.yml` contra os [testes dbt obrigatórios](../../pipelines/refe
 - [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
 - [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
 - [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
-  tolerante tem a medição e o motivo no README.
+  tolerante tem a medição e o motivo no README, e nenhum fica abaixo de `0.90`. Coluna pouco
+  preenchida por natureza vai para o `ignore_values`, com o motivo no README, em vez de baixar o
+  limiar.
 - [ ] Nenhum teste está em `warn` (`severity: warn`, `warn_if`). Todo teste usa a severidade
   padrão, `error`.
 - [ ] Toda exceção nos testes (`ignore_values`, tolerâncias) está documentada e
