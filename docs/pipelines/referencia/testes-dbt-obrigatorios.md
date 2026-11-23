@@ -48,6 +48,14 @@ Regras para todos os testes:
 | `relationships` ou `custom_relationships` | Toda coluna padronizada para cruzar bases (`id_municipio`, `sigla_uf`, `cnae`, `cbo`…) contra o diretório | `to`, `field`, `ignore_values`, `proportion_allowed_failures` (padrão `0`) | Padronização para cruzar bases |
 | `custom_dictionary_coverage` | Toda tabela com colunas descritas no `dicionario` do conjunto | `dictionary_model`, `columns_covered_by_dictionary` | Padronização para cruzar bases: o dicionário cobre todas as chaves da tabela |
 
+### Colunas da chave única
+
+O `combination_of_columns` só tem colunas que identificam a unidade da informação: códigos, ids e
+o período de referência. Coluna de valor (valor, quantidade, medida), descrição e texto livre
+nunca entram: são características de um item, e dois itens diferentes podem ter o mesmo valor. Se
+os identificadores não bastam, a tabela cai em uma das [exceções](#excecoes-a-chave-unica)
+abaixo ([prática](../../governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md)).
+
 ### Exceções à chave única
 
 - **Tabela sem chave única** (por exemplo, `br_me_rais.microdados_vinculos`): não leva o teste, e a

@@ -95,6 +95,8 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
 Confira o `schema.yml` contra os [testes dbt obrigatórios](../../pipelines/referencia/testes-dbt-obrigatorios.md).
 
 - [ ] A chave única vem do que cada linha representa.
+- [ ] A chave única só tem identificadores (códigos, ids, período de referência), nunca coluna de
+  valor, descrição ou texto livre.
 - [ ] Os testes obrigatórios estão lá, sem a mesma checagem repetida na mesma coluna.
 - [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
 - [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
