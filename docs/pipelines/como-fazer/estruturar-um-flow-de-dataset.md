@@ -132,14 +132,32 @@ br_ibge_ipca_mes_brasil_check_update.deploy_schedules = [
 ]
 
 @flow(name=_pipeline.extract_and_load_flow_name, log_prints=True)
-def br_ibge_ipca_mes_brasil_download(download_params: dict) -> None:
+def br_ibge_ipca_mes_brasil_extract_and_load(download_params: dict) -> None:
     _pipeline.run_extract_and_load(download_params)
 
-br_ibge_ipca_mes_brasil_download.deploy_tags = deploy_tags(
+br_ibge_ipca_mes_brasil_extract_and_load.deploy_tags = deploy_tags(
     DATASET_ID, Etapa.EXTRACT_AND_LOAD, MES_BRASIL_TABLE_ID
 )
-_pipeline.extract_load_deployment = br_ibge_ipca_mes_brasil_download.fn.__name__
+_pipeline.extract_load_deployment = br_ibge_ipca_mes_brasil_extract_and_load.fn.__name__
 ```
+
+**Nome das funções de flow.** O nome da função vira o nome do deployment no
+Prefect (e o `flow_name` no backend, usado para ativar o schedule), então ele
+segue um padrão fixo:
+
+| Flow | Nome da função (= deployment) |
+|---|---|
+| `check_update` | `<dataset_id>_<table_id>_check_update` |
+| `extract_and_load` | `<dataset_id>_<table_id>_extract_and_load` |
+
+- O sufixo do segundo flow é **`_extract_and_load`**, igual ao nome da etapa.
+  Não use `_download`, mesmo que apareça em datasets mais antigos.
+- Em dataset com mais de uma tabela, o `<table_id>` vai no nome de **todos**
+  os flows, inclusive os da primeira tabela migrada. Sem ele não dá para saber
+  pelo nome do deployment de qual tabela ele é.
+- Nunca use um nome genérico como `check_update`/`extract_and_load`: o
+  deployment em prod leva só o nome da função, e vários datasets respondendo
+  pelo mesmo nome impedem ativar o schedule pelo admin.
 
 Pontos fixos, nessa ordem:
 
