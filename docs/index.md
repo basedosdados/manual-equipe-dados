@@ -220,7 +220,7 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 
 ### [Como tratar um código sem rótulo no dicionário](governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo.md)
 
-`como-fazer` · Passos para quando o `custom_dictionary_coverage` acusa um código que está nos dados mas não tem rótulo no `dicionario`: confirmar que o código vem da fonte (e não de zeros à esquerda perdidos, tipo da coluna ou encoding), procurar o significado nos documentos oficiais e, se não houver, incluir o código com o rótulo "Significado não encontrado nas fontes relacionadas a <base>" e abrir um pedido via LAI no Fala.BR. Registra no README do conjunto, na seção de mudanças do dicionário, a fonte ou o protocolo do pedido, e troca o rótulo quando a resposta chega. O teste fica sempre em `error`: o código não vai para o `ignore_values` e o teste não vira `warn`.
+`como-fazer` · Passos para quando o `custom_dictionary_coverage` acusa um código que está nos dados mas não tem rótulo no `dicionario`: confirmar que o código vem da fonte (e não de zeros à esquerda perdidos, tipo da coluna ou encoding), procurar o significado nos documentos oficiais e, se não houver, incluir o código com o rótulo "Código <chave>: significado não encontrado nas fontes relacionadas a <base>" e abrir um pedido via LAI no Fala.BR. Registra no README do conjunto, na seção de mudanças do dicionário, a fonte ou o protocolo do pedido, e troca o rótulo quando a resposta chega. O teste fica sempre em `error`: o código não vai para o `ignore_values` e o teste não vira `warn`.
 
 ### [Qualidade de dados](governanca/qualidade/index.md)
 

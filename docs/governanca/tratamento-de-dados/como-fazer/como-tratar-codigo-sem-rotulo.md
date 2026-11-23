@@ -27,8 +27,11 @@ nunca foi rotulado.
 3. **Se encontrou o significado**, inclua o código no dicionário com o rótulo oficial e registre no
    README do conjunto o documento que o criou e quando ele aparece nos dados.
 4. **Se não encontrou**, inclua o código no dicionário mesmo assim, com o rótulo
-   `Significado não encontrado nas fontes relacionadas a <base>` (por exemplo,
-   `Significado não encontrado nas fontes relacionadas ao CNES`). Não deixe o código de fora do
+   `Código <chave>: significado não encontrado nas fontes relacionadas a <base>` (por exemplo,
+   `Código 16: significado não encontrado nas fontes relacionadas ao CNES`). O código vai no
+   próprio rótulo para que quem vê só o rótulo (num gráfico ou numa tabela agregada) saiba qual
+   código buscar. Mantenha o resto do texto igual, para que uma busca por
+   `significado não encontrado nas fontes` encontre todos os casos. Não deixe o código de fora do
    dicionário, não coloque o código no `ignore_values` do teste e não mude o teste para `warn`.
 5. **Abra um pedido via LAI** ao órgão responsável pela base, no Fala.BR, pedindo o significado
    do código e desde quando ele é usado. Um pedido pode cobrir vários códigos.
