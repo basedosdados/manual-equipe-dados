@@ -99,7 +99,9 @@ Confira o `schema.yml` contra os [testes dbt obrigatórios](../../pipelines/refe
 - [ ] Em tabela grande, todo teste usa um placeholder de partição, nunca um `where` escrito à mão.
 - [ ] `at_least` é `0.99` e as colunas de chave não estão no `ignore_values`. Qualquer limiar mais
   tolerante tem a medição e o motivo no README.
-- [ ] Toda exceção nos testes (`ignore_values`, tolerâncias, testes em `warn`) está documentada e
+- [ ] Nenhum teste está em `warn` (`severity: warn`, `warn_if`). Todo teste usa a severidade
+  padrão, `error`.
+- [ ] Toda exceção nos testes (`ignore_values`, tolerâncias) está documentada e
   justificada no README. Para cada uma, avalie se é um problema que podemos resolver no
   tratamento ou se é inerente à fonte e deve passar.
 
@@ -121,7 +123,7 @@ BigQuery.
   justificam limiares de teste.
 - [ ] Cita o documento oficial de todo código novo no dicionário e quando ele aparece nos dados.
 - [ ] Registra o que precisa ser investigado (por exemplo, linhas sem par no diretório) e os
-  pedidos de esclarecimento via LAI.
+  pedidos de esclarecimento via LAI, com o link da issue `pedido-lai` que acompanha cada um.
 - [ ] É direto: explica o que alguém precisa saber para mexer no conjunto, sem narrar o processo.
   Não inclui lista de alternativas de tratamento que não diz por que foram descartadas.
 
@@ -157,7 +159,9 @@ merge, confira:
 - **O `table-approve` não materializou a tabela** — o PR não alterava o `.sql` do modelo, ou o
   label foi aplicado com a staging de dev incompleta.
 - **Um teste dbt quebra sem que o código tenha mudado** — a fonte publicou um código novo que não
-  está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste.
+  está no dicionário. Inclua o código com a proveniência, em vez de afrouxar o teste. Se o
+  significado não está em nenhuma fonte, siga
+  [Como tratar um código sem rótulo no dicionário](../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo.md).
 - **Coletas de teste aparecem em prod** — a staging de dev tinha cargas de teste quando o PR com
   `table-approve` foi mergeado. Apague essas pastas da staging de dev antes do merge.
 
