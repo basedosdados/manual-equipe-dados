@@ -10,7 +10,7 @@ O que a BD faz e o que não faz com o dado da fonte, e como a equipe garante iss
 
 ### Como fazer
 
-- [Como tratar um código sem rótulo no dicionário](como-fazer/como-tratar-codigo-sem-rotulo.md) — o que fazer quando o `custom_dictionary_coverage` acusa um código que não tem rótulo: confirmar que vem da fonte, buscar o significado e, se não houver, incluir com "significado não encontrado" e pedir via LAI.
+- [Como tratar um código sem rótulo no dicionário](como-fazer/como-tratar-codigo-sem-rotulo.md) — o que fazer quando o `custom_dictionary_coverage` acusa um código que não tem rótulo: confirmar que vem da fonte, buscar o significado e, se não houver, incluir com o rótulo "Código <chave>: sem significado nas fontes oficiais (nota da BD)" e pedir via LAI.
 
 ### Referências
 
