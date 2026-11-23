@@ -124,7 +124,7 @@ em [Pipeline orientado a eventos](../../../pipelines/explicacao/pipeline-orienta
 |---|---|---|
 | Flow único (dataset não migrado) | 1 pod, do começo ao fim | No mesmo pod |
 | Estágios com tabelas derivadas (`br_ms_sim`) | 2 pods: `check_update` e `extract_and_load` | No pod do `extract_and_load` (`promote_primary_and_derived_tables`) |
-| `table-approve` | Runner do GitHub Actions, fora do cluster, + 1 pod por tabela | Pod do deployment `transfer_files_to_prod_flow`, no pool de prod |
+| `table-approve` | Runner do GitHub Actions, fora do cluster, + 1 pod de `build_and_promote` por tabela | No pod do `build_and_promote`, no pool de prod |
 
 ## Trade-offs e alternativas consideradas
 

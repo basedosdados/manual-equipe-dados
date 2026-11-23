@@ -76,7 +76,7 @@ Os caminhos diferem em quem dispara, onde cada etapa roda e se os testes rodam t
 | Pipeline em estágios | Schedule do `check_update` | Pod do `build_and_promote`, pool de prod | `dbt run/test` | `br_bcb_agencia` |
 | Pipeline em estágios com tabelas derivadas | Schedule do `check_update` | Pod do `extract_and_load` (`promote_primary_and_derived_tables`) | `dbt run/test` | `br_ms_sim` |
 | Flow único (não migrado) | Schedule do flow | O único pod do flow | Depende do flow | `au_dcceew_greenhouse` |
-| Pipeline semi-automatizada | Merge de PR com a label `table-approve` | Deployment `transfer_files_to_prod_flow`, pool de prod | Só `dbt run`; o teste roda no CI, em dev ([#2325](https://github.com/basedosdados/pipelines/issues/2325)) | PR semi-automatizado |
+| Pipeline semi-automatizada | Merge de PR com a label `table-approve` | Deployment `build_and_promote`, pool de prod | `dbt run/test` | PR semi-automatizado |
 
 ### Pipeline em estágios
 
@@ -129,21 +129,24 @@ Numa [pipeline semi-automatizada](../glossario.md#p), quem faz as etapas 1 e 2 �
 
 O passo a passo completo do colaborador está no [CONTRIBUTING.md do `pipelines`](https://github.com/basedosdados/pipelines/blob/main/CONTRIBUTING.md) e em [Abrir um PR](../pipelines/como-fazer/abrir-pr.md).
 
-A label sozinha não dispara nada: a Action [`table-approve.yaml`](https://github.com/basedosdados/pipelines/blob/main/.github/workflows/table-approve.yaml) roda em todo push na `main` e, se o PR mergeado tiver a label, chama o script `prefect_run_dbt.py`. Para cada modelo `.sql` alterado no PR, o script dispara no Prefect 3 o flow `transfer_files_to_prod_flow`, o mesmo que o `build_and_promote` usa:
+A label sozinha não dispara nada: a Action [`table-approve.yaml`](https://github.com/basedosdados/pipelines/blob/main/.github/workflows/table-approve.yaml) roda em todo push na `main` e, se o PR mergeado tiver a label, chama o script `prefect_run_dbt.py`. Para cada modelo `.sql` alterado no PR, o script dispara no Prefect 3 o deployment `build_and_promote`, o mesmo das pipelines em estágios. Ele testa a tabela em dev e só então promove:
 
 ```mermaid
 flowchart LR
     PR[PR com a label<br/>table-approve] -->|merge na main| ACT[Action<br/>table-approve.yaml]
-    ACT -->|prefect_run_dbt.py| TF[transfer_files_to_prod_flow<br/>pool de prod]
-    TF -->|backup e cópia| GPRD[(bucket<br/>basedosdados)]
+    ACT -->|prefect_run_dbt.py| BP[build_and_promote<br/>pool de prod]
+    BP -- dbt run/test --> BQD[basedosdados-dev<br/>.dataset]
+    BP -->|transfer_files_to_prod_flow:<br/>backup e cópia| GPRD[(bucket<br/>basedosdados)]
     GPRD -. lê .-> BQPS[basedosdados-staging<br/>.dataset_staging]
-    BQPS -- dbt run --> BQP[basedosdados<br/>.dataset]
-    TF -->|registra| API[(Backend)]
+    BQPS -- dbt run/test --> BQP[basedosdados<br/>.dataset]
+    BP -->|registra| API[(Backend)]
+    classDef dev fill:#f6e9cc,stroke:#b7791f,color:#2b2108
     classDef prod fill:#dce7f6,stroke:#2b5fa8,color:#0f1d33
+    class BQD dev
     class GPRD,BQPS,BQP prod
 ```
 
-Os detalhes e os riscos (troca da staging antes da materialização, esquema da tabela externa) estão em [Table-approve](../pipelines/explicacao/table-approve.md).
+Os detalhes e os riscos (troca da staging antes da materialização em prod, staging de dev vazia, esquema da tabela externa) estão em [Table-approve](../pipelines/explicacao/table-approve.md).
 
 ## Como testo sem afetar prod?
 
@@ -197,7 +200,7 @@ O código fica em `pipelines/utils/metadata/`. Para o passo a passo, veja [Subir
 | `Extract and Load: <dataset>.<tabela>` | O download e o tratamento funcionaram? | Talvez parcial em `basedosdados-dev` |
 | `Build and Promote: <dataset>.<tabela>` | O teste em dev passou? A cópia e o dbt em prod passaram? | Em dev; em prod, só se falhou depois da cópia |
 | Run com o nome do flow (flow único, ex.: `au_dcceew_greenhouse`) | Em que etapa o flow parou? | Depende da etapa: veja o log |
-| Action `table-approve` + run do `transfer_files_to_prod_flow` | A promoção do PR funcionou? | Staging de prod já trocada, se falhou no dbt |
+| Action `table-approve` + run do `build_and_promote` | O teste em dev passou? A promoção do PR funcionou? | Em dev; em prod, staging já trocada se falhou depois da cópia |
 
 Antes de concluir qualquer coisa, confira a fonte, o Prefect e o BigQuery, como descrito em [Diagnóstico com evidência](../processos/referencia/diagnostico-com-evidencia.md).
 
