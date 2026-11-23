@@ -25,8 +25,11 @@ Regras para todos os testes:
   total maior que 5 GB. O tamanho total aparece em "Detalhes" da tabela no console do BigQuery.
   Em tabelas grandes, todo teste usa `config: where:` com um dos placeholders de partição (tabela
   abaixo). Tabelas menores podem rodar os testes na tabela toda.
-- **Severidade `error`.** Um teste que falha bloqueia a publicação. `warn` só com justificativa no
-  README do conjunto.
+- **Severidade `error`, sem exceção.** Um teste que falha bloqueia a publicação. Nenhum teste fica
+  em `warn`: ninguém acompanha aviso de teste, então ele só gera custo de processamento. Se uma
+  falha não deve bloquear a carga, o teste não deve existir; se a falha vem da fonte, o limiar é
+  ajustado com a medição registrada no README do conjunto. Código sem rótulo no dicionário segue
+  [Como tratar um código sem rótulo no dicionário](../../governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo.md).
 - **Sem repetição.** Uma coluna não passa duas vezes pelo mesmo tipo de checagem (por exemplo,
   `not_null` e `not_null_proportion_multiple_columns` na mesma coluna).
 - **Limiares medidos e justificados.** Os valores padrão são `at_least: 0.99` e

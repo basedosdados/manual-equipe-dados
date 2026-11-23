@@ -208,7 +208,7 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 
 ### [Tratamento de dados](governanca/tratamento-de-dados/index.md)
 
-`índice` · Mapa do sub-domínio de tratamento de dados: o que a BD faz e o que não faz com o dado da fonte, e como a equipe garante isso no pipeline, no dbt e na revisão de PR. Aponta para a explicação dos **princípios de tratamento** e para a referência das **práticas de tratamento**.
+`índice` · Mapa do sub-domínio de tratamento de dados: o que a BD faz e o que não faz com o dado da fonte, e como a equipe garante isso no pipeline, no dbt e na revisão de PR. Aponta para a explicação dos **princípios de tratamento**, para a referência das **práticas de tratamento** e para o passo a passo de **código sem rótulo no dicionário**.
 
 ### [Princípios de tratamento de dados](governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md)
 
@@ -217,6 +217,10 @@ Resumo de cada página publicada, agrupado por domínio na ordem do menu. O rót
 ### [Práticas de tratamento](governanca/tratamento-de-dados/referencia/praticas-de-tratamento.md)
 
 `referência` · As regras de engenharia verificadas na revisão de PR para garantir os princípios de tratamento: entender a chave única antes de testá-la, zero tolerância de perda de linhas (`check_rows_written`), justificativa e custo medido para toda transformação nova, corrigir a causa na medida do problema (ocorrências raras da fonte — como referência, menos de 0,1% — documentadas, com pedido de esclarecimento via LAI registrado no README), testes só na partição nova em tabelas grandes e sem repetição, decisões registradas no README do conjunto e proveniência de códigos novos no README. Cada prática traz um exemplo.
+
+### [Como tratar um código sem rótulo no dicionário](governanca/tratamento-de-dados/como-fazer/como-tratar-codigo-sem-rotulo.md)
+
+`como-fazer` · Passos para quando o `custom_dictionary_coverage` acusa um código que está nos dados mas não tem rótulo no `dicionario`: confirmar que o código vem da fonte (e não de zeros à esquerda perdidos, tipo da coluna ou encoding), procurar o significado nos documentos oficiais e, se não houver, incluir o código com o rótulo "Significado não encontrado nas fontes relacionadas a <base>" e abrir um pedido via LAI no Fala.BR. Registra no README do conjunto, na seção de mudanças do dicionário, a fonte ou o protocolo do pedido, e troca o rótulo quando a resposta chega. O teste fica sempre em `error`: o código não vai para o `ignore_values` e o teste não vira `warn`.
 
 ### [Qualidade de dados](governanca/qualidade/index.md)
 
