@@ -75,9 +75,17 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
   [quatro tipos de modificação](../../governanca/tratamento-de-dados/explicacao/principios-de-tratamento.md#as-unicas-modificacoes-que-fazemos)
   ou é uma exceção registrada no README do conjunto, com o motivo e o custo de processamento.
 - [ ] Nenhum `select distinct` ou filtro remove linhas da fonte sem uma regra documentada.
-- [ ] Cada partição (ou cluster) tem pelo menos 1 GB. Se não tiver, a tabela não deve ser
-  particionada. O tamanho de cada partição está em `INFORMATION_SCHEMA.PARTITIONS` (coluna
-  `total_logical_bytes`).
+- [ ] As partições têm, em média, pelo menos 10 GB, como recomenda a
+  [documentação do BigQuery](https://cloud.google.com/bigquery/docs/partitioned-tables).
+  Abaixo disso a tabela não deve ser particionada: muitas partições pequenas aumentam os
+  metadados da tabela e deixam as consultas mais lentas. Nesse caso, use só o `cluster_by`, que
+  compensa a partir de 64 MB
+  ([clusterização no BigQuery](https://cloud.google.com/bigquery/docs/clustered-tables)). O tamanho
+  de cada partição está em `INFORMATION_SCHEMA.PARTITIONS` (coluna `total_logical_bytes`).
+  Exceção: um modelo incremental com `insert_overwrite` pode ter partições menores, desde que a
+  tabela inteira passe de 10 GB. Nele, a partição segue a unidade que cada carga regrava (por
+  exemplo, o ano), e é ela que permite substituir só o período novo sem reconstruir a tabela.
+  O motivo fica registrado no README do conjunto.
 - [ ] O `range` de `partition_by` cobre os próximos anos. Um `end` no passado faz as linhas novas
   irem para `__UNPARTITIONED__`, e as consultas filtradas por ano passam a ler a tabela inteira.
 - [ ] Em modelo incremental:
