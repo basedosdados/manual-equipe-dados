@@ -82,6 +82,10 @@ Confira contra [como estruturar um flow de dataset](../../pipelines/como-fazer/e
   compensa a partir de 64 MB
   ([clusterização no BigQuery](https://cloud.google.com/bigquery/docs/clustered-tables)). O tamanho
   de cada partição está em `INFORMATION_SCHEMA.PARTITIONS` (coluna `total_logical_bytes`).
+  Exceção: um modelo incremental com `insert_overwrite` pode ter partições menores, desde que a
+  tabela inteira passe de 10 GB. Nele, a partição segue a unidade que cada carga regrava (por
+  exemplo, o ano), e é ela que permite substituir só o período novo sem reconstruir a tabela.
+  O motivo fica registrado no README do conjunto.
 - [ ] O `range` de `partition_by` cobre os próximos anos. Um `end` no passado faz as linhas novas
   irem para `__UNPARTITIONED__`, e as consultas filtradas por ano passam a ler a tabela inteira.
 - [ ] Em modelo incremental:
