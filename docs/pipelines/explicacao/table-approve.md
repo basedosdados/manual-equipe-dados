@@ -33,59 +33,58 @@ flowchart TD
     A[Merge na main] --> C{PR tem o label<br/>table-approve?}
     C -- não --> X[Etapas puladas<br/>job verde]
     C -- sim --> D[Seleciona os modelos .sql<br/>alterados no PR]
-    D --> F[Substitui a staging de prod<br/>pela de dev, com backup]
+    D --> B[build_and_promote<br/>uma tabela por vez]
+    B --> E[dbt run/test em dev]
+    E -- falha --> Y[Job falha<br/>prod não é tocada]
+    E --> F[Backup da staging de prod,<br/>apaga e copia a de dev]
     F --> G[Recria a tabela externa<br/>em basedosdados-staging]
-    G --> H[dbt run --target prod<br/>uma tabela por vez]
-    H -- falha --> Y[Job falha<br/>tabelas seguintes não rodam]
+    G --> H[dbt run/test em prod<br/>e registro no backend]
+    H -- falha --> Z[Job falha<br/>tabelas seguintes não rodam]
 ```
 
-As etapas estão em `.github/workflows/scripts/prefect_run_dbt.py` (trechos
-reduzidos abaixo).
+O script `.github/workflows/scripts/prefect_run_dbt.py` dispara, para cada
+tabela, o deployment `build_and_promote`, o mesmo que as pipelines em estágios
+usam ([#2327](https://github.com/basedosdados/pipelines/pull/2327)). Ele espera
+cada flow run terminar antes de passar à próxima tabela e imprime a URL do run
+no log da Action.
 
 **1. Seleção.** Só entram arquivos `models/<dataset>/<modelo>.sql`; subpastas,
-testes e macros ficam de fora.
+testes e macros ficam de fora. Um prefixo `<dataset>__` no nome do arquivo é
+removido para chegar ao `table_id`.
 
 ```python
 if file.suffix == ".sql" and len(file.parts) == 3 and file.parts[0] == "models"
 ```
 
-**2. Substituição da staging.** A staging de prod vai para
-`basedosdados-backup` e é trocada pela de dev. Se a de dev estiver vazia, nada
-muda.
+**2. Teste em dev.** O `build_and_promote` roda `dbt run/test --target dev`.
+Se falhar, a tabela não é promovida e prod não muda.
 
-```python
-if len(list(source_ref)) == 0:  # staging de dev vazia
-    return True
-ref.copy_table(source_bucket_name=destination_bucket_name,  # prod -> backup
-               destination_bucket_name=backup_bucket_name)
-ref.copy_table(source_bucket_name=source_bucket_name,  # dev -> prod
-               destination_bucket_name=destination_bucket_name)
-```
+**3. Substituição da staging.** O `transfer_files_to_prod_flow` (subflow do
+`build_and_promote`) chama `copy_staging_to_prod` sem `folders`, ou seja, uma
+promoção completa: copia a staging de prod para `basedosdados-backup`, **apaga**
+a staging de prod e copia a de dev inteira, com cópia server-side.
 
-**3. Tabela externa.** `basedosdados-staging.<dataset>_staging.<tabela>` é
-recriada com o esquema do primeiro arquivo da staging de dev.
+**4. Tabela externa.** `basedosdados-staging.<dataset>_staging.<tabela>` é
+recriada com o esquema de **um** arquivo de amostra da staging copiada.
 
-```python
-if blob_name.endswith((".csv", ".parquet")):
-    break  # usa só o primeiro arquivo
-```
+**5. Materialização e registro.** `dbt run/test --target prod` e, em seguida,
+o registro da materialização no backend (cobertura e última atualização).
 
-**4. Materialização.** Um flow do Prefect por tabela executa
-`dbt run --target prod` e exporta o CSV de download. Uma falha encerra o job.
+Cada tabela passa pelas etapas 2 a 5 antes da próxima começar. Se uma falhar,
+as tabelas anteriores do PR já foram promovidas e as seguintes não rodam.
 
-```python
-run_deployment(name=DBT_MODEL_DEPLOYMENT,
-               parameters={"dbt_command": "run", "target": "prod", ...})
-```
-
-As etapas 2 e 3 rodam para todas as tabelas antes da 4. Se a materialização
-falhar, a staging de prod de todo o PR já foi trocada.
+!!! warning "Staging de dev vazia"
+    Com a staging de dev vazia, o backup e a limpeza da staging de prod
+    acontecem antes da cópia, e o flow só falha depois (não há arquivo de
+    amostra). A staging de prod fica vazia até ser restaurada do backup. Antes
+    de aplicar o label, confira que a staging de dev de cada tabela do PR
+    existe e está completa.
 
 ### Alterações de esquema
 
 A tabela final é recriada a cada execução, então colunas novas ou removidas não
-exigem passo extra. O risco está na tabela externa, cujo esquema vem do
-primeiro arquivo: coluna ausente nele gera `Unrecognized name` no `dbt run`.
+exigem passo extra. O risco está na tabela externa, cujo esquema vem de um
+único arquivo: coluna ausente nele gera `Unrecognized name` no `dbt run`.
 CSV é lido por posição, e ordem de colunas diferente entre arquivos troca
 valores sem erro; Parquet é lido por nome.
 
@@ -96,8 +95,14 @@ valores sem erro; Parquet é lido por nome.
   ([ADR-0002](../../infraestrutura/adr/0002-pipeline-integrada-com-ambiente-dev.md)),
   e a staging de prod serve de backup
   ([ADR-0003](../../infraestrutura/adr/0003-manter-staging-no-processo-de-dados.md)).
-- **O que fica de fora:** testes dbt, metadados no backend e ordem de
-  dependência entre modelos novos do mesmo PR. 
+- **Mesmo deployment das pipelines:** desde o
+  [#2327](https://github.com/basedosdados/pipelines/pull/2327), o
+  `table-approve` usa o `build_and_promote`, então testa em dev antes de
+  promover e roda os testes também em prod. Uma tabela com teste falhando não
+  é mais promovida.
+- **O que fica de fora:** ordem de dependência entre modelos novos do mesmo
+  PR, e promoção parcial (o `table-approve` sempre copia a staging inteira,
+  apagando em prod arquivos que só existem lá).
   
 
 ## Ver também
