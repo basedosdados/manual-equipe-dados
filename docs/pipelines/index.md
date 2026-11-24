@@ -5,7 +5,7 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 ## Explicação
 
 - [Pipeline orientado a eventos](explicacao/pipeline-orientado-a-eventos.md) — por que um flow de dataset é dividido em estágios encadeados e como eles se conectam
-- [Table-approve](explicacao/table-approve.md) — como as tabelas alteradas em um PR são materializadas em prod
+- [Checagem de schema no upload para o GCS](explicacao/checagem-de-schema-no-upload.md) — por que o `upload_to_gcs` compara o arquivo com a staging e por que as regras são as que são
 
 ## Como fazer
 
@@ -17,5 +17,12 @@ Padrões de design, módulos reutilizáveis, validações e tratamentos específ
 ## Referência
 
 - [`stage_dispatch.py`](referencia/stage-dispatch.md) — tipos e funções usados para encadear os estágios
-- [Testes dbt obrigatórios](referencia/testes-dbt-obrigatorios.md) — o conjunto mínimo de testes de toda tabela e o princípio de tratamento que cada um protege
-- [Rodar um flow localmente](como-fazer/rodar-flow-localmente.md) — Prefect 3, sem precisar de deploy em dev na nuvem
+- [`schema_check.py`](referencia/schema-check.md) — regras de classificação, módulo, fluxo na task e alertas da checagem de schema
+
+## Runbooks
+
+- [Erro ou aviso de schema no upload](runbooks/erro-de-schema-no-upload.md) — o que fazer quando o `upload_to_gcs` falha com `SchemaMismatchError` ou termina com `SchemaWarning`
+
+## ADRs
+
+- [Índice de ADRs de Pipelines](adr/index.md) — decisões sobre a checagem de schema (0001 a 0009) e deprecações

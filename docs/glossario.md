@@ -16,6 +16,8 @@ Termos usados de forma recorrente em toda a documentação da equipe dados.
 
 ## C
 
+**Checagem de schema** — comparação, feita pela task `upload_to_gcs`, entre as colunas do arquivo a subir e o schema da tabela externa de staging no BigQuery. O resultado é *warning* (segue e avisa) ou *erro* (aborta antes de alterar a staging ou o bucket). Ver [Checagem de schema no upload](pipelines/explicacao/checagem-de-schema-no-upload.md).
+
 ## D
 
 **Datalake House** — arquitetura híbrida que combina um *data lake* (arquivos brutos/tratados em object storage) com um *data warehouse* (engine SQL com modelos materializados), unidos por tabelas externas. Na BD: os buckets GCS (`basedosdados-dev`, `basedosdados-staging`) são o lake; os projetos BigQuery (`basedosdados-dev`, `basedosdados-staging`, `basedosdados`) são o warehouse; tabelas `<dataset>_staging` são externas e leem direto do GCS, enquanto `<dataset>` são materializadas pelo dbt. Ver [Fluxo de dados e infraestrutura](onboarding/fluxo-de-dados-e-infraestrutura.md).
