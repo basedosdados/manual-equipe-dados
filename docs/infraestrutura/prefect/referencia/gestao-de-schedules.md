@@ -12,10 +12,15 @@ Sistema automático que monitora falhas de flows no Prefect 3 e desativa schedul
 ## Visão geral
 
 ```
-PR merged
-   └─ CI deploys flows com paused=True
-         └─ CI chama POST /admin-tools/sync-deployments/
-               └─ Backend ativa/pausa cada flow conforme o banco
+PR com a label deploy-flow mergeado em main
+   └─ CI acha o PR do commit, confirma a label
+         └─ Deploy dos flows alterados no PR, sempre com paused=True
+               └─ CI chama POST /admin-tools/sync-deployments/ com {"activate": [...]}
+                     └─ Backend FORÇA is_schedule_active=True nesses deployments
+                           (mesmo que estivessem pausados por outro motivo)
+
+PR sem a label deploy-flow
+   └─ Nenhum deploy acontece
 
 Flow falha no Prefect 3
    └─ Automação "flow-failed-prod-webhook" dispara
@@ -24,7 +29,7 @@ Flow falha no Prefect 3
                      └─ Se sim: pausa no Prefect 3 + atualiza banco
 ```
 
-O banco de dados é sempre a fonte de verdade. O Prefect 3 é ajustado para refletir o que está no banco.
+Fora do sync seletivo (chamada sem `activate` — sync completo manual), o banco de dados é a fonte de verdade e o Prefect 3 é ajustado para refletir o que está nele.
 
 ---
 
@@ -55,23 +60,26 @@ A task de nome `run_dbt` terminou com `Failed` e o erro não está na lista de e
 
 ## Fluxo de deploy
 
-Quando um PR é mergeado no repositório `pipelines` e o CD (`cd-prefect3.yaml`) roda:
+Quando um PR com a label **`deploy-flow`** é mergeado no repositório `pipelines`, o CD (`cd-prefect3.yaml`) roda (sem a label, nenhum deploy acontece):
 
-1. **Deploy dos flows** — `deploy_flows.py` faz deploy de todos os flows com `paused=True`. Isso garante que flows novos nunca entrem ativos por padrão.
+1. **Deploy dos flows** — `deploy_flows.py --changed` faz deploy só dos flows cujo arquivo mudou no PR, sempre com `paused=True`. A expansão é por dataset/arquivo: editar um flow num `flows.py` com várias tabelas redeploya (e, no passo seguinte, ativa) todas elas, não só a editada — ver aviso de risco abaixo.
 
-2. **Sync com o backend** — o CI chama o endpoint de sync automaticamente.
+2. **Sync com o backend** — o CI chama o endpoint de sync passando a lista dos deployments registrados com sucesso: `{"activate": ["br_x_y_check_update", ...]}`.
 
-3. **O sync aplica o estado do banco no Prefect 3:**
-   - Flow já conhecido + ativo no banco → despausa no Prefect 3
-   - Flow já conhecido + pausado no banco → mantém pausado
-   - Flow novo (não existe no banco) → cria registro pausado, permanece pausado
+3. **O sync força a ativação dos deployments da lista**, independente do estado anterior no banco:
+   - Deployment em `activate` → `is_schedule_active=True` + `reactivated_at=now()`, mesmo que estivesse pausado por outro motivo (inclusive auto-desativação por falha)
+   - Deployment fora de `activate` → não é tocado
 
-> O sync **nunca altera** `is_schedule_active` no banco — só lê. Ele corrige o Prefect 3 para refletir o banco.
+> Isso é o **sync seletivo** (body com `activate`). Uma chamada sem esse campo (ex. `workflow_dispatch` manual com `--all`, ou uma sincronização direta via curl) é o **sync completo**: aplica o estado já salvo no banco, sem forçar nada — aí sim vale "o banco é a fonte de verdade".
+
+> Se a chamada de sync falhar, o job do CD falha — não é mais silencioso. Um flow corretamente redeployado nunca fica pausado sem que ninguém note.
 
 **Verificar no log do backend após deploy:**
 ```
 Sync complete: {'created': 0, 'updated': 0, 'activated': 141, 'paused': 53, 'errors': 0}
 ```
+
+> ⚠️ **Risco conhecido**: um PR que edita **qualquer** flow de um `flows.py` com várias tabelas ativa todas elas no sync seguinte, não só a editada — inclusive uma que estivesse pausada por um motivo não relacionado ao PR.
 
 ---
 
@@ -79,19 +87,28 @@ Sync complete: {'created': 0, 'updated': 0, 'activated': 141, 'paused': 53, 'err
 
 ### `POST /admin-tools/sync-deployments/`
 
-Sincroniza o Prefect 3 com o estado do banco. Chamado pelo CI após cada deploy.
+Sincroniza o Prefect 3 com o estado do banco (ou força ativação). Chamado pelo CI após cada deploy.
+
+**Body (opcional):**
+```json
+{"activate": ["br_x_y_check_update", "br_x_y_download"]}
+```
+
+- **Com `activate`** (sync seletivo — usado pelo CD de produção): busca só esses deployments no Prefect e força `is_schedule_active=True` neles, mesmo que já existissem e estivessem pausados. Não roda o cleanup de deployments "dangling" (que sumiram do Prefect) — não é seguro fazer isso com um subconjunto parcial.
+- **Sem `activate`** (sync completo): aplica o estado já salvo no banco em todos os deployments do Prefect, sem forçar nada, e limpa dangling — comportamento de sempre.
 
 **Resposta:**
 ```json
-{"created": 0, "updated": 0, "activated": 141, "paused": 53, "errors": 0}
+{"created": 0, "updated": 0, "activated": 141, "paused": 53, "removed_no_schedule": 0, "removed_dangling": 0, "tables_linked": 0, "errors": 0}
 ```
 
 | Campo | Significado |
 |---|---|
-| `created` | Flows novos registrados no banco (ficam pausados) |
+| `created` | Flows novos registrados no banco |
 | `updated` | Flows com `deployment_id` atualizado (re-deploy) |
-| `activated` | Flows que estavam pausados no Prefect 3 mas ativos no banco — despaused |
+| `activated` | Flows ativados — já ativos no banco (sync completo) ou forçados por `activate` (sync seletivo) |
 | `paused` | Flows pausados no banco, confirmados pausados no Prefect 3 |
+| `removed_no_schedule`/`removed_dangling`/`tables_linked` | Só aparecem num sync completo — omitidos no seletivo |
 | `errors` | Falhas ao processar um deployment específico |
 
 ---
@@ -239,7 +256,8 @@ for record in DisabledFlowSchedule.objects.filter(is_schedule_active=True):
 | Flow falhou mas não foi desativado | Automação não disparou ou webhook retornou erro | Checar logs do Grafana — buscar `webhook received` no horário da falha |
 | Sync do CI retorna 401 | Chave errada no secret do pod | Verificar sealed secret no IAC |
 | Flow ativo no banco mas pausado no Prefect | Divergência pós-deploy ou intervenção manual | Rodar sync via Django Admin ou curl |
-| `Sync complete` não aparece nos logs após deploy | Step do CI falhou silenciosamente | Verificar log da action no GitHub |
+| `Sync complete` não aparece nos logs após deploy | Step do CI falhou (job do CD aparece vermelho) | Verificar log da action no GitHub |
+| Deploy teve sucesso mas o CD ficou verde sem nenhum flow alterado | PR sem a label `deploy-flow` | Confirmar a label antes de mergear |
 
 ---
 
